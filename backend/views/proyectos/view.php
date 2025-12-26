@@ -1,0 +1,52 @@
+<?php
+
+use yii\helpers\Html;
+use yii\widgets\DetailView;
+
+/** @var yii\web\View $this */
+/** @var common\models\Proyectos $model */
+
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Proyectos', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
+\yii\web\YiiAsset::register($this);
+?>
+<div class="proyectos-view">
+
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <p>
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
+
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'id',
+            'nombre',
+            'descripcion:ntext',
+            'cliente_id',
+            'servicio_id',
+            'consultor_id',
+            'auditor_id',
+            'fecha_inicio',
+            'fecha_fin_prevista',
+            'fecha_fin_real',
+            'estado',
+            'presupuesto',
+            'notas_internas:ntext',
+            'creado_por',
+            'fecha_creacion',
+            'modificado_por',
+            'fecha_modificacion',
+        ],
+    ]) ?>
+
+</div>
