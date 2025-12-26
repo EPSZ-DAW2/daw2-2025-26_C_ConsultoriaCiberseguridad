@@ -23,17 +23,22 @@ class SiteController extends Controller
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
-                    [
-                        'actions' => ['login', 'error'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
+                [
+                    'actions' => ['login', 'error'],
+                    'allow' => true,
+                ],
+                [
+                    'actions' => ['logout'],
+                    'allow' => true,
+                    'roles' => ['@'], 
+                ],
+                [
+                    'actions' => ['index'],
+                    'allow' => true,
+                    'roles' => ['verPanel'],
                 ],
             ],
+        ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [

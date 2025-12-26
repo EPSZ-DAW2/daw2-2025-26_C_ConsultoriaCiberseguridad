@@ -11,10 +11,9 @@ use common\models\User;
  */
 class SignupForm extends Model
 {
-    public $username;
+    public $username; // Esto será el "Nombre"
     public $email;
     public $password;
-
 
     /**
      * {@inheritdoc}
@@ -22,26 +21,30 @@ class SignupForm extends Model
     public function rules()
     {
         return [
+            // REGLAS PARA EL NOMBRE (antes username)
             ['username', 'trim'],
-            ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
+            ['username', 'required', 'message' => 'Por favor, escribe tu nombre.'],
+            // ELIMINADA LA REGLA 'UNIQUE' PARA USERNAME PORQUE TU TABLA NO TIENE COLUMNA 'USERNAME'
             ['username', 'string', 'min' => 2, 'max' => 255],
 
+            // REGLAS PARA EL EMAIL
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+            // Esta regla comprueba que el email no exista ya en la tabla 'User' (usuarios)
+            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Este correo ya está registrado.'],
 
+            // REGLAS PARA LA CONTRASEÑA
             ['password', 'required'],
-            ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
+            ['password', 'string', 'min' => 8], // He puesto mínimo 8 por seguridad
         ];
     }
 
     /**
      * Signs user up.
      *
-     * @return bool whether the creating new account was successful and email was sent
+     * @return bool whether the creating new account was successful and the email was sent
      */
     public function signup()
     {
@@ -50,31 +53,31 @@ class SignupForm extends Model
         }
         
         $user = new User();
-        $user->username = $this->username;
+        
+        // ASIGNACIÓN DE DATOS (Formulario -> Base de Datos)
+        $user->nombre = $this->username; // Guardamos lo que escriban en 'Username' dentro de 'nombre'
         $user->email = $this->email;
+        $user->activo = 1; // 1 = Activo
+        $user->fecha_registro = date('Y-m-d H:i:s'); // Fecha actual
+        
+        // IMPORTANTE: Si tu base de datos obliga a tener 'apellidos', 
+        // pon una cadena vacía o añade el campo al formulario.
+        // $user->apellidos = ''; 
+        
         $user->setPassword($this->password);
         $user->generateAuthKey();
-        $user->generateEmailVerificationToken();
+        
+        // Guardar usuario
+        if ($user->save()) {
+            // Asignar rol por defecto (Cliente) si existe el sistema RBAC
+            $auth = Yii::$app->authManager;
+            $clienteRole = $auth->getRole('cliente'); 
+            if ($clienteRole) {
+                $auth->assign($clienteRole, $user->id);
+            }
+            return true;
+        }
 
-        return $user->save() && $this->sendEmail($user);
-    }
-
-    /**
-     * Sends confirmation email to user
-     * @param User $user user model to with email should be send
-     * @return bool whether the email was sent
-     */
-    protected function sendEmail($user)
-    {
-        return Yii::$app
-            ->mailer
-            ->compose(
-                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                ['user' => $user]
-            )
-            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-            ->setTo($this->email)
-            ->setSubject('Account registration at ' . Yii::$app->name)
-            ->send();
+        return null;
     }
 }

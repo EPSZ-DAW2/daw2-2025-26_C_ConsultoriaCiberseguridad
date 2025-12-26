@@ -34,22 +34,50 @@ AppAsset::register($this);
             'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
         ],
     ]);
+
+    // --- AQUÍ EMPIEZA LA MAGIA DEL MENÚ ---
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
     ];
+
+    // Solo mostramos opciones si el usuario NO es invitado
+    if (!Yii::$app->user->isGuest) {
+        
+        // 1. GESTIONAR PROYECTOS (Consultor y Admin)
+        if (Yii::$app->user->can('gestionarProyectos')) {
+            $menuItems[] = ['label' => 'Gestionar Proyectos', 'url' => ['/proyecto/index']];
+        }
+
+        // 2. DOCUMENTACIÓN (Auditor, Consultor y Admin)
+        if (Yii::$app->user->can('verDocs')) {
+            $menuItems[] = ['label' => 'Documentación', 'url' => ['/documento/index']];
+        }
+
+        // 3. CALENDARIO 
+        // Si pueden ver el panel (Staff), pueden ver el calendario
+        if (Yii::$app->user->can('verPanel')) {
+            $menuItems[] = ['label' => 'Calendario', 'url' => ['/calendario/index']];
+        }
+    }
+
+    // Botón de Login para invitados (por si acaso, aunque en backend suele estar protegido)
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    }     
+    }    
+    // --------------------------------------
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
         'items' => $menuItems,
     ]);
+
+    // Botón de Logout (Salida)
     if (Yii::$app->user->isGuest) {
         echo Html::tag('div',Html::a('Login',['/site/login'],['class' => ['btn btn-link login text-decoration-none']]),['class' => ['d-flex']]);
     } else {
         echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
+                'Logout (' . Yii::$app->user->identity->nombre . ')',
                 ['class' => 'btn btn-link logout text-decoration-none']
             )
             . Html::endForm();
