@@ -97,16 +97,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php else: ?>
                         <ul class="list-group list-group-flush">
                             <?php foreach ($documentos as $doc): ?>
-                                <li class="list-group-item">
-                                    <i class="fas fa-file"></i>
-                                    <?= Html::encode($doc->nombre_archivo) ?>
-                                    <br>
-                                    <small class="text-muted">
-                                        <?= Html::encode($doc->tipo_documento) ?>
-                                        <?php if ($doc->version): ?>
-                                            - v<?= Html::encode($doc->version) ?>
-                                        <?php endif; ?>
-                                    </small>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-file text-danger"></i> <?= Html::encode($doc->nombre_archivo) ?>
+                                        <br>
+                                        <small class="text-muted">
+                                            <?= Html::encode($doc->tipo_documento) ?>
+                                            <?php if ($doc->version): ?>
+                                                - v<?= Html::encode($doc->version) ?>
+                                            <?php endif; ?>
+                                        </small>
+                                    </div>
+                                    
+                                    <?= Html::a('⬇️ Descargar', ['descargar', 'id' => $doc->id], [
+                                        'class' => 'btn btn-sm btn-outline-primary',
+                                        'title' => 'Descargar este documento',
+                                        'data-pjax' => '0', // Importante para descargas de archivos
+                                    ]) ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>

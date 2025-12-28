@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "documentos".
@@ -27,7 +28,6 @@ use Yii;
  */
 class Documentos extends \yii\db\ActiveRecord
 {
-
     /**
      * ENUM field values
      */
@@ -39,6 +39,16 @@ class Documentos extends \yii\db\ActiveRecord
     const TIPO_DOCUMENTO_CERTIFICADO = 'Certificado';
     const TIPO_DOCUMENTO_DOCUMENTACION_TECNICA = 'Documentación Técnica';
     const TIPO_DOCUMENTO_OTROS = 'Otros';
+
+    // -----------------------------------------------------------
+    //              NUEVA VARIABLE PARA LA SUBIDA
+    // -----------------------------------------------------------
+    /**
+     * @var UploadedFile Variable para manejar la subida del archivo
+     */
+    public $archivo_subido;
+
+
 
     /**
      * {@inheritdoc}
@@ -59,13 +69,19 @@ class Documentos extends \yii\db\ActiveRecord
             [['tamaño_bytes'], 'default', 'value' => 0],
             [['version'], 'default', 'value' => 1.0],
             [['visible_cliente'], 'default', 'value' => 1],
-            [['proyecto_id', 'nombre_archivo', 'ruta_archivo', 'subido_por'], 'required'],
+            
+            [['proyecto_id', 'subido_por'], 'required'],
             [['proyecto_id', 'tamaño_bytes', 'visible_cliente', 'subido_por'], 'integer'],
             [['descripcion', 'ruta_archivo', 'tipo_documento', 'notas'], 'string'],
             [['fecha_subida', 'fecha_modificacion'], 'safe'],
             [['nombre_archivo'], 'string', 'max' => 255],
             [['version'], 'string', 'max' => 20],
             [['hash_verificacion'], 'string', 'max' => 64],
+            
+            // --- NUEVA REGLA: VALIDAR QUE SEA UN PDF ---
+            [['archivo_subido'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf', 'checkExtensionByMimeType' => false],
+            // -------------------------------------------
+
             ['tipo_documento', 'in', 'range' => array_keys(self::optsTipoDocumento())],
             [['proyecto_id'], 'exist', 'skipOnError' => true, 'targetClass' => Proyectos::class, 'targetAttribute' => ['proyecto_id' => 'id']],
             [['subido_por'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::class, 'targetAttribute' => ['subido_por' => 'id']],
@@ -79,19 +95,20 @@ class Documentos extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'proyecto_id' => 'Proyecto ID',
+            'proyecto_id' => 'Proyecto',
             'nombre_archivo' => 'Nombre Archivo',
-            'descripcion' => 'Descripcion',
+            'descripcion' => 'Descripción',
             'ruta_archivo' => 'Ruta Archivo',
             'tipo_documento' => 'Tipo Documento',
-            'tamaño_bytes' => 'Tamaño Bytes',
-            'version' => 'Version',
-            'visible_cliente' => 'Visible Cliente',
-            'hash_verificacion' => 'Hash Verificacion',
+            'tamaño_bytes' => 'Tamaño',
+            'version' => 'Versión',
+            'visible_cliente' => 'Visible Cliente (1=Sí, 0=No)',
+            'hash_verificacion' => 'Hash Verificación',
             'subido_por' => 'Subido Por',
             'fecha_subida' => 'Fecha Subida',
-            'fecha_modificacion' => 'Fecha Modificacion',
+            'fecha_modificacion' => 'Fecha Modificación',
             'notas' => 'Notas',
+            'archivo_subido' => 'Archivo PDF', // Etiqueta para el formulario
         ];
     }
 

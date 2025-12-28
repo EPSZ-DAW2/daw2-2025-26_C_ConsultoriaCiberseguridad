@@ -96,4 +96,36 @@ class ProyectosController extends Controller
 
         throw new NotFoundHttpException('El proyecto solicitado no existe.');
     }
+
+
+    /**
+     * Descarga segura para clientes.
+     * Verifica que el proyecto sea SUYO antes de entregar el archivo.
+     */
+    public function actionDescargar($id)
+    {
+        // 1. Buscamos el documento
+        $documento = \common\models\Documentos::findOne($id);
+
+        if (!$documento) {
+            throw new NotFoundHttpException('El documento no existe.');
+        }
+
+        // 2. SEGURIDAD CRÍTICA
+        // Comprobamos si el proyecto de este documento pertenece al usuario conectado
+        // Si el ID del cliente del proyecto NO coincide con el ID del usuario logueado -> BLOQUEAR
+        if ($documento->proyecto->cliente_id != Yii::$app->user->id) {
+            throw new \yii\web\ForbiddenHttpException('¡Alto ahí! No tienes permiso para descargar archivos de otros clientes.');
+        }
+
+        // 3. Si pasa el control, se lo entregamos
+        $rutaArchivo = $documento->ruta_archivo;
+        
+        if (file_exists($rutaArchivo)) {
+            return Yii::$app->response->sendFile($rutaArchivo, $documento->nombre_archivo);
+        }
+
+        throw new NotFoundHttpException('El archivo físico no se encuentra en el servidor.');
+    }
+
 }
