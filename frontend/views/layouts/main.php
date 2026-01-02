@@ -75,28 +75,30 @@ if (!Yii::$app->user->isGuest) {
     </ul>
 </nav>
 
+
 <div id="layoutSidenav">
     <div id="layoutSidenav_nav">
         <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
             <div class="sb-sidenav-menu">
                 <div class="nav">
-                    <div class="sb-sidenav-menu-heading">Core</div>
-
-                    <a class="nav-link" href="<?= Url::to(['/site/index']) ?>">
+                    <?php if (!Yii::$app->user->isGuest): ?>
+                    <div class="sb-sidenav-menu-heading">Privado</div>
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/dashboard']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Dashboard
                     </a>
+                    <?php endif; ?>
 
                     <div class="sb-sidenav-menu-heading">Público</div>
-                    <a class="nav-link" href="<?= Url::to(['/site/index']) ?>">
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/index']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                         Inicio
                     </a>
-                    <a class="nav-link" href="<?= Url::to(['/site/catalogo']) ?>">
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/catalogo']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
                         Catálogo
                     </a>
-                    <a class="nav-link" href="<?= Url::to(['/site/contact']) ?>">
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/contact']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-envelope"></i></div>
                         Contacto
                     </a>
@@ -104,17 +106,11 @@ if (!Yii::$app->user->isGuest) {
             </div>
 
             <div class="sb-sidenav-footer">
-                <div class="small">Identificado como:</div>
-                
-                <?php if (Yii::$app->user->isGuest): ?>
-                    Invitado
-                <?php else: ?>
-                    <strong><?= Html::encode($nombreUsuario) ?></strong>
-                    <br>
-                    <small class="text-muted">(<?= Html::encode($rolUsuario) ?>)</small>
+                <?php if (!Yii::$app->user->isGuest): ?>
+                    <div class="small">Logged in as:</div>
+                    <?= Html::encode(Yii::$app->user->identity->username) ?>
                 <?php endif; ?>
             </div>
-
         </nav>
     </div>
 
@@ -136,7 +132,6 @@ if (!Yii::$app->user->isGuest) {
             </div>
         </footer>
     </div>
-</div>
 </div>
 
 <div id="cookie-banner" class="cookie-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">

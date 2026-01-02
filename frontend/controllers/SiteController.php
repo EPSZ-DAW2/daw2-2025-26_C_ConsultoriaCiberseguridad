@@ -279,4 +279,9 @@ class SiteController extends Controller
         // Esto busca el archivo en views/site/terminos.php
         return $this->render('terminos');
     }
+
+    public function actionDashboard()
+    {
+        return $this->render('dashboard');
+    }
 }
