@@ -11,6 +11,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use common\models\Servicio;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -253,33 +254,14 @@ class SiteController extends Controller
     }
 
     public function actionCatalogo()
-{
-    // Datos “mock” (de momento sin BD) para cumplir la carcasa
-    $servicios = [
-        [
-            'nombre' => 'Implantación ISO 27001',
-            'precio' => 'Desde 1.500 €',
-            'imagen' => Yii::getAlias('@web') . '/template/assets/img/iso27001.jpg',
-        ],
-        [
-            'nombre' => 'Auditoría ENS',
-            'precio' => 'Desde 900 €',
-            'imagen' => Yii::getAlias('@web') . '/template/assets/img/ens.jpg',
-        ],
-        [
-            'nombre' => 'SOC 24/7',
-            'precio' => 'Desde 499 €/mes',
-            'imagen' => Yii::getAlias('@web') . '/template/assets/img/soc.jpg',
-        ],
-        [
-            'nombre' => 'Pentesting Web',
-            'precio' => 'Desde 1.200 €',
-            'imagen' => Yii::getAlias('@web') . '/template/assets/img/pentest.jpg',
-        ],
-    ];
+    {
+        $servicios = \common\models\Servicios::find()
+            ->where(['activo' => 1])
+            ->asArray() 
+            ->all();
 
-    return $this->render('catalogo', [
-        'servicios' => $servicios,
-    ]);
-}
+        return $this->render('catalogo', [
+            'servicios' => $servicios,
+        ]);
+    }
 }
