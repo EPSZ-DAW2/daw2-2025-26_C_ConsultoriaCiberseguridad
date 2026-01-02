@@ -56,7 +56,7 @@ AppAsset::register($this);
         // 3. CALENDARIO 
         // Si pueden ver el panel (Staff), pueden ver el calendario
         if (Yii::$app->user->can('verPanel')) {
-            $menuItems[] = ['label' => 'Calendario', 'url' => ['/calendario/index']];
+            $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
     }
 
