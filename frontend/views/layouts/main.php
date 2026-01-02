@@ -13,17 +13,9 @@ $nombreUsuario = 'Invitado';
 $rolUsuario = '';
 
 if (!Yii::$app->user->isGuest) {
-    // 1. Obtenemos el nombre real (columna 'nombre' de tu BD)
     $nombreUsuario = Yii::$app->user->identity->nombre; 
     
-    // 2. Obtenemos el rol desde el AuthManager
-    $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->id);
-    if (!empty($roles)) {
-        // Cogemos el primer rol que tenga asignado y ponemos la primera letra mayúscula
-        $rolUsuario = ucfirst(array_keys($roles)[0]); 
-    } else {
-        $rolUsuario = 'Usuario';
-    }
+    $rolUsuario = ucfirst(Yii::$app->user->identity->rol ?? 'Usuario'); 
 }
 ?>
 
