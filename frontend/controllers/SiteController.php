@@ -264,4 +264,19 @@ class SiteController extends Controller
             'servicios' => $servicios,
         ]);
     }
+
+    public function actionPoliticaPrivacidad()
+    {
+        // Esto busca el archivo en views/site/politica-privacidad.php
+        return $this->render('politica-privacidad');
+    }
+
+    /**
+     * Muestra la página de Términos y Condiciones
+     */
+    public function actionTerminos()
+    {
+        // Esto busca el archivo en views/site/terminos.php
+        return $this->render('terminos');
+    }
 }

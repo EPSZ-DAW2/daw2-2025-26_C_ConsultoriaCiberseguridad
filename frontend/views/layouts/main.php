@@ -120,6 +120,7 @@ if (!Yii::$app->user->isGuest) {
 
     <div id="layoutSidenav_content">
         <main class="p-4">
+            <?= \common\widgets\Alert::widget() ?>
             <?= $content ?>
         </main>
 
@@ -128,14 +129,59 @@ if (!Yii::$app->user->isGuest) {
                 <div class="d-flex align-items-center justify-content-between small">
                     <div class="text-muted">&copy; CyberSec Manager <?= date('Y') ?></div>
                     <div>
-                        <a href="#">Privacy Policy</a> &middot;
-                        <a href="#">Terms &amp; Conditions</a>
+                        <a href="<?= \yii\helpers\Url::to(['/site/politica-privacidad']) ?>">Política de Privacidad</a> &middot;
+                        <a href="<?= \yii\helpers\Url::to(['/site/terminos']) ?>">Términos y Condiciones</a>
                     </div>
                 </div>
             </div>
         </footer>
     </div>
 </div>
+</div>
+
+<div id="cookie-banner" class="cookie-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div class="cookie-content bg-light p-4 rounded shadow-lg" style="max-width: 800px; width: 90%; margin: 20px;">
+        <h3 class="fw-bold mb-3">Aceptación de Cookies</h3>
+        <p class="mb-4">
+            ¡Hola! En nuestra web usamos cookies propias y de terceros, incluidos los servicios de terceros proveedores, 
+            para analizar el uso que haces de ella y mostrarte anuncios personalizados según tu perfil de navegación.
+            <br><br>
+            Puedes aceptarlas para seguir navegando, rechazarlas, o bien consultarlas para conocerlas en detalle en nuestra Política de Cookies.
+        </p>
+        
+        <div class="d-flex flex-column flex-md-row gap-3 justify-content-between">
+            <button id="reject-cookies" class="btn btn-danger flex-grow-1" style="background-color: #d32f2f; border-color: #d32f2f;">Rechazar todas las cookies</button>
+            <button id="config-cookies" class="btn btn-warning text-white flex-grow-1" style="background-color: #7cb342; border-color: #7cb342;">Configuración de cookies</button>
+            <button id="accept-cookies" class="btn btn-primary flex-grow-1" style="background-color: #0d47a1; border-color: #0d47a1;">Aceptar todas las cookies</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Mostrar si no hay decisión guardada
+        if (!localStorage.getItem("cookieConsent")) {
+            document.getElementById("cookie-banner").style.display = "flex";
+        }
+
+        // Aceptar todas
+        document.getElementById("accept-cookies").addEventListener("click", function() {
+            localStorage.setItem("cookieConsent", "accepted");
+            document.getElementById("cookie-banner").style.display = "none";
+        });
+
+        // Rechazar todas
+        document.getElementById("reject-cookies").addEventListener("click", function() {
+            localStorage.setItem("cookieConsent", "rejected");
+            document.getElementById("cookie-banner").style.display = "none";
+        });
+
+        // Configurar (por ahora solo cierra, en futuro abriría panel)
+        document.getElementById("config-cookies").addEventListener("click", function() {
+            alert("Aquí se abriría el panel de configuración de cookies.");
+        });
+    });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
