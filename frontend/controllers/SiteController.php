@@ -123,7 +123,24 @@ class SiteController extends Controller
     {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            Yii::$app->session->setFlash('success', 'Mensaje enviado correctamente.');
+            
+            // Guardar en Base de Datos
+            $solicitud = new \common\models\SolicitudesPresupuesto();
+            $solicitud->nombre_contacto = $model->nombre . ' ' . $model->apellidos;
+            $solicitud->email_contacto = $model->email;
+            $solicitud->empresa = 'No especificada (Contacto Web)'; 
+            $solicitud->descripcion_necesidad = $model->mensaje;
+            $solicitud->origen_solicitud = 'Web';
+            $solicitud->fecha_solicitud = date('Y-m-d H:i:s');
+            $solicitud->estado_solicitud = 'Pendiente';
+            $solicitud->prioridad = 2; // Media
+
+            if ($solicitud->save()) {
+                Yii::$app->session->setFlash('success', 'Mensaje enviado y registrado correctamente. Nos pondremos en contacto pronto.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Hubo un error al guardar tu mensaje.');
+            }
+
             return $this->refresh();
         }
 
