@@ -45,12 +45,12 @@ AppAsset::register($this);
         
         // 1. GESTIONAR PROYECTOS (Consultor y Admin)
         if (Yii::$app->user->can('gestionarProyectos')) {
-            $menuItems[] = ['label' => 'Gestionar Proyectos', 'url' => ['/proyecto/index']];
+            $menuItems[] = ['label' => 'Gestionar Proyectos', 'url' => ['/proyectos/index']];
         }
 
         // 2. DOCUMENTACIÓN (Auditor, Consultor y Admin)
         if (Yii::$app->user->can('verDocs')) {
-            $menuItems[] = ['label' => 'Documentación', 'url' => ['/documento/index']];
+            $menuItems[] = ['label' => 'Documentación', 'url' => ['/documentos/index']];
         }
 
         // 3. CALENDARIO 
