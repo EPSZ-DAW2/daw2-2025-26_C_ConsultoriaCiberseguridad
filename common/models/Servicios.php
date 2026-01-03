@@ -186,4 +186,24 @@ class Servicios extends \yii\db\ActiveRecord
     {
         $this->categoria = self::CATEGORIA_AUDITORIA;
     }
+
+    /**
+     * Devuelve la URL de la imagen del servicio basada en su ID.
+     * Busca en frontend/web/template/assets/img/services/service_{id}.jpg
+     * 
+     * @return string
+     */
+    public function getImagenUrl()
+    {
+        $filename = 'service_' . $this->id . '.jpg';
+        $filePath = Yii::getAlias('@frontend/web/template/assets/img/services/') . $filename;
+        
+        if (file_exists($filePath)) {
+            $timestamp = filemtime($filePath); // Obtener fecha de modificación para cache busting
+            return Yii::getAlias('@web/template/assets/img/services/') . $filename . '?v=' . $timestamp;
+        }
+
+        // Imagen por defecto si no existe la específica
+        return Yii::getAlias('@web/template/assets/img/ens.jpg'); 
+    }
 }

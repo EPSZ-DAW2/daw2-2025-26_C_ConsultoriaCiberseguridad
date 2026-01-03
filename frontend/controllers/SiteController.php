@@ -274,7 +274,6 @@ class SiteController extends Controller
     {
         $servicios = \common\models\Servicios::find()
             ->where(['activo' => 1])
-            ->asArray() 
             ->all();
 
         return $this->render('catalogo', [
@@ -300,5 +299,24 @@ class SiteController extends Controller
     public function actionDashboard()
     {
         return $this->render('dashboard');
+    }
+
+    /**
+     * Muestra la página de detalle de un servicio.
+     * @param int $id
+     * @return mixed
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function actionServicio($id)
+    {
+        $servicio = \common\models\Servicios::findOne(['id' => $id, 'activo' => 1]);
+
+        if (!$servicio) {
+            throw new \yii\web\NotFoundHttpException('El servicio solicitado no existe o no está activo.');
+        }
+
+        return $this->render('servicio', [
+            'servicio' => $servicio,
+        ]);
     }
 }
