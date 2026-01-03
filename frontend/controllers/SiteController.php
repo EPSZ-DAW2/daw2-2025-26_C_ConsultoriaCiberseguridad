@@ -319,4 +319,9 @@ class SiteController extends Controller
             'servicio' => $servicio,
         ]);
     }
+
+    public function actionConfiguracion()
+    {
+        return $this->render('configuracion');
+    }
 }

@@ -66,6 +66,9 @@ if (!Yii::$app->user->isGuest) {
                             'data-method' => 'post', // Importante para Yii2
                         ]) ?>
                     </li>
+                    <li>
+                        <a class="dropdown-item" href="<?= Url::to(['/site/configuracion']) ?>">Configuración</a>
+                    </li>
                 <?php else: ?>
                     <li><a class="dropdown-item" href="<?= Url::to(['/site/login']) ?>">Iniciar Sesión</a></li>
                     <li><a class="dropdown-item" href="<?= Url::to(['/site/signup']) ?>">Registrarse</a></li>
