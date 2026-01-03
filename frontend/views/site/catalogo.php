@@ -57,7 +57,7 @@ $this->title = 'Catálogo de Servicios';
                                 Desde <?= $precioVisual ?>
                             </p>
                             <?php if (!empty($servicio['duracion_estimada'])): ?>
-                                <small class="text-muted">Duración est.: <?= $servicio['duracion_estimada'] ?> días</small>
+                                <small class="text-muted">Duración est.: <?= $servicio['duracion_estimada'] ?> meses</small>
                             <?php endif; ?>
                         </div>
 
