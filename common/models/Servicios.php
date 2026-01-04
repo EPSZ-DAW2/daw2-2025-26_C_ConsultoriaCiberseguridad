@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property string $nombre Nombre del servicio (ej: "Implantación ISO 27001")
  * @property string|null $descripcion Descripción detallada del servicio
+ * @property string|null $Mas_informacion Información adicional para despliegue en catálogo
  * @property string $categoria Categoría del servicio
  * @property float|null $precio_base Precio de referencia en euros (puede ser NULL si es variable)
  * @property int|null $duracion_estimada Duración típica en días
@@ -54,7 +55,7 @@ class Servicios extends \yii\db\ActiveRecord
             [['requiere_auditoria'], 'default', 'value' => 0],
             [['activo'], 'default', 'value' => 1],
             [['nombre'], 'required'],
-            [['descripcion', 'categoria'], 'string'],
+            [['descripcion', 'Mas_informacion', 'categoria'], 'string'],
             [['precio_base'], 'number'],
             [['duracion_estimada', 'requiere_auditoria', 'activo', 'creado_por', 'modificado_por'], 'integer'],
             [['fecha_creacion', 'fecha_modificacion'], 'safe'],
@@ -74,6 +75,7 @@ class Servicios extends \yii\db\ActiveRecord
             'id' => 'ID',
             'nombre' => 'Nombre',
             'descripcion' => 'Descripcion',
+            'Mas_informacion' => 'Más Información',
             'categoria' => 'Categoria',
             'precio_base' => 'Precio Base',
             'duracion_estimada' => 'Duracion Estimada',

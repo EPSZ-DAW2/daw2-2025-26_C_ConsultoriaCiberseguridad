@@ -41,7 +41,24 @@ $this->title = 'Catálogo de Servicios';
                             <?php endif; ?>
                         </div>
 
-                        <a href="<?= \yii\helpers\Url::to(['site/servicio', 'id' => $servicio->id]) ?>" class="btn btn-primary w-100 mt-3">Más información</a>
+                        <button class="btn btn-primary w-100 mt-3 btn-more-info" type="button" data-target="#collapseService-<?= $servicio->id ?>">
+                            Más información
+                        </button>
+                    </div>
+                    
+                    <!-- Dropdown / Collapse Section - Inside Card -->
+                    <div class="collapse" id="collapseService-<?= $servicio->id ?>">
+                        <div class="card-footer bg-white border-top-0">
+                            <?php if (!empty($servicio->Mas_informacion)): ?>
+                                <p class="mb-0 text-secondary">
+                                    <?= nl2br(Html::encode($servicio->Mas_informacion)) ?>
+                                </p>
+                            <?php else: ?>
+                                <p class="mb-0 text-muted fst-italic small">
+                                    No hay información adicional disponible.
+                                </p>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -55,3 +72,14 @@ $this->title = 'Catálogo de Servicios';
         <?php endif; ?>
     </div>
 </div>
+
+<?php
+$script = <<< JS
+    $(document).on('click', '.btn-more-info', function(e) {
+        e.preventDefault();
+        var target = $(this).attr('data-target');
+        $(target).slideToggle();
+    });
+JS;
+$this->registerJs($script);
+?>
