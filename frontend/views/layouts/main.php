@@ -95,6 +95,11 @@ if (!Yii::$app->user->isGuest) {
                         <div class="sb-nav-link-icon"><i class="fas fa-folder-open"></i></div>
                         Mis Proyectos
                     </a>
+
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/incidencias/index']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        Mis Incidencias
+                    </a>
                     <?php endif; ?>
 
                     <div class="sb-sidenav-menu-heading">Público</div>

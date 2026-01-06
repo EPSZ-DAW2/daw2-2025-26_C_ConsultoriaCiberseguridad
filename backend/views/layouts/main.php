@@ -53,10 +53,16 @@ AppAsset::register($this);
             $menuItems[] = ['label' => 'Documentación', 'url' => ['/documentos/index']];
         }
 
-        // 3. CALENDARIO 
+        // 3. CALENDARIO
         // Si pueden ver el panel (Staff), pueden ver el calendario
         if (Yii::$app->user->can('verPanel')) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
+        }
+
+        // 3.5. GESTIÓN DE INCIDENCIAS (Admin y Analista SOC)
+        $user = Yii::$app->user->identity;
+        if ($user && in_array($user->rol, ['admin', 'analista_soc'])) {
+            $menuItems[] = ['label' => 'Gestión Incidencias', 'url' => ['/incidencias/index']];
         }
 
         // 4. GESTIÓN FORMACIÓN (Solo Admin/Gestor)
