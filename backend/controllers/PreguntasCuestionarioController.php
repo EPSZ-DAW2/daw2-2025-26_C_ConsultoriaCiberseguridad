@@ -7,6 +7,7 @@ use backend\models\PreguntasCuestionarioSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * PreguntasCuestionarioController implements the CRUD actions for PreguntasCuestionario model.
@@ -21,6 +22,20 @@ class PreguntasCuestionarioController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                // bloquear analista_soc - solo pueden ver incidencias
+                                $user = \Yii::$app->user->identity;
+                                return $user && $user->rol !== 'analista_soc';
+                            }
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
