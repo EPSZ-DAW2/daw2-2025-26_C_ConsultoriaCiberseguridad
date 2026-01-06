@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\models\Servicios;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\Cursos $model */
@@ -16,22 +18,20 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'descripcion')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'imagen_portada')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'video_url')->textInput(['placeholder' => 'Ej: https://www.youtube.com/embed/...']) ?>
 
-    <?= $form->field($model, 'nota_minima_aprobado')->textInput(['maxlength' => true]) ?>
+    <?php 
+        // Esto crea un desplegable con los servicios que existen
+        $servicios = ArrayHelper::map(Servicios::find()->all(), 'id', 'nombre');
+    ?>
+    <?= $form->field($model, 'servicio_id')->dropDownList($servicios, ['prompt' => 'Selecciona el Servicio...']) ?>
 
-    <?= $form->field($model, 'activo')->textInput() ?>
-
-    <?= $form->field($model, 'creado_por')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_creacion')->textInput() ?>
-
-    <?= $form->field($model, 'modificado_por')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_modificacion')->textInput() ?>
+    <?php if ($model->hasAttribute('activo')): ?>
+        <?= $form->field($model, 'activo')->dropDownList([1 => 'Sí', 0 => 'No']) ?>
+    <?php endif; ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Guardar Curso', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

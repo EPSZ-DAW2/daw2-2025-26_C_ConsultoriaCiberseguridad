@@ -52,6 +52,32 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
 
+            <?php 
+            // Buscamos si hay un curso asociado a este servicio
+            $curso = \common\models\Cursos::find()
+                ->where(['servicio_id' => $model->servicio_id])
+                ->one();
+            ?>
+
+            <?php if ($curso && !empty($curso->video_url)): ?>
+                <div class="card mb-4 shadow-sm border-primary">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-play-circle"></i> Formación Incluida: <?= Html::encode($curso->nombre) ?></h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="<?= Html::encode($curso->video_url) ?>" 
+                                    title="Video del curso" 
+                                    allowfullscreen
+                                    style="border:0;">
+                            </iframe>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        Este contenido es exclusivo para clientes con este servicio contratado.
+                    </div>
+                </div>
+            <?php endif; ?>
             <?php if ($model->consultor): ?>
                 <div class="card mb-4">
                     <div class="card-header">
@@ -112,7 +138,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <?= Html::a('⬇️ Descargar', ['descargar', 'id' => $doc->id], [
                                         'class' => 'btn btn-sm btn-outline-primary',
                                         'title' => 'Descargar este documento',
-                                        'data-pjax' => '0', // Importante para descargas de archivos
+                                        'data-pjax' => '0', 
                                     ]) ?>
                                 </li>
                             <?php endforeach; ?>

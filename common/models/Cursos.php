@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property string $nombre Nombre del curso (ej: "Concienciación Phishing")
  * @property string|null $descripcion Descripción del contenido del curso
+ * @property string|null $video_url URL del video del curso (o iframe)
  * @property string|null $imagen_portada Ruta a la imagen de portada del curso o NULL si no tiene
  * @property float $nota_minima_aprobado Nota mínima para aprobar el cuestionario (ej: 5.00 sobre 10)
  * @property int $activo Curso activo y disponible: 0=Inactivo, 1=Activo
@@ -48,11 +49,12 @@ class Cursos extends \yii\db\ActiveRecord
             [['activo'], 'default', 'value' => 1],
             [['nombre'], 'required'],
             [['descripcion'], 'string'],
+            [['activo', 'servicio_id'], 'integer'],
             [['nota_minima_aprobado'], 'number'],
             [['activo', 'creado_por', 'modificado_por'], 'integer'],
             [['fecha_creacion', 'fecha_modificacion'], 'safe'],
             [['nombre'], 'string', 'max' => 200],
-            [['imagen_portada'], 'string', 'max' => 255],
+            [['imagen_portada', 'video_url'], 'string', 'max' => 255],
             [['creado_por'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::class, 'targetAttribute' => ['creado_por' => 'id']],
             [['modificado_por'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::class, 'targetAttribute' => ['modificado_por' => 'id']],
         ];
@@ -74,6 +76,8 @@ class Cursos extends \yii\db\ActiveRecord
             'fecha_creacion' => 'Fecha Creacion',
             'modificado_por' => 'Modificado Por',
             'fecha_modificacion' => 'Fecha Modificacion',
+            'video_url' => 'URL del Video',
+            'servicio_id' => 'Servicio Asociado',
         ];
     }
 

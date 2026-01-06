@@ -8,11 +8,10 @@ use Yii;
  * This is the model class for table "servicios".
  *
  * @property int $id
- * @property string $nombre Nombre del servicio (ej: "Implantación ISO 27001")
+ * @property string $nombre Nombre del servicio
  * @property string|null $descripcion Descripción detallada del servicio
- * @property string|null $Mas_informacion Información adicional para despliegue en catálogo
  * @property string $categoria Categoría del servicio
- * @property float|null $precio_base Precio de referencia en euros (puede ser NULL si es variable)
+ * @property float|null $precio_base Precio de referencia
  * @property int|null $duracion_estimada Duración típica en días
  * @property int $requiere_auditoria Si requiere auditoría posterior: 0=No, 1=Sí
  * @property int $activo Visible en catálogo: 0=No, 1=Sí
@@ -35,6 +34,7 @@ class Servicios extends \yii\db\ActiveRecord
     const CATEGORIA_GOBERNANZA = 'Gobernanza';
     const CATEGORIA_DEFENSA = 'Defensa';
     const CATEGORIA_AUDITORIA = 'Auditoría';
+    const CATEGORIA_FORMACION = 'Formación';
 
     /**
      * {@inheritdoc}
@@ -55,7 +55,8 @@ class Servicios extends \yii\db\ActiveRecord
             [['requiere_auditoria'], 'default', 'value' => 0],
             [['activo'], 'default', 'value' => 1],
             [['nombre'], 'required'],
-            [['descripcion', 'Mas_informacion', 'categoria'], 'string'],
+            // HE BORRADO 'mas_informacion' DE AQUÍ ABAJO:
+            [['descripcion', 'categoria'], 'string'], 
             [['precio_base'], 'number'],
             [['duracion_estimada', 'requiere_auditoria', 'activo', 'creado_por', 'modificado_por'], 'integer'],
             [['fecha_creacion', 'fecha_modificacion'], 'safe'],
@@ -75,7 +76,7 @@ class Servicios extends \yii\db\ActiveRecord
             'id' => 'ID',
             'nombre' => 'Nombre',
             'descripcion' => 'Descripcion',
-            'Mas_informacion' => 'Más Información',
+            // HE BORRADO 'mas_informacion' DE AQUÍ TAMBIÉN
             'categoria' => 'Categoria',
             'precio_base' => 'Precio Base',
             'duracion_estimada' => 'Duracion Estimada',
@@ -139,6 +140,7 @@ class Servicios extends \yii\db\ActiveRecord
             self::CATEGORIA_GOBERNANZA => 'Gobernanza',
             self::CATEGORIA_DEFENSA => 'Defensa',
             self::CATEGORIA_AUDITORIA => 'Auditoría',
+            self::CATEGORIA_FORMACION => 'Formación',
         ];
     }
 
@@ -190,10 +192,22 @@ class Servicios extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return bool
+     */
+    public function isCategoriaFormacion()
+    {
+        return $this->categoria === self::CATEGORIA_FORMACION;
+    }
+
+    public function setCategoriaToFormacion()
+    {
+        $this->categoria = self::CATEGORIA_FORMACION;
+    }
+
+    /**
      * Devuelve la URL de la imagen del servicio basada en su ID.
      * Busca en frontend/web/template/assets/img/services/service_{id}.jpg
-     * 
-     * @return string
+     * * @return string
      */
     public function getImagenUrl()
     {

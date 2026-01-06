@@ -16,26 +16,23 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'descripcion')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'categoria')->dropDownList([ 'Gobernanza' => 'Gobernanza', 'Defensa' => 'Defensa', 'Auditoría' => 'Auditoría', ], ['prompt' => '']) ?>
+    <?= $form->field($model, 'categoria')->dropDownList([ 
+        'Gobernanza' => 'Gobernanza', 
+        'Defensa' => 'Defensa', 
+        'Auditoría' => 'Auditoría', 
+        'Formación' => 'Formación', 
+    ], ['prompt' => 'Seleccione una categoría...']) ?>
 
-    <?= $form->field($model, 'precio_base')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'precio_base')->textInput(['type' => 'number', 'step' => '0.01']) ?>
 
-    <?= $form->field($model, 'duracion_estimada')->textInput() ?>
+    <?= $form->field($model, 'duracion_estimada')->textInput(['placeholder' => 'Ej: 10 horas']) ?>
 
-    <?= $form->field($model, 'requiere_auditoria')->textInput() ?>
+    <?= $form->field($model, 'requiere_auditoria')->checkbox() ?>
 
-    <?= $form->field($model, 'activo')->textInput() ?>
-
-    <?= $form->field($model, 'creado_por')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_creacion')->textInput() ?>
-
-    <?= $form->field($model, 'modificado_por')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_modificacion')->textInput() ?>
+    <?= $form->field($model, 'activo')->dropDownList([1 => 'Sí', 0 => 'No']) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Guardar Servicio', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

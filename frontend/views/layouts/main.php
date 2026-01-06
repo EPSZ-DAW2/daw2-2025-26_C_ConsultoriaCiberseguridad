@@ -90,12 +90,21 @@ if (!Yii::$app->user->isGuest) {
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Dashboard
                     </a>
+
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/proyectos/index']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-folder-open"></i></div>
+                        Mis Proyectos
+                    </a>
                     <?php endif; ?>
 
                     <div class="sb-sidenav-menu-heading">Público</div>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/index']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                         Inicio
+                    </a>
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/cursos/index']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
+                        Campus
                     </a>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/catalogo']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
@@ -181,7 +190,7 @@ if (!Yii::$app->user->isGuest) {
     });
 </script>
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
 <script src="<?= Yii::getAlias('@web') ?>/template/js/scripts.js"></script>
 

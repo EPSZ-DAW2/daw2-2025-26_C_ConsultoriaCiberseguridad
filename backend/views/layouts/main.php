@@ -58,6 +58,20 @@ AppAsset::register($this);
         if (Yii::$app->user->can('verPanel')) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
+
+        // 4. GESTIÓN FORMACIÓN (Solo Admin/Gestor)
+        if (Yii::$app->user->can('gestionarProyectos')) { // Asumimos mismo permiso por simplicidad
+            $menuItems[] = [
+                'label' => 'Formación',
+                'items' => [
+                    ['label' => 'Cursos', 'url' => ['/cursos/index']],
+                    ['label' => 'Diapositivas', 'url' => ['/diapositivas/index']],
+                    ['label' => 'Preguntas Examen', 'url' => ['/preguntas-cuestionario/index']],
+                    '<div class="dropdown-divider"></div>',
+                    ['label' => 'Progreso Alumnos', 'url' => ['/progreso-usuario/index']],
+                ],
+            ];
+        }
     }
 
     // Botón de Login para invitados (por si acaso, aunque en backend suele estar protegido)

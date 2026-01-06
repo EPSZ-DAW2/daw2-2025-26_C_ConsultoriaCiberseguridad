@@ -49,9 +49,9 @@ $this->title = 'Catálogo de Servicios';
                     <!-- Dropdown / Collapse Section - Inside Card -->
                     <div class="collapse" id="collapseService-<?= $servicio->id ?>">
                         <div class="card-footer bg-white border-top-0">
-                            <?php if (!empty($servicio->Mas_informacion)): ?>
+                            <?php if (!empty($servicio->mas_informacion)): ?>
                                 <p class="mb-0 text-secondary">
-                                    <?= nl2br(Html::encode($servicio->Mas_informacion)) ?>
+                                    <?= nl2br(Html::encode($servicio->mas_informacion)) ?>
                                 </p>
                             <?php else: ?>
                                 <p class="mb-0 text-muted fst-italic small">
