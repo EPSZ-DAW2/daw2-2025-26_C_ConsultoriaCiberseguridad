@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-01-2026 a las 20:14:44
+-- Tiempo de generación: 02-01-2026 a las 11:36:51
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -43,7 +43,6 @@ INSERT INTO `auth_assignment` (`item_name`, `user_id`, `created_at`) VALUES
 ('cliente', '1', 1766742070),
 ('cliente', '3', 1766743766),
 ('cliente', '7', 1766748040),
-('cliente', '8', 1767365950),
 ('consultor', '4', 1766743766);
 
 -- --------------------------------------------------------
@@ -331,12 +330,11 @@ CREATE TABLE `servicios` (
   `id` int(10) UNSIGNED NOT NULL,
   `nombre` varchar(200) NOT NULL COMMENT 'Nombre del servicio (ej: "Implantación ISO 27001")',
   `descripcion` text DEFAULT NULL COMMENT 'Descripción detallada del servicio',
-  `categoria` enum('Consultoría','Ciberseguridad','Formación') NOT NULL DEFAULT 'Ciberseguridad' COMMENT 'Categoría del servicio',
+  `categoria` enum('Gobernanza','Defensa','Auditoría') NOT NULL DEFAULT 'Gobernanza' COMMENT 'Categoría del servicio',
   `precio_base` decimal(10,2) DEFAULT NULL COMMENT 'Precio de referencia en euros (puede ser NULL si es variable)',
   `duracion_estimada` int(10) UNSIGNED DEFAULT NULL COMMENT 'Duración típica en días',
   `requiere_auditoria` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Si requiere auditoría posterior: 0=No, 1=Sí',
   `activo` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Visible en catálogo: 0=No, 1=Sí',
-  `Mas_informacion` text NOT NULL,
   `creado_por` int(10) UNSIGNED DEFAULT NULL COMMENT 'ID del usuario que creó este servicio',
   `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'Cuándo se creó',
   `modificado_por` int(10) UNSIGNED DEFAULT NULL COMMENT 'ID del último usuario que lo modificó',
@@ -347,14 +345,10 @@ CREATE TABLE `servicios` (
 -- Volcado de datos para la tabla `servicios`
 --
 
-INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `categoria`, `precio_base`, `duracion_estimada`, `requiere_auditoria`, `activo`, `Mas_informacion`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
-(1, 'Implantación y Auditoría ISO 27001', 'Acompañamiento integral para el diseño SGSI, analisis de riesgos y preparación para la certificación oficial', 'Ciberseguridad', 14500.00, 6, 1, 1, 'Se cobra por hitos (30% inicio, 40% mitad y 30% fin)\r\nPagas por (Política de seguridad, análisis de riesgos, declaración de aplicabilidad, plan de tratamiento de riesgos e informe de auditoría interna) que te permitan certificarte.', NULL, '2026-01-02 21:53:10', NULL, '2026-01-04 14:35:52'),
-(2, 'Adecuación al Esquema Nacional de Seguridad', 'Adaptación de sistemas para el cumplinento con el RD311/2022 para administraciones publicas y proveedores', 'Consultoría', 18000.00, 12, 1, 1, 'Pagas por cumplir la ley (Acta de categorización del sistema, declaración de aplicabilidad, politica de seguridad, informe de insuficiencia, plan de adecuación e informe de auditoría de conformidad)', NULL, '2026-01-02 21:55:32', NULL, '2026-01-04 14:35:05'),
-(3, 'Monitorización y respuestas a incidentes', 'Vigilancia continua de activos digitales mediante SIEM y analistas de nivel 1 y 2 para detectar intrusiones en tiempo real', 'Ciberseguridad', 30000.00, 12, 0, 1, 'Pagas por tranquilidad y visibilidad mediante Acceso a Dashboard de seguridad en tiempo real, notificación de incidentes criticos, informe mensual ejecutivos de amenzasa bloqueadas y reunión trimestral de seguimiento de seguridad.', NULL, '2026-01-02 21:59:15', NULL, '2026-01-04 14:34:45'),
-(4, 'Gestión de vulnerabilidades', 'Escaneo periodicos automatizados para detectar fallos de seguridad en servidores y aplicaciones web antes que los atacantes', 'Ciberseguridad', 5400.00, 12, 0, 1, 'Pagas por saber donde tienes las brechas de seguridad antes que los hacker mediante Informe tecnicos de vulnerabilidades, guía de remediación para el equipo de IT, resumen ejecutivo de riesgos tecnológicos y certificado de escaneo trimestral.', NULL, '2026-01-02 22:01:10', NULL, '2026-01-04 14:34:26'),
-(5, 'Campaña de phishing simulado', 'Envio controlado de correos trampa a empleados para medir el nivel de riesgo humano y educar en la detención de fraudes ', 'Formación', 11400.00, 12, 0, 1, 'Pagas por medir y educar a tus empleados mediante informe de tasas de click y apertura de correos, listado de usuarios comprometidos, pildora formativa de refuerzo y diploma de participación en la campaña.', NULL, '2026-01-02 22:03:23', NULL, '2026-01-04 14:33:45'),
-(6, 'Curso de concienciación general', 'Formación fundamental sobre higiene digital: contraseñas robustas, deteción de ingeniería social, protección del puesto de trabajo y cumplimiento básico de protección de datos', 'Formación', 36.00, 12, 0, 1, 'Pagas por el certificado nominal de superación, manual de buenas practicas de ciberhigiene, decálogo de cumplimiento RGPD para imprimir y checklist de puesto de trabajo seguro. ', NULL, '2026-01-02 22:06:44', NULL, '2026-01-04 14:46:11'),
-(7, 'Ciberseguridad para diretivos', 'Seminiario ejecutivo sobre gestion de riesgos empresariales, impacto legal de las brechas de seguridad y toma de decisión ante crisis (Ransomware)', 'Ciberseguridad', 3600.00, 12, 0, 1, 'Pagas por un programa de acompañamiento anual que incluye un taller inicial de gestión de crisis y ransomware, 4 charlas trimestrales (Online 45 min.) sobre nuevas amenazas, canal de consulta prioritario para dudas del diretivo y cuadro de mando de riesgo para la dirección más una guía de bolsillo de respuestas a incidentes.', NULL, '2026-01-02 22:09:47', NULL, '2026-01-04 14:45:38');
+INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `categoria`, `precio_base`, `duracion_estimada`, `requiere_auditoria`, `activo`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
+(1, 'Auditoría Web Básica', 'Análisis de vulnerabilidades OWASP Top 10 para sitios corporativos.', 'Auditoría', 450.00, 3, 1, 1, 1, '2026-01-02 10:35:52', NULL, NULL),
+(2, 'Pentesting Interno', 'Simulación de ataque desde dentro de la red para verificar la seguridad de los endpoints.', 'Gobernanza', 1200.50, 7, 1, 1, 1, '2026-01-02 10:35:52', NULL, '2026-01-02 10:44:18'),
+(3, 'Consultoría ISO 27001', 'Asesoramiento para la implantación de la normativa de seguridad de la información.', 'Gobernanza', 2500.00, 30, 0, 1, 1, '2026-01-02 10:35:52', NULL, '2026-01-02 10:44:00');
 
 -- --------------------------------------------------------
 
@@ -385,13 +379,6 @@ CREATE TABLE `solicitudes_presupuesto` (
   `origen_solicitud` varchar(50) NOT NULL DEFAULT 'Web' COMMENT 'Origen: Web, Teléfono, Email, Referido, Evento'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Solicitudes de presupuesto desde la web pública';
 
---
--- Volcado de datos para la tabla `solicitudes_presupuesto`
---
-
-INSERT INTO `solicitudes_presupuesto` (`id`, `servicio_id`, `nombre_contacto`, `email_contacto`, `telefono_contacto`, `empresa`, `nif_cif`, `num_empleados`, `sector_actividad`, `descripcion_necesidad`, `alcance_solicitado`, `presupuesto_estimado`, `fecha_inicio_deseada`, `estado_solicitud`, `prioridad`, `fecha_solicitud`, `fecha_contacto`, `usuario_asignado_id`, `notas_comerciales`, `origen_solicitud`) VALUES
-(1, NULL, 'Pedro Domingues', 'pedro@pedro.com', NULL, 'No especificada (Contacto Web)', NULL, NULL, NULL, 'pedro', NULL, NULL, NULL, 'Pendiente', 2, '2026-01-02 21:17:56', NULL, NULL, NULL, 'Web');
-
 -- --------------------------------------------------------
 
 --
@@ -404,7 +391,7 @@ CREATE TABLE `usuarios` (
   `password` varchar(255) NOT NULL COMMENT 'Hash de la contraseña (usar bcrypt/Argon2)',
   `nombre` varchar(100) NOT NULL COMMENT 'Nombre del usuario',
   `apellidos` varchar(150) DEFAULT NULL COMMENT 'Apellidos del usuario',
-  `rol` enum('cliente_user','cliente_admin','consultor','auditor','analista_soc','admin','manager','comercial') NOT NULL DEFAULT 'cliente_user' COMMENT 'Rol del usuario en el sistema RBAC',
+  `rol` enum('invitado','cliente','consultor','auditor','analista_soc','admin') NOT NULL DEFAULT 'invitado' COMMENT 'Rol del usuario en el sistema RBAC',
   `empresa` varchar(200) DEFAULT NULL COMMENT 'Nombre de la empresa (solo para clientes)',
   `telefono` varchar(20) DEFAULT NULL COMMENT 'Teléfono de contacto',
   `direccion` text DEFAULT NULL COMMENT 'Dirección completa',
@@ -425,10 +412,11 @@ CREATE TABLE `usuarios` (
 INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `rol`, `empresa`, `telefono`, `direccion`, `fecha_registro`, `ultimo_acceso`, `intentos_acceso`, `bloqueado`, `fecha_bloqueo`, `motivo_bloqueo`, `activo`, `auth_key`) VALUES
 (1, 'admin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Pedro', 'Admin', 'admin', NULL, NULL, NULL, '2025-12-26 10:41:09', NULL, 0, 0, NULL, NULL, 1, 'cIwcYPb9TnINim4_YhZ715O5PHhY7ei_'),
 (2, 'auditor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Estela', 'Auditora', 'auditor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'd605677f1938d8e599ad7659baaa6188'),
+(3, 'cliente@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ignacio', 'Cliente', 'cliente', 'Cliente S.L.', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '7bebcd29eedf811d20065f1cd17c08db'),
 (4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c'),
+(5, 'invitado@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Marco', 'Invitado', 'invitado', 'Externa', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'f95dda056831ec91385c2d01afcd0db8'),
 (6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'analista_soc', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1'),
-(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', NULL, 'cliente_user', NULL, NULL, NULL, '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB'),
-(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, 'cliente_user', NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4');
+(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', NULL, 'invitado', NULL, NULL, NULL, '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB');
 
 --
 -- Índices para tablas volcadas
@@ -634,19 +622,19 @@ ALTER TABLE `proyectos`
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitudes_presupuesto`
 --
 ALTER TABLE `solicitudes_presupuesto`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restricciones para tablas volcadas
