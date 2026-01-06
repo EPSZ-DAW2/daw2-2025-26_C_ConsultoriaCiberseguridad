@@ -37,7 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'value' => '<span class="badge badge-' .
                                     ($model->severidad == 'Crítica' ? 'danger' :
                                     ($model->severidad == 'Alta' ? 'warning' :
-                                    ($model->severidad == 'Media' ? 'info' : 'secondary'))) . '">' .
+                                    ($model->severidad == 'Media' ? 'info' : 'success'))) .
+                                    ($model->severidad == 'Crítica' ? ' prioridad-critica' : '') . '">' .
                                     Html::encode($model->severidad) . '</span>',
                             ],
                             [
@@ -125,3 +126,16 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
 </div>
+
+<style>
+/* animación de parpadeo para prioridad crítica */
+@keyframes parpadeo {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.prioridad-critica {
+    animation: parpadeo 1.5s ease-in-out infinite;
+    font-weight: bold;
+}
+</style>

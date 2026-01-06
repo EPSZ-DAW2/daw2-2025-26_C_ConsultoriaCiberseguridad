@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="card-body">
                             <p class="card-text">
                                 <strong>Severidad:</strong>
-                                <span class="badge badge-<?= $incidencia->severidad == 'Crítica' ? 'danger' : ($incidencia->severidad == 'Alta' ? 'warning' : ($incidencia->severidad == 'Media' ? 'info' : 'secondary')) ?>">
+                                <span class="badge badge-<?= $incidencia->severidad == 'Crítica' ? 'danger' : ($incidencia->severidad == 'Alta' ? 'warning' : ($incidencia->severidad == 'Media' ? 'info' : 'success')) ?> <?= $incidencia->severidad == 'Crítica' ? 'prioridad-critica' : '' ?>">
                                     <?= Html::encode($incidencia->severidad) ?>
                                 </span>
                             </p>
@@ -80,5 +80,16 @@ $this->params['breadcrumbs'][] = $this->title;
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* animación de parpadeo para prioridad crítica */
+@keyframes parpadeo {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.prioridad-critica {
+    animation: parpadeo 1.5s ease-in-out infinite;
+    font-weight: bold;
 }
 </style>
