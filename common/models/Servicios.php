@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property string $nombre Nombre del servicio
  * @property string|null $descripcion Descripción detallada del servicio
+ * @property string|null $mas_informacion Información adicional desplegable
  * @property string $categoria Categoría del servicio
  * @property float|null $precio_base Precio de referencia
  * @property int|null $duracion_estimada Duración típica en días
@@ -55,8 +56,7 @@ class Servicios extends \yii\db\ActiveRecord
             [['requiere_auditoria'], 'default', 'value' => 0],
             [['activo'], 'default', 'value' => 1],
             [['nombre'], 'required'],
-            // HE BORRADO 'mas_informacion' DE AQUÍ ABAJO:
-            [['descripcion', 'categoria'], 'string'], 
+            [['descripcion', 'categoria', 'mas_informacion'], 'string'], 
             [['precio_base'], 'number'],
             [['duracion_estimada', 'requiere_auditoria', 'activo', 'creado_por', 'modificado_por'], 'integer'],
             [['fecha_creacion', 'fecha_modificacion'], 'safe'],
@@ -76,7 +76,7 @@ class Servicios extends \yii\db\ActiveRecord
             'id' => 'ID',
             'nombre' => 'Nombre',
             'descripcion' => 'Descripcion',
-            // HE BORRADO 'mas_informacion' DE AQUÍ TAMBIÉN
+            'mas_informacion' => 'Más Información',
             'categoria' => 'Categoria',
             'precio_base' => 'Precio Base',
             'duracion_estimada' => 'Duracion Estimada',
