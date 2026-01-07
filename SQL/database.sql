@@ -38,13 +38,15 @@ CREATE TABLE `auth_assignment` (
 --
 
 INSERT INTO `auth_assignment` (`item_name`, `user_id`, `created_at`) VALUES
-('admin', '1', 1766737131),
-('auditor', '2', 1766743766),
-('cliente', '1', 1766742070),
-('cliente', '3', 1766743766),
-('cliente', '7', 1766748040),
-('cliente', '8', 1767365950),
-('consultor', '4', 1766743766);
+('admin', '1', 1736266331),
+('analista_soc', '6', 1736266331),
+('auditor', '2', 1736266331),
+('cliente_admin', '9', 1736266331),
+('cliente_user', '7', 1736266331),
+('cliente_user', '8', 1736266331),
+('comercial', '11', 1736266331),
+('consultor', '4', 1736266331),
+('manager', '10', 1736266331);
 
 -- --------------------------------------------------------
 
@@ -67,16 +69,30 @@ CREATE TABLE `auth_item` (
 --
 
 INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `created_at`, `updated_at`) VALUES
-('admin', 1, NULL, NULL, NULL, 1766736841, 1766736841),
-('auditor', 1, NULL, NULL, NULL, 1766736841, 1766736841),
-('cliente', 1, NULL, NULL, NULL, 1766736840, 1766736840),
-('consultor', 1, NULL, NULL, NULL, 1766736841, 1766736841),
-('escribirCalendario', 2, 'Permiso exclusivo calendario', NULL, NULL, 1766736840, 1766736840),
-('gestionarProyectos', 2, 'Crear proyectos y gestionar', NULL, NULL, 1766736840, 1766736840),
-('subirDocs', 2, 'Subir documentación', NULL, NULL, 1766736840, 1766736840),
-('verDocs', 2, 'Ver documentación sin borrar', NULL, NULL, 1766736840, 1766736840),
-('verMisProyectos', 2, 'Ver Mis Proyectos y Formación', NULL, NULL, 1766736840, 1766736840),
-('verPanel', 2, 'Entrar al panel de administración', NULL, NULL, 1766736840, 1766736840);
+('admin', 1, NULL, NULL, NULL, 1736266331, 1736266331),
+('analista_soc', 1, NULL, NULL, NULL, 1736266331, 1736266331),
+('asignarRecursos', 2, 'Asignar consultores/auditores a proyectos', NULL, NULL, 1736266331, 1736266331),
+('auditor', 1, NULL, NULL, NULL, 1736266331, 1736266331),
+('cliente_admin', 1, NULL, NULL, NULL, 1736266331, 1736266331),
+('cliente_user', 1, NULL, NULL, NULL, 1736266331, 1736266331),
+('comercial', 1, NULL, NULL, NULL, 1736266331, 1736266331),
+('consultor', 1, NULL, NULL, NULL, 1736266331, 1736266331),
+('escribirCalendario', 2, 'Permiso exclusivo calendario', NULL, NULL, 1736266331, 1736266331),
+('gestionarCatalogo', 2, 'Editar catálogo de servicios', NULL, NULL, 1736266331, 1736266331),
+('gestionarCRM', 2, 'Gestionar clientes potenciales y leads', NULL, NULL, 1736266331, 1736266331),
+('gestionarEmpresa', 2, 'Dashboard empresa y gestionar empleados', NULL, NULL, 1736266331, 1736266331),
+('gestionarProyectos', 2, 'Crear proyectos y gestionar', NULL, NULL, 1736266331, 1736266331),
+('gestionarTickets', 2, 'Gestionar incidencias SOC', NULL, NULL, 1736266331, 1736266331),
+('manager', 1, NULL, NULL, NULL, 1736266331, 1736266331),
+('reportarIncidencia', 2, 'Crear tickets de incidencias', NULL, NULL, 1736266331, 1736266331),
+('subirDocs', 2, 'Subir documentación', NULL, NULL, 1736266331, 1736266331),
+('verDocs', 2, 'Ver documentación sin borrar', NULL, NULL, 1736266331, 1736266331),
+('verFacturacion', 2, 'Ver facturas de la empresa', NULL, NULL, 1736266331, 1736266331),
+('verMisCursos', 2, 'Acceder a formación asignada', NULL, NULL, 1736266331, 1736266331),
+('verMisProyectos', 2, 'Ver Mis Proyectos y Formación', NULL, NULL, 1736266331, 1736266331),
+('verMonitorizacion', 2, 'Ver dashboard SOC 24/7', NULL, NULL, 1736266331, 1736266331),
+('verPanel', 2, 'Entrar al panel de administración', NULL, NULL, 1736266331, 1736266331),
+('verRentabilidad', 2, 'Ver métricas de rentabilidad y reportes', NULL, NULL, 1736266331, 1736266331);
 
 -- --------------------------------------------------------
 
@@ -94,17 +110,39 @@ CREATE TABLE `auth_item_child` (
 --
 
 INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
+('admin', 'analista_soc'),
 ('admin', 'auditor'),
-('admin', 'cliente'),
+('admin', 'cliente_admin'),
+('admin', 'cliente_user'),
+('admin', 'comercial'),
 ('admin', 'consultor'),
+('admin', 'manager'),
+('analista_soc', 'gestionarTickets'),
+('analista_soc', 'verMonitorizacion'),
+('analista_soc', 'verPanel'),
 ('auditor', 'escribirCalendario'),
 ('auditor', 'verDocs'),
 ('auditor', 'verPanel'),
-('cliente', 'verMisProyectos'),
+('cliente_admin', 'gestionarEmpresa'),
+('cliente_admin', 'reportarIncidencia'),
+('cliente_admin', 'verFacturacion'),
+('cliente_admin', 'verMisCursos'),
+('cliente_admin', 'verMisProyectos'),
+('cliente_user', 'reportarIncidencia'),
+('cliente_user', 'verMisCursos'),
+('comercial', 'escribirCalendario'),
+('comercial', 'gestionarCatalogo'),
+('comercial', 'gestionarCRM'),
+('comercial', 'verPanel'),
 ('consultor', 'gestionarProyectos'),
 ('consultor', 'subirDocs'),
 ('consultor', 'verDocs'),
-('consultor', 'verPanel');
+('consultor', 'verPanel'),
+('manager', 'asignarRecursos'),
+('manager', 'escribirCalendario'),
+('manager', 'verDocs'),
+('manager', 'verPanel'),
+('manager', 'verRentabilidad');
 
 -- --------------------------------------------------------
 
@@ -428,7 +466,10 @@ INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `rol`,
 (4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c'),
 (6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'analista_soc', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1'),
 (7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', NULL, 'cliente_user', NULL, NULL, NULL, '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB'),
-(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, 'cliente_user', NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4');
+(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, 'cliente_user', NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4'),
+(9, 'clienteadmin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Laura', 'Admin Empresa', 'cliente_admin', 'Acme Corp', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6'),
+(10, 'manager@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Carlos', 'Manager', 'manager', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1'),
+(11, 'comercial@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ana', 'Comercial', 'comercial', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'x9y8z7a6b5c4d3e2f1g0h9i8j7k6l5m4');
 
 --
 -- Índices para tablas volcadas
@@ -646,7 +687,7 @@ ALTER TABLE `solicitudes_presupuesto`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Restricciones para tablas volcadas
