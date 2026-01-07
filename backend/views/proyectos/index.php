@@ -17,9 +17,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <?php if (Yii::$app->user->can('gestionarProyectos')): ?>
     <p>
         <?= Html::a('Create Proyectos', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
+    <?php endif; ?>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
@@ -50,7 +52,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Proyectos $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                 },
+                'visibleButtons' => [
+                    'update' => Yii::$app->user->can('gestionarProyectos'),
+                    'delete' => Yii::$app->user->can('gestionarProyectos'),
+                ]
             ],
         ],
     ]); ?>
