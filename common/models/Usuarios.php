@@ -55,10 +55,13 @@ class Usuarios extends \yii\db\ActiveRecord
      * ENUM field values
      */
     const ROL_INVITADO = 'invitado';
-    const ROL_CLIENTE = 'cliente';
+    const ROL_CLIENTE_USER = 'cliente_user';
+    const ROL_CLIENTE_ADMIN = 'cliente_admin';
     const ROL_CONSULTOR = 'consultor';
     const ROL_AUDITOR = 'auditor';
     const ROL_ANALISTA_SOC = 'analista_soc';
+    const ROL_MANAGER = 'manager';
+    const ROL_COMERCIAL = 'comercial';
     const ROL_ADMIN = 'admin';
 
     /**
@@ -350,10 +353,13 @@ class Usuarios extends \yii\db\ActiveRecord
     {
         return [
             self::ROL_INVITADO => 'invitado',
-            self::ROL_CLIENTE => 'cliente',
+            self::ROL_CLIENTE_USER => 'cliente_user',
+            self::ROL_CLIENTE_ADMIN => 'cliente_admin',
             self::ROL_CONSULTOR => 'consultor',
             self::ROL_AUDITOR => 'auditor',
             self::ROL_ANALISTA_SOC => 'analista_soc',
+            self::ROL_MANAGER => 'manager',
+            self::ROL_COMERCIAL => 'comercial',
             self::ROL_ADMIN => 'admin',
         ];
     }
