@@ -11,9 +11,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <?php if (Yii::$app->user->can('escribirCalendario')): ?>
     <p>
         <?= Html::a('Crear Evento', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
+    <?php endif; ?>
 
     <?= \yii2fullcalendar\yii2fullcalendar::widget([
         'events' => $events,
