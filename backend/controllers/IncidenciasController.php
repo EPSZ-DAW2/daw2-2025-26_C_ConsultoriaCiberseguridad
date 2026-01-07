@@ -23,16 +23,11 @@ class IncidenciasController extends Controller
             parent::behaviors(),
             [
                 'access' => [
-                    'class' => AccessControl::className(),
+                    'class' => AccessControl::class,
                     'rules' => [
                         [
                             'allow' => true,
-                            'roles' => ['@'],
-                            'matchCallback' => function ($rule, $action) {
-                                // Solo admin y analista_soc pueden acceder
-                                $user = \Yii::$app->user->identity;
-                                return $user && in_array($user->rol, ['admin', 'analista_soc']);
-                            }
+                            'roles' => ['gestionarTickets'], // solo analista_soc y admin
                         ],
                     ],
                 ],

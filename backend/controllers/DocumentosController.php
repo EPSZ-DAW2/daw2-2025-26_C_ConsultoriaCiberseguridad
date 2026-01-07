@@ -26,11 +26,16 @@ class DocumentosController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    // 'only' => ['create', 'index', 'descargar'], // Si quitas esto, aplica a TODAS las acciones
                     'rules' => [
                         [
+                            'actions' => ['index', 'view', 'descargar'],
                             'allow' => true,
-                            'roles' => ['@'], // <--- EL CANDADO: '@' significa "Solo usuarios registrados"
+                            'roles' => ['verDocs'], // consultor, auditor, manager, admin
+                        ],
+                        [
+                            'actions' => ['create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['subirDocs'], // solo consultor y admin
                         ],
                     ],
                 ],
