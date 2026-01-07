@@ -45,7 +45,8 @@ AppAsset::register($this);
         // PROYECTOS (vista o gestión según permisos)
         if (Yii::$app->user->can('gestionarProyectos')) {
             $menuItems[] = ['label' => 'Gestionar Proyectos', 'url' => ['/proyectos/index']];
-        } elseif (Yii::$app->user->can('verPanel')) {
+        } elseif (Yii::$app->user->can('verDocs')) {
+            // Solo roles con acceso a docs pueden ver proyectos (auditor, manager)
             $menuItems[] = ['label' => 'Ver Proyectos', 'url' => ['/proyectos/index']];
         }
 
