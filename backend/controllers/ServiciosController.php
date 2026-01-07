@@ -27,12 +27,7 @@ class ServiciosController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'roles' => ['@'],
-                            'matchCallback' => function ($rule, $action) {
-                                // bloquear analista_soc - solo pueden ver incidencias
-                                $user = \Yii::$app->user->identity;
-                                return $user && $user->rol !== 'analista_soc';
-                            }
+                            'roles' => ['gestionarCatalogo'], // solo comercial y admin
                         ],
                     ],
                 ],
