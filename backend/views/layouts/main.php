@@ -60,7 +60,7 @@ AppAsset::register($this);
             $menuItems[] = ['label' => 'Catálogo Servicios', 'url' => ['/servicios/index']];
         }
 
-        // CALENDARIO (staff con acceso al panel)
+        // CALENDARIO (todos los roles backend pueden verlo)
         if (Yii::$app->user->can('verPanel')) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
