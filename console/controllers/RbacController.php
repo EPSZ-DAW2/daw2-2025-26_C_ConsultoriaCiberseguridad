@@ -39,6 +39,49 @@ class RbacController extends Controller
         $escribirCalendario->description = 'Permiso exclusivo calendario';
         $auth->add($escribirCalendario);
 
+        // Permisos para manager y comercial
+        $verRentabilidad = $auth->createPermission('verRentabilidad');
+        $verRentabilidad->description = 'Ver métricas de rentabilidad y reportes';
+        $auth->add($verRentabilidad);
+
+        $asignarRecursos = $auth->createPermission('asignarRecursos');
+        $asignarRecursos->description = 'Asignar consultores/auditores a proyectos';
+        $auth->add($asignarRecursos);
+
+        $gestionarCRM = $auth->createPermission('gestionarCRM');
+        $gestionarCRM->description = 'Gestionar clientes potenciales y leads';
+        $auth->add($gestionarCRM);
+
+        $gestionarCatalogo = $auth->createPermission('gestionarCatalogo');
+        $gestionarCatalogo->description = 'Editar catálogo de servicios';
+        $auth->add($gestionarCatalogo);
+
+        // Permisos para analista SOC
+        $verMonitorizacion = $auth->createPermission('verMonitorizacion');
+        $verMonitorizacion->description = 'Ver dashboard SOC 24/7';
+        $auth->add($verMonitorizacion);
+
+        $gestionarTickets = $auth->createPermission('gestionarTickets');
+        $gestionarTickets->description = 'Gestionar incidencias SOC';
+        $auth->add($gestionarTickets);
+
+        // Permisos para clientes (frontend)
+        $gestionarEmpresa = $auth->createPermission('gestionarEmpresa');
+        $gestionarEmpresa->description = 'Dashboard empresa y gestionar empleados';
+        $auth->add($gestionarEmpresa);
+
+        $verFacturacion = $auth->createPermission('verFacturacion');
+        $verFacturacion->description = 'Ver facturas de la empresa';
+        $auth->add($verFacturacion);
+
+        $verMisCursos = $auth->createPermission('verMisCursos');
+        $verMisCursos->description = 'Acceder a formación asignada';
+        $auth->add($verMisCursos);
+
+        $reportarIncidencia = $auth->createPermission('reportarIncidencia');
+        $reportarIncidencia->description = 'Crear tickets de incidencias';
+        $auth->add($reportarIncidencia);
+
         echo "Asignando jerarquias...\n";
 
         // --- ROLES ---
@@ -64,6 +107,50 @@ class RbacController extends Controller
         $auth->addChild($admin, $consultor);
         $auth->addChild($admin, $auditor);
         $auth->addChild($admin, $cliente);
+
+        // Roles nuevos del backend
+        $manager = $auth->createRole('manager');
+        $auth->add($manager);
+        $auth->addChild($manager, $verPanel);
+        $auth->addChild($manager, $verDocs);
+        $auth->addChild($manager, $escribirCalendario);
+        $auth->addChild($manager, $verRentabilidad);
+        $auth->addChild($manager, $asignarRecursos);
+
+        $comercial = $auth->createRole('comercial');
+        $auth->add($comercial);
+        $auth->addChild($comercial, $verPanel);
+        $auth->addChild($comercial, $gestionarCatalogo);
+        $auth->addChild($comercial, $gestionarCRM);
+        $auth->addChild($comercial, $escribirCalendario);
+
+        // Migrar analista_soc al sistema RBAC
+        $analistaSoc = $auth->createRole('analista_soc');
+        $auth->add($analistaSoc);
+        $auth->addChild($analistaSoc, $verPanel);
+        $auth->addChild($analistaSoc, $verMonitorizacion);
+        $auth->addChild($analistaSoc, $gestionarTickets);
+
+        // Roles nuevos del frontend (clientes)
+        $clienteAdmin = $auth->createRole('cliente_admin');
+        $auth->add($clienteAdmin);
+        $auth->addChild($clienteAdmin, $verMisProyectos);
+        $auth->addChild($clienteAdmin, $gestionarEmpresa);
+        $auth->addChild($clienteAdmin, $verFacturacion);
+        $auth->addChild($clienteAdmin, $verMisCursos);
+        $auth->addChild($clienteAdmin, $reportarIncidencia);
+
+        $clienteUser = $auth->createRole('cliente_user');
+        $auth->add($clienteUser);
+        $auth->addChild($clienteUser, $verMisCursos);
+        $auth->addChild($clienteUser, $reportarIncidencia);
+
+        // Admin hereda de todos los roles
+        $auth->addChild($admin, $manager);
+        $auth->addChild($admin, $comercial);
+        $auth->addChild($admin, $analistaSoc);
+        $auth->addChild($admin, $clienteAdmin);
+        $auth->addChild($admin, $clienteUser);
 
         echo "¡Roles creados con éxito! :)\n";
     }
