@@ -26,13 +26,14 @@ class ProyectosController extends Controller
                     'class' => AccessControl::class,
                     'rules' => [
                         [
+                            'actions' => ['index', 'view'],
                             'allow' => true,
-                            'roles' => ['@'],
-                            'matchCallback' => function ($rule, $action) {
-                                // bloquear analista_soc - solo pueden ver incidencias
-                                $user = \Yii::$app->user->identity;
-                                return $user && $user->rol !== 'analista_soc';
-                            }
+                            'roles' => ['verPanel'], // consultor, auditor, manager, admin
+                        ],
+                        [
+                            'actions' => ['create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['gestionarProyectos'], // solo consultor, auditor, admin
                         ],
                     ],
                 ],
