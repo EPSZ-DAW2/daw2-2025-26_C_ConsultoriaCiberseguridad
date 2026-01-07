@@ -85,21 +85,48 @@ if (!Yii::$app->user->isGuest) {
             <div class="sb-sidenav-menu">
                 <div class="nav">
                     <?php if (!Yii::$app->user->isGuest): ?>
-                    <div class="sb-sidenav-menu-heading">Privado</div>
+                    <div class="sb-sidenav-menu-heading">Área Privada</div>
+
+                    <!-- Dashboard Empresa (solo cliente_admin) -->
+                    <?php if (Yii::$app->user->can('gestionarEmpresa')): ?>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/dashboard']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        Dashboard
+                        Dashboard Empresa
                     </a>
+                    <?php endif; ?>
 
+                    <!-- Mis Proyectos (cliente_admin y cliente_user con acceso) -->
+                    <?php if (Yii::$app->user->can('verMisProyectos')): ?>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/proyectos/index']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-folder-open"></i></div>
                         Mis Proyectos
                     </a>
+                    <?php endif; ?>
 
+                    <!-- Facturación (solo cliente_admin) -->
+                    <?php if (Yii::$app->user->can('verFacturacion')): ?>
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/facturacion']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                        Facturación
+                    </a>
+                    <?php endif; ?>
+
+                    <!-- Mis Cursos (cliente_admin y cliente_user) -->
+                    <?php if (Yii::$app->user->can('verMisCursos')): ?>
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/cursos/mis-cursos']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
+                        Mis Cursos
+                    </a>
+                    <?php endif; ?>
+
+                    <!-- Reportar Incidencia (cliente_admin y cliente_user) -->
+                    <?php if (Yii::$app->user->can('reportarIncidencia')): ?>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/incidencias/index']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-exclamation-triangle"></i></div>
                         Mis Incidencias
                     </a>
+                    <?php endif; ?>
+
                     <?php endif; ?>
 
                     <div class="sb-sidenav-menu-heading">Público</div>
@@ -108,12 +135,12 @@ if (!Yii::$app->user->isGuest) {
                         Inicio
                     </a>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/cursos/index']) ?>">
-                        <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
-                        Campus
+                        <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                        Campus Virtual
                     </a>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/catalogo']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
-                        Catálogo
+                        Catálogo Servicios
                     </a>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/contact']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-envelope"></i></div>

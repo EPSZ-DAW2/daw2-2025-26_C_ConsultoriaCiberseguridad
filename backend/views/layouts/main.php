@@ -35,38 +35,57 @@ AppAsset::register($this);
         ],
     ]);
 
-    // --- AQUÍ EMPIEZA LA MAGIA DEL MENÚ ---
+    // --- MENÚ CON RBAC COMPLETO ---
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
     ];
 
-    // Solo mostramos opciones si el usuario NO es invitado
     if (!Yii::$app->user->isGuest) {
-        
-        // 1. GESTIONAR PROYECTOS (Consultor y Admin)
+
+        // PROYECTOS (vista o gestión según permisos)
         if (Yii::$app->user->can('gestionarProyectos')) {
             $menuItems[] = ['label' => 'Gestionar Proyectos', 'url' => ['/proyectos/index']];
+        } elseif (Yii::$app->user->can('verPanel')) {
+            $menuItems[] = ['label' => 'Ver Proyectos', 'url' => ['/proyectos/index']];
         }
 
-        // 2. DOCUMENTACIÓN (Auditor, Consultor y Admin)
+        // DOCUMENTACIÓN (lectura o escritura)
         if (Yii::$app->user->can('verDocs')) {
             $menuItems[] = ['label' => 'Documentación', 'url' => ['/documentos/index']];
         }
 
-        // 3. CALENDARIO
-        // Si pueden ver el panel (Staff), pueden ver el calendario
+        // SERVICIOS (catálogo para comercial)
+        if (Yii::$app->user->can('gestionarCatalogo')) {
+            $menuItems[] = ['label' => 'Catálogo Servicios', 'url' => ['/servicios/index']];
+        }
+
+        // CALENDARIO (staff con acceso al panel)
         if (Yii::$app->user->can('verPanel')) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
 
-        // 3.5. GESTIÓN DE INCIDENCIAS (Admin y Analista SOC)
-        $user = Yii::$app->user->identity;
-        if ($user && in_array($user->rol, ['admin', 'analista_soc'])) {
+        // CRM (comercial y admin)
+        if (Yii::$app->user->can('gestionarCRM')) {
+            $menuItems[] = ['label' => 'CRM', 'url' => ['/crm/index']];
+        }
+
+        // MONITORIZACIÓN SOC (analista_soc y admin)
+        if (Yii::$app->user->can('verMonitorizacion')) {
+            $menuItems[] = ['label' => 'Monitorización SOC', 'url' => ['/monitorizacion/index']];
+        }
+
+        // INCIDENCIAS (analista_soc y admin)
+        if (Yii::$app->user->can('gestionarTickets')) {
             $menuItems[] = ['label' => 'Gestión Incidencias', 'url' => ['/incidencias/index']];
         }
 
-        // 4. GESTIÓN FORMACIÓN (Solo Admin/Gestor)
-        if (Yii::$app->user->can('gestionarProyectos')) { // Asumimos mismo permiso por simplicidad
+        // RENTABILIDAD (manager y admin)
+        if (Yii::$app->user->can('verRentabilidad')) {
+            $menuItems[] = ['label' => 'Rentabilidad', 'url' => ['/rentabilidad/index']];
+        }
+
+        // FORMACIÓN (consultor, admin - reusan permiso gestionarProyectos)
+        if (Yii::$app->user->can('gestionarProyectos')) {
             $menuItems[] = [
                 'label' => 'Formación',
                 'items' => [
