@@ -33,7 +33,7 @@ class ProgresoUsuarioController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'roles' => ['@'], // Solo usuarios autenticados (Admin/Consultor)
+                            'roles' => ['gestionarFormacion'], // consultor, admin
                         ],
                     ],
                 ],

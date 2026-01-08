@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-01-2026 a las 20:14:44
+-- Tiempo de generación: 08-01-2026 a las 12:44:15
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -167,6 +167,7 @@ CREATE TABLE `cursos` (
   `id` int(10) UNSIGNED NOT NULL,
   `nombre` varchar(200) NOT NULL COMMENT 'Nombre del curso (ej: "Concienciación Phishing")',
   `descripcion` text DEFAULT NULL COMMENT 'Descripción del contenido del curso',
+  `video_url` varchar(255) DEFAULT NULL,
   `imagen_portada` varchar(255) DEFAULT NULL COMMENT 'Ruta a la imagen de portada del curso o NULL si no tiene',
   `nota_minima_aprobado` decimal(4,2) NOT NULL DEFAULT 5.00 COMMENT 'Nota mínima para aprobar el cuestionario (ej: 5.00 sobre 10)',
   `activo` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Curso activo y disponible: 0=Inactivo, 1=Activo',
@@ -273,6 +274,13 @@ CREATE TABLE `incidencias` (
   `visible_cliente` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Si el cliente puede ver esta incidencia: 0=No, 1=Sí'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Sistema de ticketing SOC para incidencias de seguridad';
 
+--
+-- Volcado de datos para la tabla `incidencias`
+--
+
+INSERT INTO `incidencias` (`id`, `cliente_id`, `analista_id`, `titulo`, `descripcion`, `severidad`, `estado_incidencia`, `categoria_incidencia`, `fecha_reporte`, `fecha_asignacion`, `fecha_primera_respuesta`, `fecha_resolucion`, `tiempo_resolucion`, `sla_cumplido`, `ip_origen`, `sistema_afectado`, `acciones_tomadas`, `notas_internas`, `visible_cliente`) VALUES
+(1, 7, NULL, 'Correo sospechoso', 'Algo malo pasa', 'Media', 'Abierto', 'Phising', '2026-01-08 12:01:07', NULL, NULL, NULL, NULL, NULL, '192.100.1.230', 'Servidor web principla', NULL, NULL, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -290,10 +298,15 @@ CREATE TABLE `migration` (
 
 INSERT INTO `migration` (`version`, `apply_time`) VALUES
 ('m000000_000000_base', 1766693548),
+('m130524_201442_init', 1767868578),
 ('m140506_102106_rbac_init', 1766693551),
 ('m170907_052038_rbac_add_index_on_auth_assignment_user_id', 1766693552),
 ('m180523_151638_rbac_updates_indexes_without_prefix', 1766693552),
-('m200409_110543_rbac_update_mssql_trigger', 1766693552);
+('m190124_110200_add_verification_token_column_to_user_table', 1767868579),
+('m200409_110543_rbac_update_mssql_trigger', 1766693552),
+('m260105_000001_add_video_url_to_cursos_table', 1767868579),
+('m260108_103409_add_recovery_email_column_to_usuarios_table', 1767868580),
+('m260108_105433_add_totp_secret_column_to_usuarios_table', 1767869720);
 
 -- --------------------------------------------------------
 
@@ -428,7 +441,28 @@ CREATE TABLE `solicitudes_presupuesto` (
 --
 
 INSERT INTO `solicitudes_presupuesto` (`id`, `servicio_id`, `nombre_contacto`, `email_contacto`, `telefono_contacto`, `empresa`, `nif_cif`, `num_empleados`, `sector_actividad`, `descripcion_necesidad`, `alcance_solicitado`, `presupuesto_estimado`, `fecha_inicio_deseada`, `estado_solicitud`, `prioridad`, `fecha_solicitud`, `fecha_contacto`, `usuario_asignado_id`, `notas_comerciales`, `origen_solicitud`) VALUES
-(1, NULL, 'Pedro Domingues', 'pedro@pedro.com', NULL, 'No especificada (Contacto Web)', NULL, NULL, NULL, 'pedro', NULL, NULL, NULL, 'Pendiente', 2, '2026-01-02 21:17:56', NULL, NULL, NULL, 'Web');
+(1, NULL, 'Pedro Domingues', 'pedro@pedro.com', NULL, 'No especificada (Contacto Web)', NULL, NULL, NULL, 'pedro', NULL, NULL, NULL, 'Pendiente', 2, '2026-01-02 21:17:56', NULL, NULL, NULL, 'Web'),
+(2, 2, 'prueba Gonzalez', 'prueba@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Pendiente', 1, '2026-01-08 12:28:25', NULL, NULL, NULL, 'Web'),
+(3, 3, 'prueba Gonzalez', 'prueba@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Pendiente', 1, '2026-01-08 12:29:13', NULL, NULL, NULL, 'Web');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `user`
+--
+
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `auth_key` varchar(32) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `password_reset_token` varchar(255) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `status` smallint(6) NOT NULL DEFAULT 10,
+  `created_at` int(11) NOT NULL,
+  `updated_at` int(11) NOT NULL,
+  `verification_token` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -453,23 +487,26 @@ CREATE TABLE `usuarios` (
   `fecha_bloqueo` datetime DEFAULT NULL COMMENT 'Cuándo se bloqueó la cuenta',
   `motivo_bloqueo` text DEFAULT NULL COMMENT 'Razón del bloqueo',
   `activo` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Usuario activo: 0=Inactivo, 1=Activo',
-  `auth_key` varchar(32) NOT NULL DEFAULT ''
+  `auth_key` varchar(32) NOT NULL DEFAULT '',
+  `email_recuperacion` varchar(255) DEFAULT NULL,
+  `totp_secret` varchar(255) DEFAULT NULL,
+  `totp_activo` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Usuarios del sistema con autenticación y control de roles';
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `rol`, `empresa`, `telefono`, `direccion`, `fecha_registro`, `ultimo_acceso`, `intentos_acceso`, `bloqueado`, `fecha_bloqueo`, `motivo_bloqueo`, `activo`, `auth_key`) VALUES
-(1, 'admin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Pedro', 'Admin', 'admin', NULL, NULL, NULL, '2025-12-26 10:41:09', NULL, 0, 0, NULL, NULL, 1, 'cIwcYPb9TnINim4_YhZ715O5PHhY7ei_'),
-(2, 'auditor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Estela', 'Auditora', 'auditor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'd605677f1938d8e599ad7659baaa6188'),
-(4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c'),
-(6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'analista_soc', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1'),
-(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', NULL, 'cliente_user', NULL, NULL, NULL, '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB'),
-(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, 'cliente_user', NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4'),
-(9, 'clienteadmin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Laura', 'Admin Empresa', 'cliente_admin', 'Acme Corp', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6'),
-(10, 'manager@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Carlos', 'Manager', 'manager', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1'),
-(11, 'comercial@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ana', 'Comercial', 'comercial', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'x9y8z7a6b5c4d3e2f1g0h9i8j7k6l5m4');
+INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `rol`, `empresa`, `telefono`, `direccion`, `fecha_registro`, `ultimo_acceso`, `intentos_acceso`, `bloqueado`, `fecha_bloqueo`, `motivo_bloqueo`, `activo`, `auth_key`, `email_recuperacion`, `totp_secret`, `totp_activo`) VALUES
+(1, 'admin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Pedro', 'Admin', 'admin', NULL, NULL, NULL, '2025-12-26 10:41:09', NULL, 0, 0, NULL, NULL, 1, 'cIwcYPb9TnINim4_YhZ715O5PHhY7ei_', NULL, NULL, 0),
+(2, 'auditor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Estela', 'Auditora', 'auditor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'd605677f1938d8e599ad7659baaa6188', NULL, NULL, 0),
+(4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c', NULL, NULL, 0),
+(6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'analista_soc', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1', NULL, NULL, 0),
+(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', 'Gonzalez', 'cliente_user', 'Empresa Real', '567567567', 'Calle Falsa 123', '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB', 'pruebaRECU@cibersec.com', NULL, 0),
+(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, 'cliente_user', NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4', NULL, NULL, 0),
+(9, 'clienteadmin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Laura', 'Admin Empresa', 'cliente_admin', 'Acme Corp', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', NULL, NULL, 0),
+(10, 'manager@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Carlos', 'Manager', 'manager', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1', NULL, NULL, 0),
+(11, 'comercial@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ana', 'Comercial', 'comercial', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'x9y8z7a6b5c4d3e2f1g0h9i8j7k6l5m4', NULL, NULL, 0);
 
 --
 -- Índices para tablas volcadas
@@ -612,6 +649,15 @@ ALTER TABLE `solicitudes_presupuesto`
   ADD KEY `fk_solicitudes_usuario` (`usuario_asignado_id`);
 
 --
+-- Indices de la tabla `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `password_reset_token` (`password_reset_token`);
+
+--
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -651,7 +697,7 @@ ALTER TABLE `eventos_calendario`
 -- AUTO_INCREMENT de la tabla `incidencias`
 --
 ALTER TABLE `incidencias`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `preguntas_cuestionario`
@@ -681,7 +727,13 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `solicitudes_presupuesto`
 --
 ALTER TABLE `solicitudes_presupuesto`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `user`
+--
+ALTER TABLE `user`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`

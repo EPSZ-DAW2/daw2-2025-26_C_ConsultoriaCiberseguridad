@@ -35,7 +35,19 @@ class SiteController extends Controller
                 [
                     'actions' => ['index'],
                     'allow' => true,
-                    'roles' => ['verPanel'],
+                    'matchCallback' => function ($rule, $action) {
+                        // Permitir acceso si tiene cualquier permiso backend
+                        $user = Yii::$app->user;
+                        return $user->can('verProyectos')
+                            || $user->can('verCalendario')
+                            || $user->can('verDocs')
+                            || $user->can('gestionarFormacion')
+                            || $user->can('gestionarCRM')
+                            || $user->can('gestionarCatalogo')
+                            || $user->can('verMonitorizacion')
+                            || $user->can('gestionarTickets')
+                            || $user->can('verRentabilidad');
+                    },
                 ],
             ],
         ],

@@ -28,7 +28,7 @@ class EventosCalendarioController extends Controller
                         [
                             'actions' => ['index', 'view'],
                             'allow' => true,
-                            'roles' => ['verPanel'], // ver calendario: consultor, auditor, manager, comercial, admin
+                            'roles' => ['verCalendario'], // ver calendario: consultor, auditor, manager, comercial, analista_soc, admin
                         ],
                         [
                             'actions' => ['create', 'update', 'delete'],

@@ -6,7 +6,7 @@ use yii\console\Controller;
 
 class RbacController extends Controller
 {
-    // COMANDO 1: php yii rbac/init (Este ya lo ejecutaste)
+    // php yii rbac/init
     public function actionInit()
     {
         $auth = Yii::$app->authManager;
@@ -15,10 +15,6 @@ class RbacController extends Controller
         echo "Creando permisos...\n";
 
         // --- PERMISOS ---
-        $verPanel = $auth->createPermission('verPanel');
-        $verPanel->description = 'Entrar al panel de administración';
-        $auth->add($verPanel);
-
         $verMisProyectos = $auth->createPermission('verMisProyectos');
         $verMisProyectos->description = 'Ver Mis Proyectos y Formación';
         $auth->add($verMisProyectos);
@@ -38,6 +34,18 @@ class RbacController extends Controller
         $escribirCalendario = $auth->createPermission('escribirCalendario');
         $escribirCalendario->description = 'Permiso exclusivo calendario';
         $auth->add($escribirCalendario);
+
+        $gestionarFormacion = $auth->createPermission('gestionarFormacion');
+        $gestionarFormacion->description = 'Gestionar cursos de formación y contenido educativo';
+        $auth->add($gestionarFormacion);
+
+        $verCalendario = $auth->createPermission('verCalendario');
+        $verCalendario->description = 'Ver calendario de eventos';
+        $auth->add($verCalendario);
+
+        $verProyectos = $auth->createPermission('verProyectos');
+        $verProyectos->description = 'Ver proyectos (solo lectura)';
+        $auth->add($verProyectos);
 
         // Permisos para manager y comercial
         $verRentabilidad = $auth->createPermission('verRentabilidad');
@@ -91,14 +99,17 @@ class RbacController extends Controller
 
         $consultor = $auth->createRole('consultor');
         $auth->add($consultor);
-        $auth->addChild($consultor, $verPanel);
+        $auth->addChild($consultor, $verCalendario);
+        $auth->addChild($consultor, $verProyectos);
         $auth->addChild($consultor, $gestionarProyectos);
         $auth->addChild($consultor, $subirDocs);
         $auth->addChild($consultor, $verDocs);
+        $auth->addChild($consultor, $gestionarFormacion);
 
         $auditor = $auth->createRole('auditor');
         $auth->add($auditor);
-        $auth->addChild($auditor, $verPanel);
+        $auth->addChild($auditor, $verCalendario);
+        $auth->addChild($auditor, $verProyectos);
         $auth->addChild($auditor, $verDocs);
         $auth->addChild($auditor, $escribirCalendario);
 
@@ -111,7 +122,8 @@ class RbacController extends Controller
         // Roles nuevos del backend
         $manager = $auth->createRole('manager');
         $auth->add($manager);
-        $auth->addChild($manager, $verPanel);
+        $auth->addChild($manager, $verCalendario);
+        $auth->addChild($manager, $verProyectos);
         $auth->addChild($manager, $verDocs);
         $auth->addChild($manager, $escribirCalendario);
         $auth->addChild($manager, $verRentabilidad);
@@ -119,7 +131,8 @@ class RbacController extends Controller
 
         $comercial = $auth->createRole('comercial');
         $auth->add($comercial);
-        $auth->addChild($comercial, $verPanel);
+        $auth->addChild($comercial, $verCalendario);
+        $auth->addChild($comercial, $verProyectos);
         $auth->addChild($comercial, $gestionarCatalogo);
         $auth->addChild($comercial, $gestionarCRM);
         $auth->addChild($comercial, $escribirCalendario);
@@ -127,7 +140,8 @@ class RbacController extends Controller
         // Migrar analista_soc al sistema RBAC
         $analistaSoc = $auth->createRole('analista_soc');
         $auth->add($analistaSoc);
-        $auth->addChild($analistaSoc, $verPanel);
+        $auth->addChild($analistaSoc, $verCalendario);
+        $auth->addChild($analistaSoc, $verProyectos);
         $auth->addChild($analistaSoc, $verMonitorizacion);
         $auth->addChild($analistaSoc, $gestionarTickets);
 
@@ -155,7 +169,7 @@ class RbacController extends Controller
         echo "¡Roles creados con éxito! :)\n";
     }
 
-    // COMANDO 2: php yii rbac/assign <rol> <id_usuario> (ESTE ES EL NUEVO)
+    //php yii rbac/assign <rol> <id_usuario>
     public function actionAssign($role, $id)
     {
         $auth = Yii::$app->authManager;
@@ -171,6 +185,63 @@ class RbacController extends Controller
             echo "¡Éxito! Rol '{$role}' asignado al usuario {$id}.\n";
         } catch (\Exception $e) {
             echo "Error: Puede que el usuario ya tenga ese rol o no exista.\n";
+        }
+    }
+
+    //php yii rbac/assign-all
+    public function actionAssignAll()
+    {
+        $auth = Yii::$app->authManager;
+
+        echo "Asignando roles RBAC a usuarios existentes basándose en su columna 'rol'...\n\n";
+
+        $usuarios = \common\models\User::find()->all();
+
+        if (empty($usuarios)) {
+            echo "No se encontraron usuarios en la base de datos.\n";
+            return;
+        }
+
+        $roleMap = [
+            'admin' => 'admin',
+            'consultor' => 'consultor',
+            'auditor' => 'auditor',
+            'manager' => 'manager',
+            'comercial' => 'comercial',
+            'analista_soc' => 'analista_soc',
+            'cliente_admin' => 'cliente_admin',
+            'cliente_user' => 'cliente_user',
+        ];
+
+        $success = 0;
+        $errors = 0;
+
+        foreach ($usuarios as $usuario) {
+            if (isset($roleMap[$usuario->rol])) {
+                $roleObject = $auth->getRole($roleMap[$usuario->rol]);
+                if ($roleObject) {
+                    try {
+                        $auth->assign($roleObject, $usuario->id);
+                        echo "  ✓ Usuario {$usuario->id} ({$usuario->email}): rol '{$usuario->rol}' asignado\n";
+                        $success++;
+                    } catch (\Exception $e) {
+                        echo "  ✗ Usuario {$usuario->id} ({$usuario->email}): Error - {$e->getMessage()}\n";
+                        $errors++;
+                    }
+                } else {
+                    echo "  ✗ Usuario {$usuario->id} ({$usuario->email}): Rol '{$usuario->rol}' no existe en RBAC\n";
+                    $errors++;
+                }
+            } else {
+                echo "  ✗ Usuario {$usuario->id} ({$usuario->email}): Rol '{$usuario->rol}' no reconocido\n";
+                $errors++;
+            }
+        }
+
+        echo "\n¡Completado!\n";
+        echo "✓ {$success} usuarios procesados correctamente\n";
+        if ($errors > 0) {
+            echo "✗ {$errors} errores encontrados\n";
         }
     }
 }

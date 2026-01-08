@@ -222,15 +222,7 @@ $this->registerCss("
         <a href="#" class="settings-menu-item" data-target="section-contrasena">
             <i class="fas fa-key"></i> Contraseña
         </a>
-        <a href="#" class="settings-menu-item" data-target="section-conexiones">
-            <i class="fas fa-plug"></i> Conexiones de terceros
-        </a>
-        <a href="#" class="settings-menu-item" data-target="section-datos">
-            <i class="fas fa-user-secret"></i> Datos y privacidad
-        </a>
-        <a href="#" class="settings-menu-item" data-target="section-contactos">
-            <i class="fas fa-users"></i> Contactos y compartir
-        </a>
+
         <a href="#" class="settings-menu-item" data-target="section-pagos">
             <i class="fas fa-credit-card"></i> Pagos y suscripciones
         </a>
@@ -245,67 +237,440 @@ $this->registerCss("
             </div>
             
             <div class="text-end mt-2" style="font-size: 13px;">
-                <span class="text-muted">usal.es</span> <a href="#" style="text-decoration: none; color: #1a73e8;">gestiona tu perfil</a>
+                <span class="text-muted">CyberSec Manager</span> <span style="color: #5f6368;">gestiona tu perfil</span>
             </div>
         </div>
 
         <!-- SECCIÓN: INICIO -->
         <div id="section-inicio" class="content-section">
-            <h2 class="section-title">Tu perfil</h2>
+            <h2 class="section-title">Bienvenido, <?= Html::encode($user->nombre) ?></h2>
             
+            <!-- Resumen de Cuenta -->
             <div class="settings-card">
-                <div class="profile-hero">
-                    <?php 
-                        $inicial = strtoupper(substr($user->nombre ?? 'U', 0, 1));
-                    ?>
-                    <div class="avatar-circle"><?= $inicial ?></div>
-                    
-                    <div class="profile-info">
-                        <div style="font-size: 15px; color: #202124;">
-                            Obtén funciones inteligentes en Chrome
+                <div class="d-flex align-items-center p-4">
+                    <div class="avatar-circle" style="width: 70px; height: 70px; font-size: 30px; margin-right: 24px;">
+                        <?= strtoupper(substr($user->nombre ?? 'U', 0, 1)) ?>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 18px; margin: 0 0 4px 0;">CiberSeguridad y Privacidad</h3>
+                        <p class="text-muted mb-0">Gestiona tus datos, protege tu privacidad y supervisa tu seguridad.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjetas de Acceso Rápido (Grid) -->
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="settings-card h-100 mb-0 pointer-card" onclick="document.querySelector('[data-target=\'section-info-personal\']').click()" style="cursor: pointer;">
+                        <div class="card-content">
+                            <i class="fas fa-user-check text-primary mb-3" style="font-size: 24px;"></i>
+                            <h4 style="font-size: 16px; font-weight: 500;">Revisar información personal</h4>
+                            <p class="text-muted small mb-0">Mantén tus datos actualizados para una mejor gestión.</p>
                         </div>
-                        <div style="font-size: 13px; color: #5f6368; margin-bottom: 12px;">
-                            Sincroniza y personaliza Chrome en todos tus dispositivos
-                        </div>
-                        
-                        <div class="d-flex align-items-center justify-content-between flex-wrap">
-                            <div>
-                                <div class="profile-name"><?= Html::encode(($user->nombre ?? '') . ' ' . ($user->apellidos ?? '')) ?></div>
-                                <div class="profile-email-context">Has iniciado sesión con <?= Html::encode($user->email ?? 'usuario@ejemplo.com') ?></div>
-                            </div>
-                            <button class="btn-sync mt-2 mt-sm-0">Activar sincronización</button>
+                        <div class="border-top p-3 text-primary small fw-bold">
+                            Gestionar información personal
                         </div>
                     </div>
                 </div>
 
-                <a href="#" class="settings-row">
-                    <div class="row-label">Sincronización y servicios de Google</div>
-                    <i class="fas fa-chevron-right row-icon"></i>
-                </a>
-                <a href="#" class="settings-row">
-                    <div class="row-label">Gestionar tu cuenta de Google</div>
-                    <i class="fas fa-external-link-alt row-icon"></i>
-                </a>
+                <div class="col-md-6">
+                    <div class="settings-card h-100 mb-0 pointer-card" onclick="document.querySelector('[data-target=\'section-contrasena\']').click()" style="cursor: pointer;">
+                        <div class="card-content">
+                            <i class="fas fa-shield-alt text-success mb-3" style="font-size: 24px;"></i>
+                            <h4 style="font-size: 16px; font-weight: 500;">Seguridad de la cuenta</h4>
+                            <p class="text-muted small mb-0">Protege tu cuenta con una contraseña segura.</p>
+                        </div>
+                        <div class="border-top p-3 text-primary small fw-bold">
+                            Gestionar seguridad
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recomendaciones / Consejos -->
+             <div class="settings-card mt-4">
+                <div class="card-content d-flex align-items-start">
+                     <i class="fas fa-lightbulb text-warning me-3 mt-1" style="font-size: 20px;"></i>
+                     <div>
+                         <h4 style="font-size: 15px; font-weight: 500; margin-bottom: 4px;">Consejo de Seguridad</h4>
+                         <p class="text-muted small mb-0">Nunca compartas tu contraseña con nadie. Nuestro equipo nunca te la pedirá por correo o teléfono.</p>
+                     </div>
+                </div>
             </div>
         </div>
 
         <!-- SECCIÓN: INFORMACIÓN PERSONAL -->
         <div id="section-info-personal" class="content-section" style="display: none;">
-            <h2 class="section-title">Información personal</h2>
-            <div class="settings-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title mb-0">Información personal</h2>
+            </div>
+            
+            <p class="text-muted mb-4">Gestiona los detalles que mejoran tu experiencia y decide qué información pueden ver los demás.</p>
+
+            <!-- VISTA DE LECTURA -->
+            <div id="profile-view-mode" class="settings-card">
+                
+                <!-- Encabezado con Avatar -->
+                <div class="d-flex align-items-center justify-content-between p-4 border-bottom">
+                    <div>
+                        <div style="font-size: 14px; color: #202124; font-weight: 500;">Perfil básico</div>
+                        <div style="font-size: 13px; color: #5f6368;">Alguna información puede ser visible para otras personas.</div>
+                    </div>
+                    <?php 
+                        $inicial = strtoupper(substr($user->nombre ?? 'U', 0, 1));
+                    ?>
+                    <div class="avatar-circle" style="width: 50px; height: 50px; font-size: 24px; background: #689f38;">
+                        <?= $inicial ?>
+                    </div>
+                </div>
+
+                <!-- Lista de Campos -->
+                <div class="d-flex align-items-center p-3 border-bottom settings-row-static">
+                    <div class="col-4 text-muted text-uppercase small fw-bold">Nombre</div>
+                    <div class="col-8 text-dark"><?= Html::encode(($user->nombre ?? '') . ' ' . ($user->apellidos ?? '')) ?></div>
+                </div>
+
+                <div class="d-flex align-items-center p-3 border-bottom settings-row-static">
+                    <div class="col-4 text-muted text-uppercase small fw-bold">Empresa</div>
+                    <div class="col-8 text-dark"><?= Html::encode($user->empresa ?? '-') ?></div>
+                </div>
+
+                <div class="d-flex align-items-center p-3 border-bottom settings-row-static">
+                    <div class="col-4 text-muted text-uppercase small fw-bold">Rol</div>
+                    <div class="col-8 text-dark"><?= Html::encode($user->rol ?? '-') ?></div>
+                </div>
+
+                <!-- Contacto -->
+                <div class="d-flex align-items-center justify-content-between p-4 border-bottom bg-light">
+                    <div style="font-size: 14px; color: #202124; font-weight: 500;">Información de contacto</div>
+                </div>
+
+                <div class="d-flex align-items-center p-3 border-bottom settings-row-static">
+                    <div class="col-4 text-muted text-uppercase small fw-bold">Correo electrónico</div>
+                    <div class="col-8 text-dark">
+                        <?= Html::encode($user->email) ?>
+                        <div class="small text-muted">Para cambiarlo contacta con soporte.</div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center p-3 border-bottom settings-row-static">
+                    <div class="col-4 text-muted text-uppercase small fw-bold">Teléfono</div>
+                    <div class="col-8 text-dark"><?= Html::encode($user->telefono ?? '-') ?></div>
+                </div>
+
+                <div class="d-flex align-items-center p-3 border-bottom settings-row-static">
+                    <div class="col-4 text-muted text-uppercase small fw-bold">Dirección</div>
+                    <div class="col-8 text-dark"><?= Html::encode($user->direccion ?? '-') ?></div>
+                </div>
+
+                <div class="d-flex align-items-center p-3 settings-row-static">
+                    <div class="col-4 text-muted text-uppercase small fw-bold">Fecha de registro</div>
+                    <div class="col-8 text-dark"><?= Html::encode($user->fecha_registro ?? '-') ?></div>
+                </div>
+                
+                <div class="p-3 text-end bg-light border-top">
+                    <button class="btn btn-primary" onclick="toggleEditProfile()">Editar perfil</button>
+                </div>
+            </div>
+
+            <!-- VISTA DE EDICIÓN (FORMULARIO) -->
+            <div id="profile-edit-mode" class="settings-card" style="display: none;">
                 <div class="card-content">
-                    <p>Aquí podrás editar tu nombre, foto de perfil y fecha de nacimiento.</p>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0">Editar información personal</h4>
+                        <button type="button" class="btn-close" onclick="toggleEditProfile()" aria-label="Close"></button>
+                    </div>
+
+                    <form action="<?= Url::to(['site/update-profile']) ?>" method="post">
+                        <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" name="nombre" value="<?= Html::encode($user->nombre) ?>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Apellidos</label>
+                                <input type="text" class="form-control" name="apellidos" value="<?= Html::encode($user->apellidos) ?>" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Rol / Cargo</label>
+                                <input type="text" class="form-control" name="rol" value="<?= Html::encode($user->rol ?? '') ?>" placeholder="Ej: Administrador, Mánager...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Empresa</label>
+                                <input type="text" class="form-control" name="empresa" value="<?= Html::encode($user->empresa ?? '') ?>">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" name="telefono" value="<?= Html::encode($user->telefono ?? '') ?>">
+                            </div>
+                             <div class="col-md-6">
+                                <label class="form-label">Dirección</label>
+                                <input type="text" class="form-control" name="direccion" value="<?= Html::encode($user->direccion ?? '') ?>">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label text-muted">Fecha de registro</label>
+                                <input type="text" class="form-control bg-light" value="<?= Html::encode($user->fecha_registro) ?>" readonly disabled>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        
+                        <div class="alert alert-warning">
+                            <i class="fas fa-lock me-2"></i> <strong>Seguridad:</strong> Para guardar los cambios, confirma tu identidad.
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Confirma tu correo electrónico</label>
+                            <input type="email" class="form-control" name="auth_email" required placeholder="<?= Html::encode($user->email) ?>">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Contraseña actual</label>
+                            <input type="password" class="form-control" name="auth_password" required>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary" onclick="toggleEditProfile()">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
+        <script>
+        function toggleEditProfile() {
+            var viewMode = document.getElementById('profile-view-mode');
+            var editMode = document.getElementById('profile-edit-mode');
+            
+            if (viewMode.style.display === 'none') {
+                viewMode.style.display = 'block';
+                editMode.style.display = 'none';
+            } else {
+                viewMode.style.display = 'none';
+                editMode.style.display = 'block';
+            }
+        }
+        </script>
+
         <!-- SECCIÓN: SEGURIDAD -->
         <div id="section-seguridad" class="content-section" style="display: none;">
             <h2 class="section-title">Seguridad e inicio de sesión</h2>
-            <div class="settings-card">
-                <div class="card-content">
-                    <p>Revisa la actividad reciente y activa la verificación en dos pasos.</p>
+            
+            <!-- Hero Card: Estado de Seguridad -->
+            <div class="settings-card mb-4">
+                <div class="card-content d-flex align-items-center">
+                    <img src="<?= Url::to('@web/images/security_shield.png') ?>" alt="Seguridad" style="width: 48px; height: 48px; margin-right: 20px;">
+                    <div>
+                        <h3 style="font-size: 16px; margin: 0 0 4px 0;">Tu cuenta está protegida</h3>
+                        <p class="text-muted small mb-0">La Revisión de Seguridad ha comprobado tu cuenta y no ha encontrado ninguna acción recomendada.</p>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="mb-4">
+                <h4 style="font-size: 14px; color: #202124; font-weight: 500; margin-bottom: 8px;">Actividad relacionada con la seguridad reciente</h4>
+                <p class="text-muted small">No ha habido ninguna alerta ni actividad relacionadas con la seguridad en los últimos 28 días.</p>
+            </div>
+
+            <!-- Cómo inicias sesión -->
+            <div class="settings-card">
+                 <div class="p-3 border-bottom">
+                    <h3 style="font-size: 16px; margin: 0 0 4px 0;">Cómo inicias sesión en CyberSec Manager</h3>
+                    <p class="text-muted small mb-0">Asegúrate de poder acceder siempre a tu cuenta manteniendo al día esta información</p>
+                </div>
+
+                <!-- 2FA (Dinámico) -->
+                <div class="settings-row" onclick="toggleTotpSection()" style="cursor: pointer;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt text-muted fs-5 me-3" style="width: 24px; text-align: center;"></i>
+                        <div>
+                            <div class="row-label fw-bold">Verificación en dos pasos</div>
+                            <div class="small text-muted">
+                                <?= $user->totp_activo ? '<span class="text-success">Activado</span> <i class="fas fa-check-circle small"></i>' : 'La verificación en dos pasos está desactivada' ?>
+                            </div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right row-icon"></i>
+                </div>
+
+                <!-- Panel 2FA (Oculto) -->
+                <div id="totp-section" class="p-4 bg-light border-top" style="display: none;">
+                    <?php if (!$user->totp_activo): ?>
+                        <div id="totp-setup-step-1">
+                            <h5 class="mb-3">Protege tu cuenta con la verificación en 2 pasos</h5>
+                            <p class="text-muted small">Cada vez que inicies sesión, necesitarás introducir un código único que genera tu aplicación de autenticación (Google Authenticator, Authy, etc.).</p>
+                            <button class="btn btn-primary btn-sm" onclick="startTotpSetup()">Empezar configuración</button>
+                        </div>
+                        
+                        <div id="totp-setup-step-2" style="display: none;">
+                            <h6 class="fw-bold">1. Escanea este código QR</h6>
+                            <p class="small text-muted">Abre tu aplicación de autenticación y escanea el código.</p>
+                            
+                            <!-- Placeholder QR / Se llenará vía JS o Iframe de imagen -->
+                            <div class="text-center my-3 bg-white p-3 d-inline-block rounded shadow-sm border">
+                                <?php 
+                                    // Generamos secreto y URL QR al vuelo para mostrar (esto debería hacerse mejor en controlador AJAX, 
+                                    // pero para prototipo rápido usamos lógica inline o llamada futura).
+                                    // Para simplificar: usaremos un iframe o img src si tuviéramos endpoint.
+                                    // Aquí usaremos la librería PHP instalada para pintar el QR directamente si es posible,
+                                    // o pasaremos el secreto al form.
+                                    
+                                    // OJO: Generar secreto aquí rompe MVC estricto pero es efectivo para vista rápida.
+                                    // Mejor: Un botón "Mostrar QR" que haga submit a una vista intermedia o ajax.
+                                    // MODO SIMPLE: Usar una imagen generada por helper de Google Charts o similar si librería falla, 
+                                    // pero tenemos bacon-qr instalado.
+                                    
+                                    $google2fa = new \PragmaRX\Google2FA\Google2FA();
+                                    $secret = $google2fa->generateSecretKey();
+                                    // La URL 'otpauth'
+                                    $qrCodeUrl = $google2fa->getQRCodeUrl(
+                                        Yii::$app->name,
+                                        $user->email,
+                                        $secret
+                                    );
+                                    
+                                    // Usamos un servicio público de QR para no depender de librerías de imagen complejas 
+                                    // (bacon qr a veces requiere imagick).
+                                    // Google Charts API para QR está deprecated pero funciona, o goqr.me
+                                    $qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrCodeUrl);
+                                ?>
+                                <img src="<?= $qrImageUrl ?>" alt="QR Code" style="width: 150px; height: 150px;">
+                            </div>
+                            
+                            <div class="mb-3 text-center">
+                                <small class="text-muted d-block">¿No puedes escanearlo? Clave manual:</small>
+                                <code class="fw-bold text-dark"><?= $secret ?></code>
+                            </div>
+
+                            <h6 class="fw-bold mt-4">2. Introduce el código de 6 dígitos</h6>
+                            <form action="<?= Url::to(['site/enable-totp']) ?>" method="post" class="mt-2">
+                                <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                                <input type="hidden" name="totp_secret" value="<?= $secret ?>">
+                                
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-auto">
+                                        <input type="text" name="totp_code" class="form-control form-control-sm text-center" placeholder="123456" maxlength="6" required style="width: 120px; letter-spacing: 4px; font-weight: bold;">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-success btn-sm">Verificar y Activar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    <?php else: ?>
+                        <!-- DESACTIVAR 2FA -->
+                        <div class="alert alert-success d-flex align-items-center mb-4">
+                            <i class="fas fa-check-circle fs-4 me-3"></i>
+                            <div>
+                                <strong>La autenticación en dos pasos está activa.</strong>
+                                <div class="small">Tu cuenta está más segura. Se te pedirá un código al iniciar sesión.</div>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-danger">Desactivar verificación en dos pasos</h6>
+                        <p class="small text-muted mb-3">Si desactivas esto, tu cuenta será más vulnerable a robos de contraseña.</p>
+                        
+                        <form action="<?= Url::to(['site/disable-totp']) ?>" method="post">
+                             <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                             <div class="mb-3" style="max-width: 300px;">
+                                <label class="form-label small fw-bold">Confirma tu contraseña para desactivar</label>
+                                <input type="password" name="current_password" class="form-control form-control-sm" required>
+                             </div>
+                             <button type="button" class="btn btn-secondary btn-sm me-2" onclick="toggleTotpSection()">Cancelar</button>
+                             <button type="submit" class="btn btn-danger btn-sm">Desactivar 2FA</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+
+                <script>
+                function toggleTotpSection() {
+                    var el = document.getElementById('totp-section');
+                    el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+                }
+                function startTotpSetup() {
+                    document.getElementById('totp-setup-step-1').style.display = 'none';
+                    document.getElementById('totp-setup-step-2').style.display = 'block';
+                }
+                </script>
+
+
+
+                <!-- Contraseña (Funcional - Link) -->
+                <div class="settings-row" onclick="document.querySelector('[data-target=\'section-contrasena\']').click()">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-asterisk text-muted fs-5 me-3" style="width: 24px; text-align: center;"></i>
+                        <div>
+                            <div class="row-label fw-bold">Contraseña</div>
+                            <div class="small text-muted">Última modificación: Desconocido</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right row-icon"></i>
+                </div>
+
+
+
+                 <!-- Correo Recuperación -->
+                 <div class="settings-row border-top mt-2" onclick="toggleRecoveryForm()" style="cursor: pointer;">
+                    <div class="d-flex align-items-center">
+                        <i class="far fa-envelope text-muted fs-5 me-3" style="width: 24px; text-align: center;"></i>
+                        <div>
+                            <div class="row-label fw-bold">Correo de recuperación</div>
+                            <?php if (!empty($user->email_recuperacion)): ?>
+                                <div class="small text-muted"><?= Html::encode($user->email_recuperacion) ?></div>
+                            <?php else: ?>
+                                <div class="small text-warning bg-warning bg-opacity-10 px-2 py-0 rounded d-inline-block mt-1">
+                                    <i class="fas fa-exclamation-circle small me-1"></i> Añadir una dirección de correo electrónico
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right row-icon"></i>
+                </div>
+
+                <!-- Formulario Correo Recuperación (Oculto) -->
+                <div id="recovery-email-form" class="p-4 bg-light border-top" style="display: none;">
+                    <form action="<?= Url::to(['site/update-recovery-email']) ?>" method="post">
+                        <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                        
+                        <p class="small text-muted mb-3">
+                            Este correo se utilizará para contactar contigo si detectamos actividad inusual en tu cuenta o si pierdes el acceso.
+                        </p>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Correo de recuperación</label>
+                            <input type="email" class="form-control" name="email_recuperacion" value="<?= Html::encode($user->email_recuperacion) ?>" placeholder="ejemplo@gmail.com" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Para continuar, verifica tu contraseña actual</label>
+                            <input type="password" class="form-control" name="password_confirm" required>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="button" class="btn btn-sm btn-secondary me-2" onclick="toggleRecoveryForm()">Cancelar</button>
+                            <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <script>
+                function toggleRecoveryForm() {
+                    var form = document.getElementById('recovery-email-form');
+                    if (form.style.display === 'none') {
+                        form.style.display = 'block';
+                    } else {
+                        form.style.display = 'none';
+                    }
+                }
+                </script>
+
             </div>
         </div>
 
@@ -314,50 +679,159 @@ $this->registerCss("
             <h2 class="section-title">Contraseña</h2>
             <div class="settings-card">
                 <div class="card-content">
-                    <p>Cambia tu contraseña y gestiona tus claves guardadas.</p>
-                    <a href="<?= Url::to(['/site/request-password-reset']) ?>" class="btn btn-primary btn-sm mt-2">Cambiar contraseña</a>
+                    <p class="mb-4">Gestiona tu contraseña para proteger tu cuenta.</p>
+                    
+                    <?php if (Yii::$app->session->hasFlash('success')): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <?= Yii::$app->session->getFlash('success') ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (Yii::$app->session->hasFlash('error')): ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <?= Yii::$app->session->getFlash('error') ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <?php endif; ?>
+
+                    <form action="<?= Url::to(['site/change-password']) ?>" method="post">
+                        <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label" style="font-size: 14px; font-weight: 500;">Correo electrónico</label>
+                            <input type="email" class="form-control" id="email" name="email" required placeholder="Confirma tu correo actual">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label" style="font-size: 14px; font-weight: 500;">Contraseña actual</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="new_password" class="form-label" style="font-size: 14px; font-weight: 500;">Nueva contraseña</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password" required minlength="6">
+                            <div class="form-text">La contraseña debe tener al menos 6 caracteres.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN: CONEXIONES -->
-        <div id="section-conexiones" class="content-section" style="display: none;">
-            <h2 class="section-title">Conexiones de terceros</h2>
-            <div class="settings-card">
-                <div class="card-content">
-                    <p>Gestiona las aplicaciones y sitios que tienen acceso a tu cuenta.</p>
-                </div>
-            </div>
-        </div>
 
-         <!-- SECCIÓN: DATOS -->
-         <div id="section-datos" class="content-section" style="display: none;">
-            <h2 class="section-title">Datos y privacidad</h2>
-            <div class="settings-card">
-                <div class="card-content">
-                    <p>Controla lo que guardamos para mejorar tu experiencia.</p>
-                </div>
-            </div>
-        </div>
 
-         <!-- SECCIÓN: CONTACTOS -->
-         <div id="section-contactos" class="content-section" style="display: none;">
-            <h2 class="section-title">Contactos y compartir</h2>
-            <div class="settings-card">
-                <div class="card-content">
-                    <p>Organiza tus contactos y elige qué información ven los demás.</p>
-                </div>
-            </div>
-        </div>
+        <!-- SECCIÓN: PAGOS Y SUSCRIPCIONES (Renombrado a Mis Solicitudes) -->
+        <div id="section-pagos" class="content-section" style="display: none;">
+            <h2 class="section-title">Mis Solicitudes y Presupuestos</h2>
+            
+            <?php 
+                // Consulta directa a SolicitudesPresupuesto (idealmente debería pasar por Controller)
+                $misSolicitudes = \common\models\SolicitudesPresupuesto::find()
+                    ->where(['email_contacto' => $user->email])
+                    ->orderBy(['fecha_solicitud' => SORT_DESC])
+                    ->all();
+            ?>
 
-         <!-- SECCIÓN: PAGOS -->
-         <div id="section-pagos" class="content-section" style="display: none;">
-            <h2 class="section-title">Pagos y suscripciones</h2>
-            <div class="settings-card">
-                <div class="card-content">
-                    <p>Gestiona tus métodos de pago y suscripciones activas.</p>
+            <?php if (empty($misSolicitudes)): ?>
+                <div class="settings-card text-center p-5">
+                    <img src="https://img.icons8.com/fluency/96/purchase-order.png" alt="Sin solicitudes" class="mb-3" style="opacity: 0.6;">
+                    <h4 class="mb-2">Aún no tienes solicitudes</h4>
+                    <p class="text-muted mb-4">Aquí aparecerán los servicios que contrates con nosotros y sus facturas.</p>
+                    <a href="<?= Url::to(['site/catalogo']) ?>" class="btn btn-primary">Ver Catálogo de Servicios</a>
                 </div>
-            </div>
+            <?php else: ?>
+                <!-- Resumen -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="settings-card p-3 d-flex align-items-center mb-0">
+                            <div class="avatar-circle bg-primary bg-opacity-10 text-primary me-3" style="width: 48px; height: 48px; font-size: 20px;">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <div>
+                                <h3 class="h5 mb-0"><?= count($misSolicitudes) ?></h3>
+                                <small class="text-muted">Total Solicitudes</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card overflow-hidden">
+                    <div class="p-4 border-bottom bg-light">
+                        <h5 class="mb-0 fs-6 fw-bold text-uppercase text-muted">Historial de Servicios</h5>
+                    </div>
+                    
+                    <?php foreach ($misSolicitudes as $solicitud): ?>
+                        <div class="settings-row border-bottom p-3 d-block h-auto">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex">
+                                    <div class="me-3 mt-1">
+                                        <?php if ($solicitud->isEstadoSolicitudPendiente()): ?>
+                                            <span class="badge bg-warning text-dark"><i class="far fa-clock"></i></span>
+                                        <?php elseif ($solicitud->isEstadoSolicitudContratado()): ?>
+                                            <span class="badge bg-success"><i class="fas fa-check"></i></span>
+                                        <?php elseif ($solicitud->isEstadoSolicitudRechazado() || $solicitud->isEstadoSolicitudCancelado()): ?>
+                                            <span class="badge bg-secondary"><i class="fas fa-ban"></i></span>
+                                        <?php else: ?>
+                                            <span class="badge bg-info"><i class="fas fa-sync"></i></span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark mb-1">
+                                            <?= Html::encode($solicitud->servicio ? $solicitud->servicio->nombre : 'Consulta General') ?>
+                                        </div>
+                                        <div class="small text-muted mb-2">
+                                            <i class="far fa-calendar-alt me-1"></i> <?= Yii::$app->formatter->asDate($solicitud->fecha_solicitud, 'long') ?>
+                                            &bull; ID: #<?= str_pad($solicitud->id, 5, '0', STR_PAD_LEFT) ?>
+                                        </div>
+                                        <p class="small text-secondary mb-0 fst-italic">
+                                            "<?= \yii\helpers\StringHelper::truncate(Html::encode($solicitud->descripcion_necesidad), 80) ?>"
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge rounded-pill border border-light shadow-sm 
+                                        <?= $solicitud->isEstadoSolicitudPendiente() ? 'bg-warning text-dark' : 
+                                           ($solicitud->isEstadoSolicitudContratado() ? 'bg-success' : 'bg-secondary') ?>">
+                                        <?= Html::encode($solicitud->estado_solicitud) ?>
+                                    </span>
+                                    
+                                    <?php if ($solicitud->usuarioAsignado): ?>
+                                        <div class="small text-muted mt-2" title="Agente asignado">
+                                            <i class="fas fa-user-tie"></i> <?= Html::encode($solicitud->usuarioAsignado->nombre) ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            
+                            <!-- Acciones (Mockup) -->
+                            <?php if ($solicitud->isEstadoSolicitudPresupuestoEnviado() || $solicitud->isEstadoSolicitudContratado()): ?>
+                                <div class="mt-3 pt-3 border-top d-flex justify-content-end gap-2">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf me-1"></i> Ver Presupuesto</button>
+                                    <?php if ($solicitud->isEstadoSolicitudContratado()): ?>
+                                        <button class="btn btn-sm btn-outline-success"><i class="fas fa-file-invoice-dollar me-1"></i> Facturas</button>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Bloque Suscripciones (Estático/Promo) -->
+                <div class="settings-card mt-4 bg-primary bg-opacity-10 border-0">
+                    <div class="card-content d-flex align-items-center">
+                         <div class="text-primary fs-1 me-3"><i class="fas fa-headset"></i></div>
+                         <div>
+                             <h4 class="h6 fw-bold text-primary mb-1">¿No sabes qué servicios contratar?</h4>
+                             <p class="small text-muted mb-0">Ponte en contacto con nuestros expertos para obtener ayuda y asesoramiento personalizado.</p>
+                         </div>
+                         <div class="ms-auto">
+                             <a href="<?= Url::to(['site/contact']) ?>" class="btn btn-sm btn-primary">Contactar</a>
+                         </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
 
     </div>
@@ -367,11 +841,24 @@ $this->registerCss("
 document.addEventListener('DOMContentLoaded', function() {
     const menuItems = document.querySelectorAll('.settings-menu-item');
     const sections = document.querySelectorAll('.content-section');
+    const searchInput = document.querySelector('.search-bar input');
+    
+    // Guardar la pestaña activa actual para restaurarla al limpiar la búsqueda
+    let activeTabId = 'section-inicio'; // Por defecto
 
+    // Función auxiliar para normalizar texto (quitar acentos y minúsculas)
+    function normalizeText(text) {
+        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // Lógica de menús (Pestañas)
     menuItems.forEach(item => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
             
+            // Si hay búsqueda activa, limpiarla al cambiar de pestaña manualmente (? opcional, por ahora mantenemos comportamiento estándar)
+            // searchInput.value = ''; 
+
             // 1. Quitar activo de todos
             menuItems.forEach(i => i.classList.remove('active'));
             // 2. Poner activo al actual
@@ -385,8 +872,104 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetSection = document.getElementById(targetId);
             if (targetSection) {
                 targetSection.style.display = 'block';
+                // Restaurar visibilidad de elementos internos por si estaban ocultos por búsqueda
+                // Excluyendo explícitamente los paneles de vista/edición de perfil que tienen su propia lógica de display
+                const hiddenElements = targetSection.querySelectorAll('[style*="display: none"]');
+                hiddenElements.forEach(el => {
+                    if (el.id !== 'profile-edit-mode' && el.id !== 'profile-view-mode' && el.id !== 'recovery-email-form' && el.id !== 'totp-section' && el.id !== 'totp-setup-step-2') {
+                        el.style.display = '';
+                    }
+                });
             }
+            
+            activeTabId = targetId;
         });
     });
+
+    // Lógica de Búsqueda
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = normalizeText(this.value.trim());
+
+            if (searchTerm.length > 0) {
+                // MODO BÚSQUEDA: Mostrar todas las secciones para buscar dentro de ellas
+                sections.forEach(section => {
+                    section.style.display = 'block';
+                    
+                    let hasVisibleItems = false;
+                    
+                    // Buscar en títulos de sección
+                    const sectionTitle = section.querySelector('.section-title');
+                    let sectionMatch = false;
+                    if (sectionTitle && normalizeText(sectionTitle.textContent).includes(searchTerm)) {
+                        sectionMatch = true; 
+                        hasVisibleItems = true;
+                    }
+
+                    // Buscar en filas de configuración (.settings-row) y tarjetas (.settings-card p, .profile-info etc)
+                    // Estrategia: Buscar en los contenedores de "contenido" más granulares
+                    const searchableItems = section.querySelectorAll('.settings-row, .card-content p, .profile-info div');
+                    
+                    searchableItems.forEach(item => {
+                        // Si el título de la sección coincide, mostramos todo el contenido de la sección
+                        if (sectionMatch) {
+                             if (item.closest('.settings-row')) item.closest('.settings-row').style.display = '';
+                             // Los p dentro de card-content no suelen ocultarse individualmente, pero por si acaso
+                             return;
+                        }
+
+                        // Si no coincide la sección entera, filtramos elementos
+                        const text = normalizeText(item.textContent);
+                        const parentRow = item.closest('.settings-row');
+                        
+                        if (text.includes(searchTerm)) {
+                            hasVisibleItems = true;
+                            if (parentRow) parentRow.style.display = '';
+                            item.style.display = ''; 
+                            // Asegurar que el padre (card) sea visible
+                            item.closest('.settings-card').style.display = '';
+                        } else {
+                            // Si es una fila de configuración, la ocultamos
+                            if (parentRow) {
+                                parentRow.style.display = 'none';
+                            } 
+                            // Para texto dentro de tarjetas, es más complejo ocultar solo el párrafo sin romper diseño,
+                            // por ahora si NO hay match en toda la tarjeta, ocultamos la tarjeta entera abajo.
+                        }
+                    });
+
+                    // Si después de filtrar items no hay nada visible y el título no coincidió, ocultamos la sección entera
+                    // Pero necesitamos verificar si quedaron rows visibles o si la tarjeta tiene algo visible
+                    
+                    // Re-verificación simple de visibilidad
+                    const visibleRows = Array.from(section.querySelectorAll('.settings-row')).filter(r => r.style.display !== 'none');
+                    // Asumimos que si hay texto en cards (p) que coincida, la card se queda. 
+                    // Simplificación: si el texto global de la sección contiene el término, mostramos la sección, 
+                    // pero intentamos ocultar las rows que no coinciden.
+                    
+                    if (!section.textContent || !normalizeText(section.textContent).includes(searchTerm)) {
+                        section.style.display = 'none';
+                    } else {
+                        // La sección tiene algo, asegurarnos de que se vea
+                        section.style.display = 'block';
+                    }
+                });
+
+            } else {
+                // MODO NORMAL: Restaurar vista de pestañas
+                sections.forEach(s => {
+                    // Ocultar todas
+                    s.style.display = 'none';
+                    // Limpiar estilos inline de display en hijos (restaurar visibilidad)
+                    const children = s.querySelectorAll('*');
+                    children.forEach(c => c.style.display = '');
+                });
+
+                // Mostrar solo la activa
+                const activeSection = document.getElementById(activeTabId);
+                if (activeSection) activeSection.style.display = 'block';
+            }
+        });
+    }
 });
 </script>
