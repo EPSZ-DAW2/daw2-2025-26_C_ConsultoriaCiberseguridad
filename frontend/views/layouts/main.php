@@ -127,6 +127,12 @@ if (!Yii::$app->user->isGuest) {
                     </a>
                     <?php endif; ?>
 
+                    <!-- Calendario -->
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/calendario/index']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
+                        Calendario
+                    </a>
+
                     <?php endif; ?>
 
                     <div class="sb-sidenav-menu-heading">Público</div>
