@@ -6,7 +6,7 @@ use yii\console\Controller;
 
 class RbacController extends Controller
 {
-    // COMANDO 1: php yii rbac/init (Este ya lo ejecutaste)
+    // php yii rbac/init
     public function actionInit()
     {
         $auth = Yii::$app->authManager;
@@ -38,6 +38,10 @@ class RbacController extends Controller
         $escribirCalendario = $auth->createPermission('escribirCalendario');
         $escribirCalendario->description = 'Permiso exclusivo calendario';
         $auth->add($escribirCalendario);
+
+        $gestionarFormacion = $auth->createPermission('gestionarFormacion');
+        $gestionarFormacion->description = 'Gestionar cursos de formación y contenido educativo';
+        $auth->add($gestionarFormacion);
 
         // Permisos para manager y comercial
         $verRentabilidad = $auth->createPermission('verRentabilidad');
@@ -95,6 +99,7 @@ class RbacController extends Controller
         $auth->addChild($consultor, $gestionarProyectos);
         $auth->addChild($consultor, $subirDocs);
         $auth->addChild($consultor, $verDocs);
+        $auth->addChild($consultor, $gestionarFormacion);
 
         $auditor = $auth->createRole('auditor');
         $auth->add($auditor);
@@ -155,7 +160,7 @@ class RbacController extends Controller
         echo "¡Roles creados con éxito! :)\n";
     }
 
-    // COMANDO 2: php yii rbac/assign <rol> <id_usuario> (ESTE ES EL NUEVO)
+    //php yii rbac/assign <rol> <id_usuario>
     public function actionAssign($role, $id)
     {
         $auth = Yii::$app->authManager;

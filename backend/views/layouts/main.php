@@ -85,8 +85,8 @@ AppAsset::register($this);
             $menuItems[] = ['label' => 'Rentabilidad', 'url' => ['/rentabilidad/index']];
         }
 
-        // FORMACIÓN (consultor, admin - reusan permiso gestionarProyectos)
-        if (Yii::$app->user->can('gestionarProyectos')) {
+        // FORMACIÓN (consultor, admin)
+        if (Yii::$app->user->can('gestionarFormacion')) {
             $menuItems[] = [
                 'label' => 'Formación',
                 'items' => [
