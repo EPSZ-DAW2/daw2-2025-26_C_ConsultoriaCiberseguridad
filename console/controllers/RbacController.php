@@ -15,10 +15,6 @@ class RbacController extends Controller
         echo "Creando permisos...\n";
 
         // --- PERMISOS ---
-        $verPanel = $auth->createPermission('verPanel');
-        $verPanel->description = 'Entrar al panel de administración';
-        $auth->add($verPanel);
-
         $verMisProyectos = $auth->createPermission('verMisProyectos');
         $verMisProyectos->description = 'Ver Mis Proyectos y Formación';
         $auth->add($verMisProyectos);
@@ -103,7 +99,6 @@ class RbacController extends Controller
 
         $consultor = $auth->createRole('consultor');
         $auth->add($consultor);
-        $auth->addChild($consultor, $verPanel);
         $auth->addChild($consultor, $verCalendario);
         $auth->addChild($consultor, $verProyectos);
         $auth->addChild($consultor, $gestionarProyectos);
@@ -113,7 +108,6 @@ class RbacController extends Controller
 
         $auditor = $auth->createRole('auditor');
         $auth->add($auditor);
-        $auth->addChild($auditor, $verPanel);
         $auth->addChild($auditor, $verCalendario);
         $auth->addChild($auditor, $verProyectos);
         $auth->addChild($auditor, $verDocs);
@@ -128,7 +122,6 @@ class RbacController extends Controller
         // Roles nuevos del backend
         $manager = $auth->createRole('manager');
         $auth->add($manager);
-        $auth->addChild($manager, $verPanel);
         $auth->addChild($manager, $verCalendario);
         $auth->addChild($manager, $verProyectos);
         $auth->addChild($manager, $verDocs);
@@ -138,7 +131,6 @@ class RbacController extends Controller
 
         $comercial = $auth->createRole('comercial');
         $auth->add($comercial);
-        $auth->addChild($comercial, $verPanel);
         $auth->addChild($comercial, $verCalendario);
         $auth->addChild($comercial, $verProyectos);
         $auth->addChild($comercial, $gestionarCatalogo);
@@ -148,7 +140,6 @@ class RbacController extends Controller
         // Migrar analista_soc al sistema RBAC
         $analistaSoc = $auth->createRole('analista_soc');
         $auth->add($analistaSoc);
-        $auth->addChild($analistaSoc, $verPanel);
         $auth->addChild($analistaSoc, $verCalendario);
         $auth->addChild($analistaSoc, $verProyectos);
         $auth->addChild($analistaSoc, $verMonitorizacion);
