@@ -18,8 +18,8 @@ $this->title = 'Campus de Formación';
             ¿Quieres acceder a decenas de cursos especializados, laboratorios y certificaciones?
         </p>
         <p>
-            <?= Html::a('Solicitar Presupuesto', ['/solicitudes-presupuesto/create'], ['class' => 'btn btn-primary btn-lg']) ?>
-            <?= Html::a('Ver Catálogo de Servicios', ['/site/servicios'], ['class' => 'btn btn-outline-dark btn-lg']) ?>
+            <?= Html::a('Solicitar Presupuesto', ['/site/contact'], ['class' => 'btn btn-primary btn-lg']) ?>
+            <?= Html::a('Ver Catálogo de Servicios', ['/site/catalogo'], ['class' => 'btn btn-outline-dark btn-lg']) ?>
         </p>
     </div>
     
