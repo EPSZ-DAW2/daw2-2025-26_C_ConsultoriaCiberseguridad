@@ -43,6 +43,14 @@ class RbacController extends Controller
         $gestionarFormacion->description = 'Gestionar cursos de formación y contenido educativo';
         $auth->add($gestionarFormacion);
 
+        $verCalendario = $auth->createPermission('verCalendario');
+        $verCalendario->description = 'Ver calendario de eventos';
+        $auth->add($verCalendario);
+
+        $verProyectos = $auth->createPermission('verProyectos');
+        $verProyectos->description = 'Ver proyectos (solo lectura)';
+        $auth->add($verProyectos);
+
         // Permisos para manager y comercial
         $verRentabilidad = $auth->createPermission('verRentabilidad');
         $verRentabilidad->description = 'Ver métricas de rentabilidad y reportes';
@@ -96,6 +104,8 @@ class RbacController extends Controller
         $consultor = $auth->createRole('consultor');
         $auth->add($consultor);
         $auth->addChild($consultor, $verPanel);
+        $auth->addChild($consultor, $verCalendario);
+        $auth->addChild($consultor, $verProyectos);
         $auth->addChild($consultor, $gestionarProyectos);
         $auth->addChild($consultor, $subirDocs);
         $auth->addChild($consultor, $verDocs);
@@ -104,6 +114,8 @@ class RbacController extends Controller
         $auditor = $auth->createRole('auditor');
         $auth->add($auditor);
         $auth->addChild($auditor, $verPanel);
+        $auth->addChild($auditor, $verCalendario);
+        $auth->addChild($auditor, $verProyectos);
         $auth->addChild($auditor, $verDocs);
         $auth->addChild($auditor, $escribirCalendario);
 
@@ -117,6 +129,8 @@ class RbacController extends Controller
         $manager = $auth->createRole('manager');
         $auth->add($manager);
         $auth->addChild($manager, $verPanel);
+        $auth->addChild($manager, $verCalendario);
+        $auth->addChild($manager, $verProyectos);
         $auth->addChild($manager, $verDocs);
         $auth->addChild($manager, $escribirCalendario);
         $auth->addChild($manager, $verRentabilidad);
@@ -125,6 +139,8 @@ class RbacController extends Controller
         $comercial = $auth->createRole('comercial');
         $auth->add($comercial);
         $auth->addChild($comercial, $verPanel);
+        $auth->addChild($comercial, $verCalendario);
+        $auth->addChild($comercial, $verProyectos);
         $auth->addChild($comercial, $gestionarCatalogo);
         $auth->addChild($comercial, $gestionarCRM);
         $auth->addChild($comercial, $escribirCalendario);
@@ -133,6 +149,8 @@ class RbacController extends Controller
         $analistaSoc = $auth->createRole('analista_soc');
         $auth->add($analistaSoc);
         $auth->addChild($analistaSoc, $verPanel);
+        $auth->addChild($analistaSoc, $verCalendario);
+        $auth->addChild($analistaSoc, $verProyectos);
         $auth->addChild($analistaSoc, $verMonitorizacion);
         $auth->addChild($analistaSoc, $gestionarTickets);
 
