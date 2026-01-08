@@ -187,4 +187,61 @@ class RbacController extends Controller
             echo "Error: Puede que el usuario ya tenga ese rol o no exista.\n";
         }
     }
+
+    //php yii rbac/assign-all
+    public function actionAssignAll()
+    {
+        $auth = Yii::$app->authManager;
+
+        echo "Asignando roles RBAC a usuarios existentes basándose en su columna 'rol'...\n\n";
+
+        $usuarios = \common\models\User::find()->all();
+
+        if (empty($usuarios)) {
+            echo "No se encontraron usuarios en la base de datos.\n";
+            return;
+        }
+
+        $roleMap = [
+            'admin' => 'admin',
+            'consultor' => 'consultor',
+            'auditor' => 'auditor',
+            'manager' => 'manager',
+            'comercial' => 'comercial',
+            'analista_soc' => 'analista_soc',
+            'cliente_admin' => 'cliente_admin',
+            'cliente_user' => 'cliente_user',
+        ];
+
+        $success = 0;
+        $errors = 0;
+
+        foreach ($usuarios as $usuario) {
+            if (isset($roleMap[$usuario->rol])) {
+                $roleObject = $auth->getRole($roleMap[$usuario->rol]);
+                if ($roleObject) {
+                    try {
+                        $auth->assign($roleObject, $usuario->id);
+                        echo "  ✓ Usuario {$usuario->id} ({$usuario->email}): rol '{$usuario->rol}' asignado\n";
+                        $success++;
+                    } catch (\Exception $e) {
+                        echo "  ✗ Usuario {$usuario->id} ({$usuario->email}): Error - {$e->getMessage()}\n";
+                        $errors++;
+                    }
+                } else {
+                    echo "  ✗ Usuario {$usuario->id} ({$usuario->email}): Rol '{$usuario->rol}' no existe en RBAC\n";
+                    $errors++;
+                }
+            } else {
+                echo "  ✗ Usuario {$usuario->id} ({$usuario->email}): Rol '{$usuario->rol}' no reconocido\n";
+                $errors++;
+            }
+        }
+
+        echo "\n¡Completado!\n";
+        echo "✓ {$success} usuarios procesados correctamente\n";
+        if ($errors > 0) {
+            echo "✗ {$errors} errores encontrados\n";
+        }
+    }
 }
