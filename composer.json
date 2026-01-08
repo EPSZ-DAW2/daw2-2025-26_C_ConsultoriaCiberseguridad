@@ -18,7 +18,9 @@
         "yiisoft/yii2": "~2.0.45",
         "yiisoft/yii2-bootstrap5": "~2.0.2",
         "yiisoft/yii2-symfonymailer": "~2.0.3",
-        "philippfrenzel/yii2fullcalendar": "^2.4"
+        "philippfrenzel/yii2fullcalendar": "^2.4",
+        "pragmarx/google2fa": "^9.0",
+        "bacon/bacon-qr-code": "^3.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

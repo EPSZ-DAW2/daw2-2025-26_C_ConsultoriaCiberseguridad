@@ -127,6 +127,12 @@ if (!Yii::$app->user->isGuest) {
                     </a>
                     <?php endif; ?>
 
+                    <!-- Calendario -->
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/calendario/index']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
+                        Calendario
+                    </a>
+
                     <?php endif; ?>
 
                     <div class="sb-sidenav-menu-heading">Público</div>
@@ -222,7 +228,8 @@ if (!Yii::$app->user->isGuest) {
     });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<!-- El bootstrap ya se carga vía AppAsset -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script> -->
 
 <script src="<?= Yii::getAlias('@web') ?>/template/js/scripts.js"></script>
 

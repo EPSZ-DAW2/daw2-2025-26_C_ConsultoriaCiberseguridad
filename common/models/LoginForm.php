@@ -57,7 +57,18 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+            $user = $this->getUser();
+            
+            // Si el usuario tiene 2FA activado, no hacemos login completo aún.
+            // Retornamos un indicador para que el controlador redirija.
+            if ($user->totp_activo) {
+                // Guardamos ID usuario en sesión temporalmente
+                Yii::$app->session->set('2fa_user_id', $user->id);
+                Yii::$app->session->set('2fa_remember_me', $this->rememberMe);
+                return '2fa_required';
+            }
+
+            return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
         }
         
         return false;

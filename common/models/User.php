@@ -18,12 +18,45 @@ use yii\web\IdentityInterface;
  * @property string $auth_key
  * @property integer $activo 
  * @property string $fecha_registro
+ * @property string $rol
+ * @property string $empresa
+ * @property string $telefono
+
+ * @property string $direccion
+ * @property string|null $email_recuperacion
+ * @property string|null $totp_secret
+ * @property integer $totp_activo
  */
 class User extends ActiveRecord implements IdentityInterface
 {
     // Definimos los estados según tu base de datos (0 y 1)
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 1;
+
+    // Roles
+    const ROL_ADMIN = 'admin';
+    const ROL_CLIENTE_USER = 'cliente_user';
+    const ROL_CLIENTE_ADMIN = 'cliente_admin';
+    const ROL_MANAGER = 'manager';
+    const ROL_CONSULTOR = 'consultor';
+    const ROL_AUDITOR = 'auditor';
+    const ROL_COMERCIAL = 'comercial';
+    const ROL_ANALISTA_SOC = 'analista_soc';
+
+    /**
+     * @return bool Si el usuario debe acceder al backend
+     */
+    public function isBackendUser()
+    {
+        return in_array($this->rol, [
+            self::ROL_ADMIN,
+            self::ROL_MANAGER,
+            self::ROL_CONSULTOR,
+            self::ROL_AUDITOR,
+            self::ROL_COMERCIAL,
+            self::ROL_ANALISTA_SOC
+        ]);
+    }
 
     /**
      * {@inheritdoc}
@@ -50,6 +83,10 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['activo', 'default', 'value' => self::STATUS_ACTIVE],
             ['activo', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['rol', 'empresa', 'telefono', 'direccion'], 'string'],
+            [['email_recuperacion'], 'email'],
+            [['totp_secret'], 'string'],
+            [['totp_activo'], 'integer'],
         ];
     }
 
@@ -194,5 +231,25 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    /**
+     * Instancia de Google2FA
+     */
+    public function getGoogle2fa()
+    {
+        return new \PragmaRX\Google2FA\Google2FA();
+    }
+
+    /**
+     * Valida el código TOTP proporcionado
+     */
+    public function verifyTotp($code, $secret = null)
+    {
+        $secret = $secret ?? $this->totp_secret;
+        if (!$secret) {
+            return false;
+        }
+        return $this->getGoogle2fa()->verifyKey($secret, $code);
     }
 }
