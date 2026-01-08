@@ -18,6 +18,14 @@ use yii\web\IdentityInterface;
  * @property string $auth_key
  * @property integer $activo 
  * @property string $fecha_registro
+ * @property string $rol
+ * @property string $empresa
+ * @property string $telefono
+
+ * @property string $direccion
+ * @property string|null $email_recuperacion
+ * @property string|null $totp_secret
+ * @property integer $totp_activo
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -50,6 +58,10 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['activo', 'default', 'value' => self::STATUS_ACTIVE],
             ['activo', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['rol', 'empresa', 'telefono', 'direccion'], 'string'],
+            [['email_recuperacion'], 'email'],
+            [['totp_secret'], 'string'],
+            [['totp_activo'], 'integer'],
         ];
     }
 
@@ -194,5 +206,25 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    /**
+     * Instancia de Google2FA
+     */
+    public function getGoogle2fa()
+    {
+        return new \PragmaRX\Google2FA\Google2FA();
+    }
+
+    /**
+     * Valida el código TOTP proporcionado
+     */
+    public function verifyTotp($code, $secret = null)
+    {
+        $secret = $secret ?? $this->totp_secret;
+        if (!$secret) {
+            return false;
+        }
+        return $this->getGoogle2fa()->verifyKey($secret, $code);
     }
 }
