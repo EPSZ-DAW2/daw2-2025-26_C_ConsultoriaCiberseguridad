@@ -32,18 +32,31 @@ $this->title = 'Catálogo de Servicios';
                             <?= Html::encode($servicio->descripcion ?? 'Servicio profesional de ciberseguridad.') ?>
                         </p>
                         
-                        <div class="mt-3">
-                            <p class="text-primary fw-bold mb-1" style="font-size: 1.2rem;">
-                                Desde <?= $precioVisual ?>
-                            </p>
-                            <?php if (!empty($servicio->duracion_estimada)): ?>
-                                <small class="text-muted">Duración est.: <?= $servicio->duracion_estimada ?> días</small>
-                            <?php endif; ?>
+                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-primary fw-bold mb-1" style="font-size: 1.2rem;">
+                                    Desde <?= $precioVisual ?>
+                                </p>
+                                <?php if (!empty($servicio->duracion_estimada)): ?>
+                                    <small class="text-muted">Duración est.: <?= $servicio->duracion_estimada ?> días</small>
+                                <?php endif; ?>
+                            </div>
+
+                            <a href="<?= \yii\helpers\Url::to([
+                                'site/solicitar-presupuesto',
+                                'servicio_id' => $servicio->id
+                            ]) ?>"
+                               class="btn btn-success btn-sm"
+                               data-confirm="¿Deseas solicitar este servicio?">
+                                Contratar
+                            </a>
                         </div>
 
-                        <button class="btn btn-primary w-100 mt-3 btn-more-info" type="button" data-target="#collapseService-<?= $servicio->id ?>">
+                        <button class="btn btn-primary w-100 mt-2 btn-more-info" type="button"
+                                data-target="#collapseService-<?= $servicio->id ?>">
                             Más información
                         </button>
+
                     </div>
                     
                     <!-- Dropdown / Collapse Section - Inside Card -->

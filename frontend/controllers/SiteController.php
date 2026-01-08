@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
 use common\models\Servicio;
+use common\models\SolicitudesPresupuesto;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -323,5 +324,39 @@ class SiteController extends Controller
     public function actionConfiguracion()
     {
         return $this->render('configuracion');
+    }
+
+    public function actionSolicitarPresupuesto($servicio_id)
+    {
+        // 1. Usuario debe estar logueado
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        // 2. Crear solicitud
+        $solicitud = new SolicitudesPresupuesto();
+        $solicitud->servicio_id = $servicio_id;
+
+        // Datos mínimos
+        $solicitud->nombre_contacto = Yii::$app->user->identity->nombre_completo ?? 'Usuario Web';
+        $solicitud->email_contacto = Yii::$app->user->identity->email;
+        $solicitud->empresa = 'Cliente Web';
+        $solicitud->descripcion_necesidad = 'Solicitud iniciada desde el catálogo de servicios';
+        $solicitud->estado_solicitud = SolicitudesPresupuesto::ESTADO_SOLICITUD_PENDIENTE;
+        $solicitud->origen_solicitud = 'Web';
+
+        if ($solicitud->save()) {
+            Yii::$app->session->setFlash(
+                'success',
+                'Solicitud enviada correctamente. Nuestro equipo se pondrá en contacto contigo.'
+            );
+        } else {
+            Yii::$app->session->setFlash(
+                'error',
+                'No se pudo enviar la solicitud.'
+            );
+        }
+
+        return $this->redirect(['site/catalogo']);
     }
 }
