@@ -338,8 +338,9 @@ class SiteController extends Controller
         $solicitud->servicio_id = $servicio_id;
 
         // Datos mínimos
-        $solicitud->nombre_contacto = Yii::$app->user->identity->nombre_completo ?? 'Usuario Web';
-        $solicitud->email_contacto = Yii::$app->user->identity->email;
+        $user = Yii::$app->user->identity;
+        $solicitud->nombre_contacto = trim($user->nombre . ' ' . ($user->apellidos ?? ''));
+        $solicitud->email_contacto = $user->email;
         $solicitud->empresa = 'Cliente Web';
         $solicitud->descripcion_necesidad = 'Solicitud iniciada desde el catálogo de servicios';
         $solicitud->estado_solicitud = SolicitudesPresupuesto::ESTADO_SOLICITUD_PENDIENTE;
