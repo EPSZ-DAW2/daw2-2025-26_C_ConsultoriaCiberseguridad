@@ -33,6 +33,31 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 1;
 
+    // Roles
+    const ROL_ADMIN = 'admin';
+    const ROL_CLIENTE_USER = 'cliente_user';
+    const ROL_CLIENTE_ADMIN = 'cliente_admin';
+    const ROL_MANAGER = 'manager';
+    const ROL_CONSULTOR = 'consultor';
+    const ROL_AUDITOR = 'auditor';
+    const ROL_COMERCIAL = 'comercial';
+    const ROL_ANALISTA_SOC = 'analista_soc';
+
+    /**
+     * @return bool Si el usuario debe acceder al backend
+     */
+    public function isBackendUser()
+    {
+        return in_array($this->rol, [
+            self::ROL_ADMIN,
+            self::ROL_MANAGER,
+            self::ROL_CONSULTOR,
+            self::ROL_AUDITOR,
+            self::ROL_COMERCIAL,
+            self::ROL_ANALISTA_SOC
+        ]);
+    }
+
     /**
      * {@inheritdoc}
      */
