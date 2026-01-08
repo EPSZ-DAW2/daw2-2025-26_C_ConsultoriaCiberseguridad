@@ -61,7 +61,7 @@ AppAsset::register($this);
         }
 
         // CALENDARIO (todos los roles backend pueden verlo)
-        if (Yii::$app->user->can('verPanel')) {
+        if (Yii::$app->user->can('verCalendario')) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
 
