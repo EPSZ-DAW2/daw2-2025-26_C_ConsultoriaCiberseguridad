@@ -21,8 +21,7 @@ Abrir XAMPP Control Panel y ejecutar:
 ### 3. Importar la base de datos
 
 1. Abrir phpMyAdmin: http://localhost/phpmyadmin
-2. Crear una nueva base de datos llamada: `daw2_cybersec_manager`
-3. Importar el archivo: `SQL/database.sql`
+2. Importar el archivo: `SQL/database.sql` (la base de datos se crea automáticamente)
 
 ### 4. Acceder a la aplicación
 
