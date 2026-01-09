@@ -176,6 +176,7 @@ CREATE TABLE `auth_rule` (
 
 CREATE TABLE `cursos` (
   `id` int(10) UNSIGNED NOT NULL,
+  `servicio_id` int(10) UNSIGNED DEFAULT NULL COMMENT 'ID del servicio de formación al que pertenece el curso (FK a servicios)',
   `nombre` varchar(200) NOT NULL COMMENT 'Nombre del curso (ej: "Concienciación Phishing")',
   `descripcion` text DEFAULT NULL COMMENT 'Descripción del contenido del curso',
   `video_url` varchar(255) DEFAULT NULL,
@@ -187,6 +188,13 @@ CREATE TABLE `cursos` (
   `modificado_por` int(10) UNSIGNED DEFAULT NULL,
   `fecha_modificacion` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Cursos de formación e-learning en ciberseguridad';
+
+--
+-- Volcado de datos para la tabla `cursos`
+--
+
+INSERT INTO `cursos` (`id`, `servicio_id`, `nombre`, `descripcion`, `video_url`, `imagen_portada`, `nota_minima_aprobado`, `activo`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
+(1, 8, 'Introducción al Phishing', 'Aprende a identificar y protegerte de los ataques de suplantación de identidad. Este curso te enseñará los fundamentos del phishing, ejemplos reales y medidas de protección esenciales.', 'https://www.youtube.com/watch?v=iN4-rdfx3ZE', NULL, 7.00, 1, NULL, '2026-01-09 10:00:00', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -207,6 +215,15 @@ CREATE TABLE `diapositivas` (
   `modificado_por` int(10) UNSIGNED DEFAULT NULL,
   `fecha_modificacion` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Diapositivas/slides que componen cada curso';
+
+--
+-- Volcado de datos para la tabla `diapositivas`
+--
+
+INSERT INTO `diapositivas` (`id`, `curso_id`, `numero_orden`, `titulo`, `contenido_html`, `imagen_url`, `video_url`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
+(1, 1, 1, '¿Qué es el Phishing?', '<p>El <strong>Phishing</strong> es una técnica de ciberdelincuencia que utiliza el fraude, el engaño y el timo para manipular a sus víctimas y hacer que revelen información personal confidencial.</p><ul><li>Suplantación de bancos</li><li>Correos falsos de RRHH</li><li>Premios inexistentes</li></ul>', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Phishing_trusted_bank.svg/1200px-Phishing_trusted_bank.svg.png', NULL, NULL, '2026-01-09 10:00:00', NULL, NULL),
+(2, 1, 2, 'Ejemplo en Video', '<p>Mira este video para entender cómo operan los cibercriminales en tiempo real.</p>', NULL, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', NULL, '2026-01-09 10:00:00', NULL, NULL),
+(3, 1, 3, 'Cómo protegerse', '<h3>Tips de Seguridad</h3><ol><li>Verifica siempre el remitente (@empresa.com no @gmail.com).</li><li>No hagas clic en enlaces sospechosos ("Tu cuenta ha sido bloqueada").</li><li>Activa el doble factor de autenticación (2FA).</li></ol><p>¡Estás listo para el examen!</p>', NULL, NULL, NULL, '2026-01-09 10:00:00', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -339,6 +356,15 @@ CREATE TABLE `preguntas_cuestionario` (
   `fecha_modificacion` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Preguntas tipo test para evaluación de cursos';
 
+--
+-- Volcado de datos para la tabla `preguntas_cuestionario`
+--
+
+INSERT INTO `preguntas_cuestionario` (`id`, `curso_id`, `enunciado_pregunta`, `opcion_a`, `opcion_b`, `opcion_c`, `opcion_correcta`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
+(1, 1, '¿Cuál de los siguientes es un indicio claro de Phishing?', 'El correo viene de @mibanco.com.', 'El correo tiene faltas de ortografía y mete urgencia ("¡Hazlo ya!").', 'El correo incluye mi nombre completo.', 'b', NULL, '2026-01-09 10:00:00', NULL, NULL),
+(2, 1, 'Si recibo un correo sospechoso, ¿qué debo hacer?', 'Responder preguntando si es real.', 'Hacer clic en el enlace para verificar.', 'Contactar a la entidad por otro medio oficial y borrar el correo.', 'c', NULL, '2026-01-09 10:00:00', NULL, NULL),
+(3, 1, '¿Qué significa el candado verde en el navegador?', 'Que el sitio es 100% legítimo y seguro.', 'Que la conexión está cifrada, pero el sitio podría ser fraudulento.', 'Que Google ha verificado la empresa.', 'b', NULL, '2026-01-09 10:00:00', NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -416,7 +442,8 @@ INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `categoria`, `precio_bas
 (4, 'Gestión de vulnerabilidades', 'Escaneo periodicos automatizados para detectar fallos de seguridad en servidores y aplicaciones web antes que los atacantes', 'Ciberseguridad', 5400.00, 12, 0, 1, 'Pagas por saber donde tienes las brechas de seguridad antes que los hacker mediante Informe tecnicos de vulnerabilidades, guía de remediación para el equipo de IT, resumen ejecutivo de riesgos tecnológicos y certificado de escaneo trimestral.', NULL, '2026-01-02 22:01:10', NULL, '2026-01-04 14:34:26'),
 (5, 'Campaña de phishing simulado', 'Envio controlado de correos trampa a empleados para medir el nivel de riesgo humano y educar en la detención de fraudes ', 'Formación', 11400.00, 12, 0, 1, 'Pagas por medir y educar a tus empleados mediante informe de tasas de click y apertura de correos, listado de usuarios comprometidos, pildora formativa de refuerzo y diploma de participación en la campaña.', NULL, '2026-01-02 22:03:23', NULL, '2026-01-04 14:33:45'),
 (6, 'Curso de concienciación general', 'Formación fundamental sobre higiene digital: contraseñas robustas, deteción de ingeniería social, protección del puesto de trabajo y cumplimiento básico de protección de datos', 'Formación', 36.00, 12, 0, 1, 'Pagas por el certificado nominal de superación, manual de buenas practicas de ciberhigiene, decálogo de cumplimiento RGPD para imprimir y checklist de puesto de trabajo seguro. ', NULL, '2026-01-02 22:06:44', NULL, '2026-01-04 14:46:11'),
-(7, 'Ciberseguridad para diretivos', 'Seminiario ejecutivo sobre gestion de riesgos empresariales, impacto legal de las brechas de seguridad y toma de decisión ante crisis (Ransomware)', 'Ciberseguridad', 3600.00, 12, 0, 1, 'Pagas por un programa de acompañamiento anual que incluye un taller inicial de gestión de crisis y ransomware, 4 charlas trimestrales (Online 45 min.) sobre nuevas amenazas, canal de consulta prioritario para dudas del diretivo y cuadro de mando de riesgo para la dirección más una guía de bolsillo de respuestas a incidentes.', NULL, '2026-01-02 22:09:47', NULL, '2026-01-04 14:45:38');
+(7, 'Ciberseguridad para diretivos', 'Seminiario ejecutivo sobre gestion de riesgos empresariales, impacto legal de las brechas de seguridad y toma de decisión ante crisis (Ransomware)', 'Ciberseguridad', 3600.00, 12, 0, 1, 'Pagas por un programa de acompañamiento anual que incluye un taller inicial de gestión de crisis y ransomware, 4 charlas trimestrales (Online 45 min.) sobre nuevas amenazas, canal de consulta prioritario para dudas del diretivo y cuadro de mando de riesgo para la dirección más una guía de bolsillo de respuestas a incidentes.', NULL, '2026-01-02 22:09:47', NULL, '2026-01-04 14:45:38'),
+(8, 'Formación: Hacking Ético Básico', 'Curso introductorio sobre seguridad ofensiva y defensa, aprende técnicas de hacking ético y cómo protegerte de ellas.', 'Formación', 150.00, 10, 0, 1, 'Pagas por acceso al campus online con curso completo de Introducción al Phishing, certificado de superación, exámenes prácticos y materiales didácticos descargables.', NULL, '2026-01-09 10:00:00', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -556,6 +583,7 @@ ALTER TABLE `auth_rule`
 --
 ALTER TABLE `cursos`
   ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_cursos_servicio` (`servicio_id`),
   ADD KEY `idx_activo` (`activo`),
   ADD KEY `fk_cursos_creador` (`creado_por`),
   ADD KEY `fk_cursos_modificador` (`modificado_por`);
@@ -779,6 +807,7 @@ ALTER TABLE `auth_item_child`
 -- Filtros para la tabla `cursos`
 --
 ALTER TABLE `cursos`
+  ADD CONSTRAINT `fk_cursos_servicio` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_cursos_creador` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_cursos_modificador` FOREIGN KEY (`modificado_por`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
