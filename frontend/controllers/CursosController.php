@@ -26,10 +26,10 @@ class CursosController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index', 'ver', 'contenido', 'examen', 'calificar'],
+                'only' => ['index', 'ver', 'contenido', 'examen', 'calificar', 'historial'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'ver', 'contenido', 'examen', 'calificar'],
+                        'actions' => ['index', 'ver', 'contenido', 'examen', 'calificar', 'historial'],
                         'allow' => true,
                         'roles' => ['@'], // Only logged in users (Clients)
                     ],
@@ -38,41 +38,40 @@ class CursosController extends Controller
         ];
     }
 
-    /**
-     * Checks if the current user has access to training courses.
-     * Logic: Must have at least one active project with Service Category = 'Formación'.
-     * @return bool
-     */
+    // verifica si el usuario tiene acceso a cursos de formacion
+    // devuelve los cursos agrupados por proyecto o false si no tiene acceso
     protected function hasAccess()
     {
         $userId = Yii::$app->user->id;
+        $cursosAgrupados = Cursos::getCursosAgrupadosPorProyecto($userId, true);
 
-        $hasFormacion = Proyectos::find()
-            ->alias('p')
-            ->joinWith('servicio s')
-            ->where(['p.cliente_id' => $userId])
-            ->andWhere(['s.categoria' => Servicios::CATEGORIA_FORMACION])
-            // Opcional: Filtrar por estado del proyecto (por ahora "si existe contrato")
-            // ->andWhere(['IN', 'p.estado', [Proyectos::ESTADO_EN_CURSO, Proyectos::ESTADO_FINALIZADO]])
-            ->exists();
-
-        return $hasFormacion;
+        return empty($cursosAgrupados) ? false : $cursosAgrupados;
     }
 
-    /**
-     * Lists all Cursos or shows Restricted banner.
-     * @return string
-     */
+    // verifica si el usuario puede acceder a un curso especifico
+    protected function puedeAccederCurso($cursoId, $throwException = true)
+    {
+        $userId = Yii::$app->user->id;
+        $tieneAcceso = Cursos::usuarioPuedeAccederCurso($cursoId, $userId, true);
+
+        if (!$tieneAcceso && $throwException) {
+            throw new NotFoundHttpException('no tienes acceso a este curso');
+        }
+
+        return $tieneAcceso;
+    }
+
+    // muestra los cursos agrupados por proyecto
     public function actionIndex()
     {
-        if (!$this->hasAccess()) {
+        $cursosAgrupados = $this->hasAccess();
+
+        if ($cursosAgrupados === false) {
             return $this->render('restricted');
         }
 
-        $cursos = Cursos::find()->where(['activo' => 1])->all();
-
         return $this->render('index', [
-            'cursos' => $cursos,
+            'cursosAgrupados' => $cursosAgrupados,
         ]);
     }
 
@@ -80,13 +79,11 @@ class CursosController extends Controller
      * Displays a single Cursos model (Video Player).
      * @param int $id
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws NotFoundHttpException if the model cannot be found or access denied
      */
     public function actionVer($id)
     {
-        if (!$this->hasAccess()) {
-            return $this->render('restricted');
-        }
+        $this->puedeAccederCurso($id);
 
         $model = $this->findModel($id);
 
@@ -115,7 +112,7 @@ class CursosController extends Controller
 
     public function actionContenido($id, $slide = 1)
     {
-        if (!$this->hasAccess()) return $this->render('restricted');
+        $this->puedeAccederCurso($id);
 
         $curso = $this->findModel($id);
         
@@ -166,7 +163,7 @@ class CursosController extends Controller
 
     public function actionExamen($id)
     {
-        if (!$this->hasAccess()) return $this->render('restricted');
+        $this->puedeAccederCurso($id);
 
         $curso = $this->findModel($id);
         
@@ -190,8 +187,8 @@ class CursosController extends Controller
 
     public function actionCalificar($id)
     {
-        if (!$this->hasAccess()) return $this->render('restricted');
-        
+        $this->puedeAccederCurso($id);
+
         $request = Yii::$app->request;
         if (!$request->isPost) return $this->redirect(['examen', 'id' => $id]);
 
@@ -234,6 +231,17 @@ class CursosController extends Controller
             'aciertos' => $aciertos,
             'total' => $totalPreguntas,
             'estado' => $progreso->estado
+        ]);
+    }
+
+    // muestra el historial de cursos completados del usuario
+    public function actionHistorial()
+    {
+        $userId = Yii::$app->user->id;
+        $historial = ProgresoUsuario::getHistorialUsuario($userId);
+
+        return $this->render('historial', [
+            'historial' => $historial,
         ]);
     }
 }
