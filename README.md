@@ -2,58 +2,33 @@
 
 Plataforma de Gestión de Servicios de Ciberseguridad
 
-## Instalación
+## Instalación Rápida (XAMPP)
 
-### Clone del repositorio
+### 1. Descargar el proyecto
+
+Descargar o clonar el repositorio completo en la carpeta `htdocs` de XAMPP:
 
     git clone <url>
-    cd daw2-2025-26_C_ConsultoriaCiberseguridad
 
-### Instalar dependencias con Composer
+O descargar el ZIP y extraer en: `C:\xampp\htdocs\daw2-2025-26_C_ConsultoriaCiberseguridad`
 
-    composer install
+### 2. Iniciar XAMPP
 
-### Inicializar el proyecto Yii2
+Abrir XAMPP Control Panel y ejecutar:
+- Apache
+- MySQL
 
-    php init
-    (Seleccionar 0 para Development)
+### 3. Importar la base de datos
 
-### Configurar base de datos
+1. Abrir phpMyAdmin: http://localhost/phpmyadmin
+2. Crear una nueva base de datos llamada: `daw2_cybersec_manager`
+3. Importar el archivo: `SQL/database.sql`
 
-Editar common/config/main-local.php con credenciales MySQL
+### 4. Acceder a la aplicación
 
-    'db' => [
-        'dsn' => 'mysql:host=localhost;dbname=daw2_cybersec_manager',
-        'username' => 'root',
-        'password' => '',
-    ],
+**Frontend:** http://localhost/daw2-2025-26_C_ConsultoriaCiberseguridad/frontend/web
+**Backend:** http://localhost/daw2-2025-26_C_ConsultoriaCiberseguridad/backend/web
 
-### Abrir XAMPP, ejecutar Apache y MySQL
-
-### Importar database.sql
-
-### Inicializar RBAC
-
-    php yii rbac/init
-
-### Asignar roles a usuarios
-
-    php yii rbac/assign-all
-
-### XAMPP apuntando a:
-
-Frontend: http://localhost/daw2-2025-26_C_ConsultoriaCiberseguridad/frontend/web  
-Backend: http://localhost/daw2-2025-26_C_ConsultoriaCiberseguridad/backend/web
-
-o ejecutar servidor de desarrollo:
-
-Frontend:
-
-    php yii serve --port=8080 --docroot=@frontend/web
-
-Backend:
-
-    php yii serve --port=8081 --docroot=@backend/web
 
 
 DIRECTORY STRUCTURE

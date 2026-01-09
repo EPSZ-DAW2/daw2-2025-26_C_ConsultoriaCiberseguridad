@@ -3,8 +3,6 @@
 /yii_test
 /yii_test.bat
 
-# Ignoramos este archivo para evitar problemas con la BBDD
-/common/config/main-local.php
 
 # phpstorm project files
 .idea
@@ -19,8 +17,6 @@ nbproject
 
 # windows thumbnail cache
 Thumbs.db
-
-# composer vendor dir
 
 # composer itself is not needed
 composer.phar
