@@ -107,7 +107,12 @@ class SiteController extends Controller
             }
             
             if ($loginResult === true) {
-                return $this->goBack();
+                // Redirigir según el tipo de usuario
+                if (Yii::$app->user->identity->isBackendUser()) {
+                    return $this->redirect('/daw2-2025-26_C_ConsultoriaCiberseguridad/backend/web/index.php?r=site/index');
+                } else {
+                    return $this->goHome();
+                }
             }
         }
 

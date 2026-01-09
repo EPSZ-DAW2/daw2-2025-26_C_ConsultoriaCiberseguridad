@@ -89,22 +89,8 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $this->layout = 'blank';
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        // Redirigir siempre al login del frontend
+        return $this->redirect('/daw2-2025-26_C_ConsultoriaCiberseguridad/frontend/web/index.php?r=site/login');
     }
 
     /**
@@ -116,6 +102,6 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->redirect('/daw2-2025-26_C_ConsultoriaCiberseguridad/frontend/web/index.php?r=site/login');
     }
 }
