@@ -93,10 +93,6 @@ class RbacController extends Controller
         echo "Asignando jerarquias...\n";
 
         // --- ROLES ---
-        $cliente = $auth->createRole('cliente');
-        $auth->add($cliente);
-        $auth->addChild($cliente, $verMisProyectos);
-
         $consultor = $auth->createRole('consultor');
         $auth->add($consultor);
         $auth->addChild($consultor, $verCalendario);
@@ -117,7 +113,6 @@ class RbacController extends Controller
         $auth->add($admin);
         $auth->addChild($admin, $consultor);
         $auth->addChild($admin, $auditor);
-        $auth->addChild($admin, $cliente);
 
         // Roles nuevos del backend
         $manager = $auth->createRole('manager');
