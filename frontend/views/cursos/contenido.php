@@ -42,9 +42,12 @@ $this->title = $curso->nombre . ' - Diapositiva ' . $currentSlide;
             <?php endif; ?>
 
             <!-- 2. Video -->
-            <?php if ($diapositiva->video_url): ?>
+            <?php if ($diapositiva->video_url): 
+                $embedUrl = str_replace('watch?v=', 'embed/', $diapositiva->video_url);
+                $embedUrl = str_replace('youtu.be/', 'www.youtube.com/embed/', $embedUrl);
+            ?>
                 <div class="ratio ratio-16x9 mb-4">
-                    <iframe src="<?= Html::encode($diapositiva->video_url) ?>" allowfullscreen></iframe>
+                    <iframe src="<?= Html::encode($embedUrl) ?>" allowfullscreen></iframe>
                 </div>
             <?php endif; ?>
 
