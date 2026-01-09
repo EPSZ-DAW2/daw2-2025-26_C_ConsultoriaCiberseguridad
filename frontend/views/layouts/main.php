@@ -111,13 +111,6 @@ if (!Yii::$app->user->isGuest) {
                     </a>
                     <?php endif; ?>
 
-                    <!-- Mis Cursos (cliente_admin y cliente_user) -->
-                    <?php if (Yii::$app->user->can('verMisCursos')): ?>
-                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/cursos/mis-cursos']) ?>">
-                        <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
-                        Mis Cursos
-                    </a>
-                    <?php endif; ?>
 
                     <!-- Reportar Incidencia (cliente_admin y cliente_user) -->
                     <?php if (Yii::$app->user->can('reportarIncidencia')): ?>
@@ -133,16 +126,20 @@ if (!Yii::$app->user->isGuest) {
                         Calendario
                     </a>
 
+                    <!-- Campus Virtual (cliente_admin y cliente_user) -->
+                    <?php if (Yii::$app->user->can('verMisCursos')): ?>
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/cursos/index']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                        Campus Virtual
+                    </a>
+                    <?php endif; ?>
+
                     <?php endif; ?>
 
                     <div class="sb-sidenav-menu-heading">Público</div>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/index']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                         Inicio
-                    </a>
-                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/cursos/index']) ?>">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                        Campus Virtual
                     </a>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/catalogo']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
