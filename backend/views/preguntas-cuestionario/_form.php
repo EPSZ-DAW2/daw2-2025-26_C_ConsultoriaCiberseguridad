@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\models\Cursos;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\PreguntasCuestionario $model */
@@ -12,7 +14,13 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'curso_id')->textInput() ?>
+    <?php
+    // Preparar lista de cursos
+    $cursos = Cursos::find()->all();
+    $cursosLista = ArrayHelper::map($cursos, 'id', 'titulo');
+    ?>
+
+    <?= $form->field($model, 'curso_id')->dropDownList($cursosLista, ['prompt' => 'Seleccionar curso']) ?>
 
     <?= $form->field($model, 'enunciado_pregunta')->textarea(['rows' => 6]) ?>
 
@@ -23,14 +31,6 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'opcion_c')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'opcion_correcta')->dropDownList([ 'a' => 'A', 'b' => 'B', 'c' => 'C', ], ['prompt' => '']) ?>
-
-    <?= $form->field($model, 'creado_por')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_creacion')->textInput() ?>
-
-    <?= $form->field($model, 'modificado_por')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_modificacion')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

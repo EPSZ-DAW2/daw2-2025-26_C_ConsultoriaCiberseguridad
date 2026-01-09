@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var common\models\Proyectos $model */
 
-$this->title = $model->id;
+$this->title = $model->nombre;
 $this->params['breadcrumbs'][] = ['label' => 'Proyectos', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -32,19 +32,37 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'nombre',
             'descripcion:ntext',
-            'cliente_id',
-            'servicio_id',
-            'consultor_id',
-            'auditor_id',
+            [
+                'attribute' => 'cliente_id',
+                'value' => $model->cliente ? $model->cliente->nombre . ' ' . $model->cliente->apellidos . ' (' . $model->cliente->empresa . ')' : null,
+            ],
+            [
+                'attribute' => 'servicio_id',
+                'value' => $model->servicio ? $model->servicio->nombre : null,
+            ],
+            [
+                'attribute' => 'consultor_id',
+                'value' => $model->consultor ? $model->consultor->nombre . ' ' . $model->consultor->apellidos : null,
+            ],
+            [
+                'attribute' => 'auditor_id',
+                'value' => $model->auditor ? $model->auditor->nombre . ' ' . $model->auditor->apellidos : null,
+            ],
             'fecha_inicio',
             'fecha_fin_prevista',
             'fecha_fin_real',
             'estado',
             'presupuesto',
             'notas_internas:ntext',
-            'creado_por',
+            [
+                'attribute' => 'creado_por',
+                'value' => $model->creadoPor ? $model->creadoPor->nombre . ' ' . $model->creadoPor->apellidos : null,
+            ],
             'fecha_creacion',
-            'modificado_por',
+            [
+                'attribute' => 'modificado_por',
+                'value' => $model->modificadoPor ? $model->modificadoPor->nombre . ' ' . $model->modificadoPor->apellidos : null,
+            ],
             'fecha_modificacion',
         ],
     ]) ?>

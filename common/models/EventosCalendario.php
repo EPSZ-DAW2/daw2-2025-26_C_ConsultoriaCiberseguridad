@@ -90,8 +90,8 @@ class EventosCalendario extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'proyecto_id' => 'Proyecto ID',
-            'auditor_id' => 'Auditor ID',
+            'proyecto_id' => 'Proyecto',
+            'auditor_id' => 'Auditor',
             'titulo' => 'Titulo',
             'descripcion' => 'Descripcion',
             'fecha' => 'Fecha',

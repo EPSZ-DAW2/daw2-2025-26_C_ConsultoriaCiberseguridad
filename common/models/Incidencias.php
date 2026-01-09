@@ -89,8 +89,8 @@ class Incidencias extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'cliente_id' => 'Cliente ID',
-            'analista_id' => 'Analista ID',
+            'cliente_id' => 'Cliente',
+            'analista_id' => 'Analista SOC',
             'titulo' => 'Titulo',
             'descripcion' => 'Descripcion',
             'severidad' => 'Severidad',

@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\models\User;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\Incidencias $model */
@@ -12,9 +14,28 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'cliente_id')->textInput() ?>
+    <?php
+    // Preparar listas de usuarios por rol
+    $clientes = User::find()
+        ->where(['activo' => 1])
+        ->andWhere(['rol' => 'cliente_admin'])
+        ->all();
+    $clientesLista = ArrayHelper::map($clientes, 'id', function($user) {
+        return $user->nombre . ' ' . $user->apellidos . ' (' . $user->empresa . ')';
+    });
 
-    <?= $form->field($model, 'analista_id')->textInput() ?>
+    $analistas = User::find()
+        ->where(['activo' => 1])
+        ->andWhere(['rol' => 'analista_soc'])
+        ->all();
+    $analistasLista = ArrayHelper::map($analistas, 'id', function($user) {
+        return $user->nombre . ' ' . $user->apellidos;
+    });
+    ?>
+
+    <?= $form->field($model, 'cliente_id')->dropDownList($clientesLista, ['prompt' => 'Seleccionar cliente']) ?>
+
+    <?= $form->field($model, 'analista_id')->dropDownList($analistasLista, ['prompt' => 'Seleccionar analista SOC']) ?>
 
     <?= $form->field($model, 'titulo')->textInput(['maxlength' => true]) ?>
 

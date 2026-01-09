@@ -61,7 +61,7 @@ class Diapositivas extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'curso_id' => 'Curso ID',
+            'curso_id' => 'Curso',
             'numero_orden' => 'Numero Orden',
             'titulo' => 'Titulo',
             'contenido_html' => 'Contenido Html',

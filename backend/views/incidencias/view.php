@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var common\models\Incidencias $model */
 
-$this->title = $model->id;
+$this->title = $model->titulo;
 $this->params['breadcrumbs'][] = ['label' => 'Incidencias', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -30,8 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'cliente_id',
-            'analista_id',
+            [
+                'attribute' => 'cliente_id',
+                'value' => $model->cliente ? $model->cliente->nombre . ' ' . $model->cliente->apellidos . ' (' . $model->cliente->empresa . ')' : null,
+            ],
+            [
+                'attribute' => 'analista_id',
+                'value' => $model->analista ? $model->analista->nombre . ' ' . $model->analista->apellidos : null,
+            ],
             'titulo',
             'descripcion:ntext',
             'severidad',

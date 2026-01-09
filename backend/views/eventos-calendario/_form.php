@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\models\User;
+use common\models\Proyectos;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\EventosCalendario $model */
@@ -12,9 +15,24 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'proyecto_id')->textInput() ?>
+    <?php
+    // Preparar lista de proyectos activos
+    $proyectos = Proyectos::find()->all();
+    $proyectosLista = ArrayHelper::map($proyectos, 'id', 'nombre');
 
-    <?= $form->field($model, 'auditor_id')->textInput() ?>
+    // Preparar lista de auditores
+    $auditores = User::find()
+        ->where(['activo' => 1])
+        ->andWhere(['rol' => 'auditor'])
+        ->all();
+    $auditoresLista = ArrayHelper::map($auditores, 'id', function($user) {
+        return $user->nombre . ' ' . $user->apellidos;
+    });
+    ?>
+
+    <?= $form->field($model, 'proyecto_id')->dropDownList($proyectosLista, ['prompt' => 'Seleccionar proyecto']) ?>
+
+    <?= $form->field($model, 'auditor_id')->dropDownList($auditoresLista, ['prompt' => 'Seleccionar auditor']) ?>
 
     <?= $form->field($model, 'titulo')->textInput(['maxlength' => true]) ?>
 
@@ -35,14 +53,6 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'recordatorio_enviado')->textInput() ?>
 
     <?= $form->field($model, 'notas')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'creado_por')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_creacion')->textInput() ?>
-
-    <?= $form->field($model, 'modificado_por')->textInput() ?>
-
-    <?= $form->field($model, 'fecha_modificacion')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

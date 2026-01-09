@@ -67,7 +67,7 @@ class PreguntasCuestionario extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'curso_id' => 'Curso ID',
+            'curso_id' => 'Curso',
             'enunciado_pregunta' => 'Enunciado Pregunta',
             'opcion_a' => 'Opcion A',
             'opcion_b' => 'Opcion B',
