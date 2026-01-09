@@ -90,7 +90,8 @@ class SiteController extends Controller
     public function actionLogin()
     {
         // Redirigir siempre al login del frontend
-        return $this->redirect('/daw2-2025-26_C_ConsultoriaCiberseguridad/frontend/web/index.php?r=site/login');
+        $frontendUrl = str_replace('/backend/web', '/frontend/web', Yii::$app->request->baseUrl);
+        return $this->redirect($frontendUrl . '/index.php?r=site/login');
     }
 
     /**
@@ -102,6 +103,7 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->redirect('/daw2-2025-26_C_ConsultoriaCiberseguridad/frontend/web/index.php?r=site/login');
+        $frontendUrl = str_replace('/backend/web', '/frontend/web', Yii::$app->request->baseUrl);
+        return $this->redirect($frontendUrl . '/index.php?r=site/login');
     }
 }
