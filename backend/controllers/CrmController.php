@@ -79,6 +79,33 @@ class CrmController extends Controller
     }
 
     /**
+     * Cambia el estado de una solicitud
+     */
+    public function actionCambiarEstado($id, $estado)
+    {
+        $model = $this->findModel($id);
+        $estadosPermitidos = [
+            SolicitudesPresupuesto::ESTADO_SOLICITUD_PENDIENTE,
+            SolicitudesPresupuesto::ESTADO_SOLICITUD_CONTRATADO,
+            SolicitudesPresupuesto::ESTADO_SOLICITUD_RECHAZADO,
+        ];
+
+        if (!in_array($estado, $estadosPermitidos)) {
+            Yii::$app->session->setFlash('error', 'Estado no válido.');
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        $model->estado_solicitud = $estado;
+        if ($model->save(false)) {
+            Yii::$app->session->setFlash('success', 'Estado actualizado a: ' . $estado);
+        } else {
+            Yii::$app->session->setFlash('error', 'Error al actualizar el estado.');
+        }
+
+        return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+    /**
      * Encuentra el modelo basado en su ID
      */
     protected function findModel($id)

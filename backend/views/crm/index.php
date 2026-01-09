@@ -80,17 +80,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update}',
+                'template' => '{view}',
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
-                        return Html::a('<i class="fas fa-eye"></i>', $url, [
-                            'title' => 'Ver',
-                            'class' => 'btn btn-sm btn-info',
-                        ]);
-                    },
-                    'update' => function ($url, $model, $key) {
-                        return Html::a('<i class="fas fa-edit"></i>', $url, [
-                            'title' => 'Editar',
+                        return Html::a('<i class="fas fa-eye"></i> Ver Detalles', $url, [
+                            'title' => 'Ver detalles de la solicitud',
                             'class' => 'btn btn-sm btn-primary',
                         ]);
                     },

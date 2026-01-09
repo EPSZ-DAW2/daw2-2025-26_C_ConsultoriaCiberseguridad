@@ -144,4 +144,36 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
+    <div class="mt-4">
+        <?= Html::a(
+            'Aceptar',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Contratado'],
+            [
+                'class' => 'btn btn-success me-2',
+                'data-confirm' => '¿Está seguro de aceptar esta solicitud?',
+                'data-method' => 'post'
+            ]
+        ) ?>
+
+        <?= Html::a(
+            'Rechazar',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Rechazado'],
+            [
+                'class' => 'btn btn-danger me-2',
+                'data-confirm' => '¿Está seguro de rechazar esta solicitud?',
+                'data-method' => 'post'
+            ]
+        ) ?>
+
+        <?= Html::a(
+            'Marcar como pendiente',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Pendiente'],
+            [
+                'class' => 'btn btn-secondary',
+                'data-confirm' => '¿Está seguro de marcar esta solicitud como pendiente?',
+                'data-method' => 'post'
+            ]
+        ) ?>
+    </div>
+
 </div>
