@@ -6,8 +6,14 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var array $cursoData */
 /** @var int $numDiapositivas */
+/** @var bool $isUpdate */
+/** @var int $cursoId */
+/** @var common\models\PreguntasCuestionario[] $preguntasExistentes */
 
-$this->title = 'Wizard de Creación de Curso - Paso 3';
+$isUpdate = isset($isUpdate) && $isUpdate;
+$cursoId = isset($cursoId) ? $cursoId : null;
+$preguntasExistentes = isset($preguntasExistentes) ? $preguntasExistentes : [];
+$this->title = $isUpdate ? 'Wizard de Edición de Curso - Paso 3' : 'Wizard de Creación de Curso - Paso 3';
 ?>
 <div class="cursos-wizard-step3">
 
@@ -59,7 +65,17 @@ $this->title = 'Wizard de Creación de Curso - Paso 3';
 
             <p class="text-muted">Total de preguntas: <span id="contador-preguntas">0</span></p>
 
-            <form method="post" action="<?= Url::to(['create-wizard', 'step' => 3]) ?>" id="form-preguntas">
+            <?php
+            if ($isUpdate) {
+                $formAction = Url::to(['update-wizard', 'id' => $cursoId, 'step' => 3]);
+                $backUrl = ['update-wizard', 'id' => $cursoId, 'step' => 2];
+            } else {
+                $formAction = Url::to(['create-wizard', 'step' => 3]);
+                $backUrl = ['create-wizard', 'step' => 2];
+            }
+            ?>
+
+            <form method="post" action="<?= $formAction ?>" id="form-preguntas">
                 <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken) ?>
 
                 <div id="preguntas-container">
@@ -67,7 +83,7 @@ $this->title = 'Wizard de Creación de Curso - Paso 3';
                 </div>
 
                 <div class="form-group mt-4">
-                    <?= Html::a('<i class="fas fa-arrow-left"></i> Volver al Paso 2', ['create-wizard', 'step' => 2], [
+                    <?= Html::a('<i class="fas fa-arrow-left"></i> Volver al Paso 2', $backUrl, [
                         'class' => 'btn btn-secondary'
                     ]) ?>
 
@@ -89,6 +105,19 @@ $this->title = 'Wizard de Creación de Curso - Paso 3';
 
 <script>
 let contadorPreguntas = 0;
+
+// cargar preguntas existentes en modo edicion
+<?php if ($isUpdate && !empty($preguntasExistentes)): ?>
+    <?php foreach ($preguntasExistentes as $preg): ?>
+        addPregunta(
+            <?= json_encode($preg->enunciado_pregunta) ?>,
+            <?= json_encode($preg->opcion_a) ?>,
+            <?= json_encode($preg->opcion_b) ?>,
+            <?= json_encode($preg->opcion_c) ?>,
+            <?= json_encode($preg->opcion_correcta) ?>
+        );
+    <?php endforeach; ?>
+<?php endif; ?>
 
 function addPregunta(enunciado = '', opcion_a = '', opcion_b = '', opcion_c = '', opcion_correcta = '') {
     const id = contadorPreguntas;

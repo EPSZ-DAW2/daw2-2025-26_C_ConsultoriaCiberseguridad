@@ -91,8 +91,6 @@ AppAsset::register($this);
                 'label' => 'Formación',
                 'items' => [
                     ['label' => 'Cursos', 'url' => ['/cursos/index']],
-                    ['label' => 'Diapositivas', 'url' => ['/diapositivas/index']],
-                    ['label' => 'Preguntas Examen', 'url' => ['/preguntas-cuestionario/index']],
                     '<div class="dropdown-divider"></div>',
                     ['label' => 'Progreso Alumnos', 'url' => ['/progreso-usuario/index']],
                 ],

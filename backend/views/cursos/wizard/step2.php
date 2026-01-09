@@ -6,8 +6,12 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var array $cursoData */
 /** @var array $diapositivas */
+/** @var bool $isUpdate */
+/** @var int $cursoId */
 
-$this->title = 'Wizard de Creación de Curso - Paso 2';
+$isUpdate = isset($isUpdate) && $isUpdate;
+$cursoId = isset($cursoId) ? $cursoId : null;
+$this->title = $isUpdate ? 'Wizard de Edición de Curso - Paso 2' : 'Wizard de Creación de Curso - Paso 2';
 ?>
 <div class="cursos-wizard-step2">
 
@@ -59,7 +63,17 @@ $this->title = 'Wizard de Creación de Curso - Paso 2';
 
             <p class="text-muted">Total de diapositivas: <span id="contador-diapositivas">0</span></p>
 
-            <form method="post" action="<?= Url::to(['create-wizard', 'step' => 2]) ?>" id="form-diapositivas">
+            <?php
+            if ($isUpdate) {
+                $formAction = Url::to(['update-wizard', 'id' => $cursoId, 'step' => 2]);
+                $backUrl = ['update-wizard', 'id' => $cursoId, 'step' => 1];
+            } else {
+                $formAction = Url::to(['create-wizard', 'step' => 2]);
+                $backUrl = ['create-wizard', 'step' => 1];
+            }
+            ?>
+
+            <form method="post" action="<?= $formAction ?>" id="form-diapositivas">
                 <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken) ?>
 
                 <div id="diapositivas-container">
@@ -67,7 +81,7 @@ $this->title = 'Wizard de Creación de Curso - Paso 2';
                 </div>
 
                 <div class="form-group mt-4">
-                    <?= Html::a('<i class="fas fa-arrow-left"></i> Volver al Paso 1', ['create-wizard', 'step' => 1], [
+                    <?= Html::a('<i class="fas fa-arrow-left"></i> Volver al Paso 1', $backUrl, [
                         'class' => 'btn btn-secondary'
                     ]) ?>
 

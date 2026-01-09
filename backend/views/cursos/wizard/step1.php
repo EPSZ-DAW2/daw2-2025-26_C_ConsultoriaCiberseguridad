@@ -7,8 +7,10 @@ use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\Cursos $model */
+/** @var bool $isUpdate */
 
-$this->title = 'Wizard de Creación de Curso - Paso 1';
+$isUpdate = isset($isUpdate) && $isUpdate;
+$this->title = $isUpdate ? 'Wizard de Edición de Curso - Paso 1' : 'Wizard de Creación de Curso - Paso 1';
 ?>
 <div class="cursos-wizard-step1">
 
@@ -44,7 +46,13 @@ $this->title = 'Wizard de Creación de Curso - Paso 1';
 
     <div class="card">
         <div class="card-body">
-            <?php $form = ActiveForm::begin(); ?>
+            <?php
+            if ($isUpdate) {
+                $form = ActiveForm::begin(['action' => ['update-wizard', 'id' => $model->id, 'step' => 1]]);
+            } else {
+                $form = ActiveForm::begin();
+            }
+            ?>
 
             <?= $form->field($model, 'nombre')->textInput(['maxlength' => true]) ?>
 

@@ -42,6 +42,9 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Cursos $model, $key, $index, $column) {
+                    if ($action === 'update') {
+                        return Url::toRoute(['update-wizard', 'id' => $model->id]);
+                    }
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],
