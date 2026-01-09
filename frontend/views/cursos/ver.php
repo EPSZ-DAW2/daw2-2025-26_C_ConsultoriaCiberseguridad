@@ -15,8 +15,11 @@ $this->title = $model->nombre;
         <div class="col-lg-9">
             <!-- Video Player -->
             <div class="ratio ratio-16x9 bg-black shadow-lg mb-4 text-center d-flex align-items-center justify-content-center">
-                <?php if ($model->video_url): ?>
-                    <iframe src="<?= Html::encode($model->video_url) ?>" title="<?= Html::encode($model->nombre) ?>" allowfullscreen></iframe>
+                <?php if ($model->video_url): 
+                    $embedUrl = str_replace('watch?v=', 'embed/', $model->video_url);
+                    $embedUrl = str_replace('youtu.be/', 'www.youtube.com/embed/', $embedUrl);
+                ?>
+                    <iframe src="<?= Html::encode($embedUrl) ?>" title="<?= Html::encode($model->nombre) ?>" allowfullscreen></iframe>
                 <?php else: ?>
                     <div class="text-muted p-5">
                         <i class="fas fa-video-slash fa-3x mb-3"></i><br>
