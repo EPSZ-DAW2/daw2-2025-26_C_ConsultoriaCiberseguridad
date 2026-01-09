@@ -11,11 +11,14 @@ $this->title = 'Campus de Formación';
     <div class="alert alert-secondary py-5">
         <h1 class="display-4"><i class="fas fa-lock"></i> Contenido Exclusivo</h1>
         <p class="lead mt-3">
-            Nuestro <strong>Campus de Ciberseguridad</strong> está reservado para clientes con contratos de formación activos.
+            Nuestro <strong>Campus de Ciberseguridad</strong> está reservado para clientes con proyectos de formación activos.
         </p>
         <hr class="my-4">
         <p>
-            ¿Quieres acceder a decenas de cursos especializados, laboratorios y certificaciones?
+            Los cursos están disponibles exclusivamente para los servicios de formación contratados en cada proyecto
+        </p>
+        <p>
+            ¿Quieres acceder a nuestros cursos especializados, laboratorios y certificaciones?
         </p>
         <p>
             <?= Html::a('Solicitar Presupuesto', ['/site/contact'], ['class' => 'btn btn-primary btn-lg']) ?>

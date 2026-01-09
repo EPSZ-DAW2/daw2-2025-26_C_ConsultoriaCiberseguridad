@@ -29,6 +29,39 @@ $this->title = $model->nombre;
             </div>
 
             <h2 class="text-white"><?= Html::encode($model->nombre) ?></h2>
+
+            <?php
+            // ver progreso del usuario
+            $progreso = \common\models\ProgresoUsuario::findOne([
+                'usuario_id' => Yii::$app->user->id,
+                'curso_id' => $model->id
+            ]);
+
+            if ($progreso):
+            ?>
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Tu progreso:</strong>
+                    <?php if ($progreso->isEstadoAprobado()): ?>
+                        <span class="badge bg-success ms-2">
+                            <i class="fas fa-trophy"></i> Aprobado - Nota: <?= number_format($progreso->nota_obtenida, 2) ?>/10
+                        </span>
+                    <?php elseif ($progreso->isEstadoSuspenso()): ?>
+                        <span class="badge bg-warning ms-2">
+                            <i class="fas fa-redo"></i> Suspenso - Nota: <?= number_format($progreso->nota_obtenida, 2) ?>/10
+                        </span>
+                    <?php else: ?>
+                        <span class="badge bg-primary ms-2">
+                            <i class="fas fa-spinner"></i> En curso - Diapositiva <?= $progreso->diapositiva_actual ?>
+                        </span>
+                    <?php endif; ?>
+                </div>
+                <?php if ($progreso->isEstadoEnCurso()): ?>
+                    <?= Html::a('Continuar donde lo dejaste', ['contenido', 'id' => $model->id, 'slide' => $progreso->diapositiva_actual], ['class' => 'btn btn-primary']) ?>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+
             <p class="text-secondary"><?= Html::encode($model->descripcion) ?></p>
 
         </div>
