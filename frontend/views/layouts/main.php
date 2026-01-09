@@ -67,7 +67,7 @@ if (!Yii::$app->user->isGuest) {
                         ]) ?>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="<?= Url::to(['/site/configuracion']) ?>">Configuración</a>
+                        <a class="dropdown-item" href="<?= Url::to(['/site/configuracion']) ?>">Perfil</a>
                     </li>
                 <?php else: ?>
                     <li><a class="dropdown-item" href="<?= Url::to(['/site/login']) ?>">Iniciar Sesión</a></li>

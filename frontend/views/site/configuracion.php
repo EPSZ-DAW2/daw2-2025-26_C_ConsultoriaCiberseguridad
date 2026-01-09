@@ -5,7 +5,7 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 
-$this->title = 'Configuración';
+$this->title = 'Perfil';
 $user = Yii::$app->user->identity;
 
 // Registrar CSS específico para esta página
@@ -208,7 +208,7 @@ $this->registerCss("
 <div class="chrome-settings-layout">
     <!-- Sidebar -->
     <div class="settings-sidebar d-none d-md-block">
-        <div style="padding: 18px 24px; font-size: 22px; color: #202124;">Configuración</div>
+        <div style="padding: 18px 24px; font-size: 22px; color: #202124;">Perfil</div>
         
         <a href="#" class="settings-menu-item active" data-target="section-inicio">
             <i class="fas fa-home"></i> Inicio
@@ -485,123 +485,6 @@ $this->registerCss("
                     <p class="text-muted small mb-0">Asegúrate de poder acceder siempre a tu cuenta manteniendo al día esta información</p>
                 </div>
 
-                <!-- 2FA (Dinámico) -->
-                <div class="settings-row" onclick="toggleTotpSection()" style="cursor: pointer;">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-shield-alt text-muted fs-5 me-3" style="width: 24px; text-align: center;"></i>
-                        <div>
-                            <div class="row-label fw-bold">Verificación en dos pasos</div>
-                            <div class="small text-muted">
-                                <?= $user->totp_activo ? '<span class="text-success">Activado</span> <i class="fas fa-check-circle small"></i>' : 'La verificación en dos pasos está desactivada' ?>
-                            </div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right row-icon"></i>
-                </div>
-
-                <!-- Panel 2FA (Oculto) -->
-                <div id="totp-section" class="p-4 bg-light border-top" style="display: none;">
-                    <?php if (!$user->totp_activo): ?>
-                        <div id="totp-setup-step-1">
-                            <h5 class="mb-3">Protege tu cuenta con la verificación en 2 pasos</h5>
-                            <p class="text-muted small">Cada vez que inicies sesión, necesitarás introducir un código único que genera tu aplicación de autenticación (Google Authenticator, Authy, etc.).</p>
-                            <button class="btn btn-primary btn-sm" onclick="startTotpSetup()">Empezar configuración</button>
-                        </div>
-                        
-                        <div id="totp-setup-step-2" style="display: none;">
-                            <h6 class="fw-bold">1. Escanea este código QR</h6>
-                            <p class="small text-muted">Abre tu aplicación de autenticación y escanea el código.</p>
-                            
-                            <!-- Placeholder QR / Se llenará vía JS o Iframe de imagen -->
-                            <div class="text-center my-3 bg-white p-3 d-inline-block rounded shadow-sm border">
-                                <?php 
-                                    // Generamos secreto y URL QR al vuelo para mostrar (esto debería hacerse mejor en controlador AJAX, 
-                                    // pero para prototipo rápido usamos lógica inline o llamada futura).
-                                    // Para simplificar: usaremos un iframe o img src si tuviéramos endpoint.
-                                    // Aquí usaremos la librería PHP instalada para pintar el QR directamente si es posible,
-                                    // o pasaremos el secreto al form.
-                                    
-                                    // OJO: Generar secreto aquí rompe MVC estricto pero es efectivo para vista rápida.
-                                    // Mejor: Un botón "Mostrar QR" que haga submit a una vista intermedia o ajax.
-                                    // MODO SIMPLE: Usar una imagen generada por helper de Google Charts o similar si librería falla, 
-                                    // pero tenemos bacon-qr instalado.
-                                    
-                                    $google2fa = new \PragmaRX\Google2FA\Google2FA();
-                                    $secret = $google2fa->generateSecretKey();
-                                    // La URL 'otpauth'
-                                    $qrCodeUrl = $google2fa->getQRCodeUrl(
-                                        Yii::$app->name,
-                                        $user->email,
-                                        $secret
-                                    );
-                                    
-                                    // Usamos un servicio público de QR para no depender de librerías de imagen complejas 
-                                    // (bacon qr a veces requiere imagick).
-                                    // Google Charts API para QR está deprecated pero funciona, o goqr.me
-                                    $qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrCodeUrl);
-                                ?>
-                                <img src="<?= $qrImageUrl ?>" alt="QR Code" style="width: 150px; height: 150px;">
-                            </div>
-                            
-                            <div class="mb-3 text-center">
-                                <small class="text-muted d-block">¿No puedes escanearlo? Clave manual:</small>
-                                <code class="fw-bold text-dark"><?= $secret ?></code>
-                            </div>
-
-                            <h6 class="fw-bold mt-4">2. Introduce el código de 6 dígitos</h6>
-                            <form action="<?= Url::to(['site/enable-totp']) ?>" method="post" class="mt-2">
-                                <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
-                                <input type="hidden" name="totp_secret" value="<?= $secret ?>">
-                                
-                                <div class="row g-2 align-items-center">
-                                    <div class="col-auto">
-                                        <input type="text" name="totp_code" class="form-control form-control-sm text-center" placeholder="123456" maxlength="6" required style="width: 120px; letter-spacing: 4px; font-weight: bold;">
-                                    </div>
-                                    <div class="col-auto">
-                                        <button type="submit" class="btn btn-success btn-sm">Verificar y Activar</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                    <?php else: ?>
-                        <!-- DESACTIVAR 2FA -->
-                        <div class="alert alert-success d-flex align-items-center mb-4">
-                            <i class="fas fa-check-circle fs-4 me-3"></i>
-                            <div>
-                                <strong>La autenticación en dos pasos está activa.</strong>
-                                <div class="small">Tu cuenta está más segura. Se te pedirá un código al iniciar sesión.</div>
-                            </div>
-                        </div>
-
-                        <h6 class="fw-bold text-danger">Desactivar verificación en dos pasos</h6>
-                        <p class="small text-muted mb-3">Si desactivas esto, tu cuenta será más vulnerable a robos de contraseña.</p>
-                        
-                        <form action="<?= Url::to(['site/disable-totp']) ?>" method="post">
-                             <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
-                             <div class="mb-3" style="max-width: 300px;">
-                                <label class="form-label small fw-bold">Confirma tu contraseña para desactivar</label>
-                                <input type="password" name="current_password" class="form-control form-control-sm" required>
-                             </div>
-                             <button type="button" class="btn btn-secondary btn-sm me-2" onclick="toggleTotpSection()">Cancelar</button>
-                             <button type="submit" class="btn btn-danger btn-sm">Desactivar 2FA</button>
-                        </form>
-                    <?php endif; ?>
-                </div>
-
-                <script>
-                function toggleTotpSection() {
-                    var el = document.getElementById('totp-section');
-                    el.style.display = (el.style.display === 'none') ? 'block' : 'none';
-                }
-                function startTotpSetup() {
-                    document.getElementById('totp-setup-step-1').style.display = 'none';
-                    document.getElementById('totp-setup-step-2').style.display = 'block';
-                }
-                </script>
-
-
-
                 <!-- Contraseña (Funcional - Link) -->
                 <div class="settings-row" onclick="document.querySelector('[data-target=\'section-contrasena\']').click()">
                     <div class="d-flex align-items-center">
@@ -876,7 +759,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Excluyendo explícitamente los paneles de vista/edición de perfil que tienen su propia lógica de display
                 const hiddenElements = targetSection.querySelectorAll('[style*="display: none"]');
                 hiddenElements.forEach(el => {
-                    if (el.id !== 'profile-edit-mode' && el.id !== 'profile-view-mode' && el.id !== 'recovery-email-form' && el.id !== 'totp-section' && el.id !== 'totp-setup-step-2') {
+                    if (el.id !== 'profile-edit-mode' && el.id !== 'profile-view-mode' && el.id !== 'recovery-email-form') {
                         el.style.display = '';
                     }
                 });
