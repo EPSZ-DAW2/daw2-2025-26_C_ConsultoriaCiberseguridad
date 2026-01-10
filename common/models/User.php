@@ -6,6 +6,7 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use PragmaRX\Google2FA\Google2FA;
 
 /**
  * User model adaptado a la tabla 'usuarios'
@@ -238,7 +239,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getGoogle2fa()
     {
-        return new \PragmaRX\Google2FA\Google2FA();
+        return new Google2FA();
     }
 
     /**

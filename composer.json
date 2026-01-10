@@ -19,8 +19,8 @@
         "yiisoft/yii2-bootstrap5": "~2.0.2",
         "yiisoft/yii2-symfonymailer": "~2.0.3",
         "philippfrenzel/yii2fullcalendar": "^2.4",
-        "pragmarx/google2fa": "^9.0",
-        "bacon/bacon-qr-code": "^3.0"
+        "pragmarx/google2fa": "^8.0",
+        "bacon/bacon-qr-code": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
@@ -48,6 +48,9 @@
         "process-timeout": 1800,
         "fxp-asset": {
             "enabled": false
+        },
+        "platform": {
+            "php": "8.0.30"
         }
     },
     "repositories": [

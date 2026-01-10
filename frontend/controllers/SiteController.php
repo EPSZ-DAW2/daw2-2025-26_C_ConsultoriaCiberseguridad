@@ -378,7 +378,34 @@ class SiteController extends Controller
 
     public function actionConfiguracion()
     {
-        return $this->render('configuracion');
+        $user = Yii::$app->user->identity;
+        $secret = null;
+        $qrCodeUrl = null;
+
+        if (!$user->totp_activo) {
+            $google2fa = $user->getGoogle2fa();
+            
+            // Generar o recuperar secreto temporal de la sesión
+            if (!Yii::$app->session->has('2fa_setup_secret')) {
+                Yii::$app->session->set('2fa_setup_secret', $google2fa->generateSecretKey());
+            }
+            $secret = Yii::$app->session->get('2fa_setup_secret');
+
+            // Generar URL para el QR
+            $qrCodeUrl = $google2fa->getQRCodeUrl(
+                Yii::$app->name,
+                $user->email,
+                $secret
+            );
+        } else {
+            // Si ya está activo, limpiamos cualquier secreto temporal porsiaca
+            Yii::$app->session->remove('2fa_setup_secret');
+        }
+
+        return $this->render('configuracion', [
+            'secret' => $secret,
+            'qrCodeUrl' => $qrCodeUrl
+        ]);
     }
 
     public function actionSolicitarPresupuesto($servicio_id)

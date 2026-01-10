@@ -2,30 +2,39 @@
 
 Plataforma de Gestión de Servicios de Ciberseguridad
 
-## Instalación Rápida (XAMPP)
+## Guía de Despliegue y Pruebas
 
-### 1. Descargar el proyecto
+Para poner en marcha el proyecto en otro equipo, sigue estos pasos estrictamente:
 
-Descargar o clonar el repositorio completo en la carpeta `htdocs` de XAMPP:
+### 1. Descargar el código
+Clona el repositorio o descomprime el ZIP en `htdocs`:
+`git clone <url>`
 
-    git clone <url>
+### 2. Instalar Dependencias (IMPORTANTE)
+El proyecto usa librerías externas (como Google2FA) que no se suben al repositorio.
+**Ejecuta el archivo incluído `instalar_todo.bat`** haciendo doble clic.
+*Esto descargará todas las librerías necesarias automáticamente.*
 
-O descargar el ZIP y extraer en: `C:\xampp\htdocs\daw2-2025-26_C_ConsultoriaCiberseguridad`
+### 3. Base de Datos
+1.  Abrir phpMyAdmin: http://localhost/phpmyadmin
+2.  Importar el archivo: `SQL/database.sql` (la base de datos se crea automáticamente).
+3.  Si necesitas configurar usuario/contraseña de BD, edita `common/config/main-local.php` (si no existe, copia `common/config/main-local-example.php`).
 
-### 2. Iniciar XAMPP
+### 4. Inicializar Entorno (Solo primera vez)
+Ejecuta el archivo `init.bat` en la raíz, selecciona opción `0` (Development) y `yes`.
 
-Abrir XAMPP Control Panel y ejecutar:
-- Apache
-- MySQL
+### 5. Probando la Verificación en 2 Pasos (2FA)
+El sistema incluye autenticación de doble factor. Para probarla:
 
-### 3. Importar la base de datos
+1.  Accede al Frontend: `/daw2-2025-26_C_ConsultoriaCiberseguridad/frontend/web`
+2.  Loguéate con un usuario (o crea uno nuevo).
+3.  Ve a **Configuración** (Menú superior -> Configuración).
+4.  Baja a la sección **Seguridad**.
+5.  Haz clic en **"Verificación en dos pasos"**.
+6.  Escanea el QR con **Google Authenticator** (móvil) e introduce el código numérico.
+7.  Al activarse, sal del sistema (`Logout`).
+8.  Al volver a entrar, tras poner tu contraseña, te pedirá el código 2FA.
 
-1. Abrir phpMyAdmin: http://localhost/phpmyadmin
-2. Importar el archivo: `SQL/database.sql` (la base de datos se crea automáticamente)
-
-### 4. Acceder a la aplicación
-
-**Frontend:** http://localhost/daw2-2025-26_C_ConsultoriaCiberseguridad/frontend/web
 **Backend:** http://localhost/daw2-2025-26_C_ConsultoriaCiberseguridad/backend/web
 
 

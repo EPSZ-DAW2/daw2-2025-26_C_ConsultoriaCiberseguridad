@@ -554,6 +554,127 @@ $this->registerCss("
                 }
                 </script>
 
+                 <!-- 2FA ROW -->
+                 <div class="settings-row border-top" onclick="toggle2FA()" style="cursor: pointer;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-mobile-alt text-muted fs-5 me-3" style="width: 24px; text-align: center;"></i>
+                        <div>
+                            <div class="row-label fw-bold">Verificación en dos pasos</div>
+                            <div class="small text-muted">
+                                <?= $user->totp_activo ? '<span class="text-success fw-bold">Activado <i class="fas fa-check-circle"></i></span>' : 'Desactivado' ?>
+                            </div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right row-icon"></i>
+                </div>
+
+                <!-- 2FA SETUP / DISABLE AREA -->
+                <div id="2fa-container" class="p-4 bg-light border-top" style="display: none;">
+                    
+                    <?php if ($user->totp_activo): ?>
+                        <!-- ESTADO: ACTIVADO -->
+                        <h5 class="text-danger mb-3">Desactivar verificación en dos pasos</h5>
+                        <p class="small text-muted mb-3">Si desactivas esta función, tu cuenta estará menos protegida.</p>
+                        
+                        <form action="<?= Url::to(['site/disable-totp']) ?>" method="post">
+                             <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                             <div class="mb-3">
+                                <label class="form-label small fw-bold">Confirma tu contraseña</label>
+                                <input type="password" class="form-control" name="current_password" required style="max-width: 300px;">
+                             </div>
+                             <div class="text-end">
+                                <button type="button" class="btn btn-sm btn-secondary me-2" onclick="toggle2FA()">Cancelar</button>
+                                <button type="submit" class="btn btn-sm btn-danger">Desactivar 2FA</button>
+                             </div>
+                        </form>
+
+                    <?php else: ?>
+                        <!-- ESTADO: DESACTIVADO (SETUP) -->
+                        <h5 class="text-primary mb-3">Configurar verificación en dos pasos</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <ol class="small text-muted ps-3 mb-4">
+                                    <li class="mb-2">Descarga una app de autenticación como <strong>Google Authenticator</strong> o <strong>Microsoft Authenticator</strong> en tu móvil.</li>
+                                    <li class="mb-2">Escanea el código QR que aparece a la derecha.</li>
+                                    <li class="mb-2">Introduce el código de 6 dígitos que genera la app para confirmar.</li>
+                                </ol>
+
+                                <form action="<?= Url::to(['site/enable-totp']) ?>" method="post">
+                                    <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                                    <!-- Enviamos el secreto generado para guardarlo definitivamente -->
+                                    <input type="hidden" name="totp_secret" value="<?= $secret ?>">
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Código de verificación</label>
+                                        <input type="text" class="form-control form-control-lg" name="totp_code" placeholder="123456" required 
+                                               style="max-width: 200px; letter-spacing: 4px; text-align: center;" autocomplete="off">
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" class="btn btn-secondary me-3" onclick="toggle2FA()">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">Activar</button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div class="col-md-4 text-center">
+                                <div class="bg-white p-3 d-inline-block rounded shadow-sm border mb-2">
+                                    <!-- Contenedor QR -->
+                                    <div id="qrcode"></div>
+                                </div>
+                                <div class="small text-muted mt-2">
+                                    ¿No puedes escanearlo? <br>
+                                    <button class="btn btn-link btn-sm p-0 text-decoration-none" type="button" 
+                                            onclick="alert('Tu clave secreta es: <?= $secret ?>')">Ver clave secreta</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Librería QR Code JS -->
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+                        <script>
+                            function generateQR() {
+                                var container = document.getElementById("qrcode");
+                                // Limpiar por si acaso ya había uno
+                                container.innerHTML = "";
+                                if (container) {
+                                    new QRCode(container, {
+                                        text: "<?= $qrCodeUrl ?>",
+                                        width: 128,
+                                        height: 128,
+                                        correctLevel : QRCode.CorrectLevel.M
+                                    });
+                                }
+                            }
+                            
+                            // Intentar generar si la sección ya es visible o al cargar
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Pequeño timeout para asegurar que la librería cargó
+                                setTimeout(function() {
+                                    var container = document.getElementById('2fa-container');
+                                    if (container && container.style.display !== 'none') {
+                                        generateQR();
+                                    }
+                                }, 500);
+                            });
+                        </script>
+                    <?php endif; ?>
+                </div>
+
+                <script>
+                function toggle2FA() {
+                    var container = document.getElementById('2fa-container');
+                    if (container.style.display === 'none') {
+                        container.style.display = 'block';
+                        if (typeof generateQR === 'function') {
+                            generateQR();
+                        }
+                    } else {
+                        container.style.display = 'none';
+                    }
+                }
+                </script>
+
             </div>
         </div>
 
@@ -759,7 +880,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Excluyendo explícitamente los paneles de vista/edición de perfil que tienen su propia lógica de display
                 const hiddenElements = targetSection.querySelectorAll('[style*="display: none"]');
                 hiddenElements.forEach(el => {
-                    if (el.id !== 'profile-edit-mode' && el.id !== 'profile-view-mode' && el.id !== 'recovery-email-form') {
+                    if (el.id !== 'profile-edit-mode' && el.id !== 'profile-view-mode' && el.id !== 'recovery-email-form' && el.id !== '2fa-container') {
                         el.style.display = '';
                     }
                 });
