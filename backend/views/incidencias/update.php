@@ -5,10 +5,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\Incidencias $model */
 
-$this->title = 'Update Incidencias: ' . $model->id;
+$this->title = 'Actualizar Incidencia: ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Incidencias', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Actualizar';
 ?>
 <div class="incidencias-update">
 

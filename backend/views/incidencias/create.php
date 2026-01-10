@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\Incidencias $model */
 
-$this->title = 'Create Incidencias';
+$this->title = 'Crear Incidencia';
 $this->params['breadcrumbs'][] = ['label' => 'Incidencias', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

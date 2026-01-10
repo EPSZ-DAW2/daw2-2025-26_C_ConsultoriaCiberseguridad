@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if (Yii::$app->user->can('subirDocs')): ?>
     <p>
-        <?= Html::a('Create Documentos', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Crear Documento', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?php endif; ?>
 

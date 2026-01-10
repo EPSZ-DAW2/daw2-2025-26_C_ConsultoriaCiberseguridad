@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\Diapositivas $model */
 
-$this->title = 'Create Diapositivas';
+$this->title = 'Crear Diapositiva';
 $this->params['breadcrumbs'][] = ['label' => 'Diapositivas', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

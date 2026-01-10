@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\PreguntasCuestionario $model */
 
-$this->title = 'Create Preguntas Cuestionario';
+$this->title = 'Crear Pregunta';
 $this->params['breadcrumbs'][] = ['label' => 'Preguntas Cuestionarios', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
