@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?= $form->field($model, 'password')->passwordInput()->label('Contraseña') ?>
 
-                <?= $form->field($model, 'rememberMe')->checkbox()->label('Recuérdame') ?>
+
 
                 <div class="my-1 mx-0" style="color:#999;">
                     Si olvidó su contraseña puede <?= Html::a('restablecerla', ['site/request-password-reset']) ?>.

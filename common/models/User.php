@@ -27,11 +27,14 @@ use PragmaRX\Google2FA\Google2FA;
  * @property string|null $email_recuperacion
  * @property string|null $totp_secret
  * @property integer $totp_activo
+ * @property string|null $verification_token
+ * @property string|null $password_reset_token
  */
 class User extends ActiveRecord implements IdentityInterface
 {
     // Definimos los estados según tu base de datos (0 y 1)
     const STATUS_DELETED = 0;
+    const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
     // Roles

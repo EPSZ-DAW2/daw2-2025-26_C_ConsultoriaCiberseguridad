@@ -21,7 +21,7 @@ $this->title = 'Iniciar Sesión';
 
             <?= $form->field($model, 'password')->passwordInput()->label('Contraseña') ?>
 
-            <?= $form->field($model, 'rememberMe')->checkbox()->label('Recuérdame') ?>
+
 
             <div class="form-group">
                 <?= Html::submitButton('Iniciar Sesión', ['class' => 'btn btn-primary btn-block', 'name' => 'login-button']) ?>

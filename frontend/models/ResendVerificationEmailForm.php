@@ -25,9 +25,19 @@ class ResendVerificationEmailForm extends Model
             ['email', 'email'],
             ['email', 'exist',
                 'targetClass' => '\common\models\User',
-                'filter' => ['status' => User::STATUS_INACTIVE],
-                'message' => 'There is no user with this email address.'
+                'filter' => ['activo' => User::STATUS_INACTIVE],
+                'message' => 'No existe ningún usuario inactivo con este correo electrónico.'
             ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'email' => 'Correo Electrónico',
         ];
     }
 
@@ -40,10 +50,15 @@ class ResendVerificationEmailForm extends Model
     {
         $user = User::findOne([
             'email' => $this->email,
-            'status' => User::STATUS_INACTIVE
+            'activo' => User::STATUS_INACTIVE
         ]);
 
         if ($user === null) {
+            return false;
+        }
+
+        $user->generateEmailVerificationToken();
+        if (!$user->save()) {
             return false;
         }
 
@@ -53,9 +68,9 @@ class ResendVerificationEmailForm extends Model
                 ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
                 ['user' => $user]
             )
-            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+            ->setFrom([Yii::$app->params['supportEmail'] => 'Equipo Técnico de CyberSec'])
             ->setTo($this->email)
-            ->setSubject('Account registration at ' . Yii::$app->name)
+            ->setSubject('Registro de cuenta en ' . Yii::$app->name)
             ->send();
     }
 }
