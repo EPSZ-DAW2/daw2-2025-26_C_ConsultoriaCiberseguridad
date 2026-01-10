@@ -154,7 +154,7 @@ if (!Yii::$app->user->isGuest) {
 
             <div class="sb-sidenav-footer">
                 <?php if (!Yii::$app->user->isGuest): ?>
-                    <div class="small">Logged in as:</div>
+                    <div class="small">Conectado como:</div>
                     <?= Html::encode(Yii::$app->user->identity->username) ?>
                 <?php endif; ?>
             </div>

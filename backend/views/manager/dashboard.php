@@ -1,6 +1,6 @@
 <?php
 
-$this->title = 'Executive Dashboard';
+$this->title = 'Cuadro de Mando Ejecutivo';
 $this->params['breadcrumbs'][] = $this->title;
 
 // Convertir datos PHP a JSON para JS
@@ -15,7 +15,7 @@ $jsonValuesCriticidad = json_encode($valuesCriticidad);
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="manager-dashboard">
-    <h1 class="mb-4"><i class="fas fa-chart-line"></i> Business & Operations Dashboard</h1>
+    <h1 class="mb-4"><i class="fas fa-chart-line"></i> Panel de Negocio y Operaciones</h1>
 
     <!-- ROW 1: KPI CARDS -->
     <div class="row mb-4">
