@@ -854,6 +854,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Guardar la pestaña activa actual para restaurarla al limpiar la búsqueda
     let activeTabId = 'section-inicio'; // Por defecto
 
+    // Verificar si hay un hash en la URL para abrir una sección específica
+    if (window.location.hash) {
+        const hash = window.location.hash.substring(1); // Quitar el #
+        const targetLink = document.querySelector(`.settings-menu-item[data-target="${hash}"]`);
+        if (targetLink) {
+            // Se simulará el click más abajo o se puede ajustar activeTabId
+            // Simular click después de definir los listeners o hacerlo manualmente aquí
+            // Esperamos un momento para asegurar que todo esté listo
+            setTimeout(() => targetLink.click(), 50);
+        }
+    }
+
     // Función auxiliar para normalizar texto (quitar acentos y minúsculas)
     function normalizeText(text) {
         return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
