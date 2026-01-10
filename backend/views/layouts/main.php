@@ -81,8 +81,8 @@ AppAsset::register($this);
         }
 
         // RENTABILIDAD (manager y admin)
-        if (Yii::$app->user->can('verRentabilidad')) {
-            $menuItems[] = ['label' => 'Rentabilidad', 'url' => ['/rentabilidad/index']];
+        if (Yii::$app->user->can('verRentabilidad') || in_array(Yii::$app->user->identity->rol, ['manager', 'admin'])) {
+            $menuItems[] = ['label' => 'Executive Dashboard', 'url' => ['/manager/dashboard']];
         }
 
         // FORMACIÓN (consultor, admin)
