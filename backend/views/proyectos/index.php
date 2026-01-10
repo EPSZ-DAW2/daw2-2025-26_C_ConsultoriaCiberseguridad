@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if (Yii::$app->user->can('gestionarProyectos')): ?>
     <p>
-        <?= Html::a('Create Proyectos', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Crear Proyecto', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?php endif; ?>
 
