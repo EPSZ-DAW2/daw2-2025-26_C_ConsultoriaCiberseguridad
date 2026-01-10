@@ -39,7 +39,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'usuarios', 'create-user'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -521,7 +521,6 @@ class SiteController extends Controller
             $user->apellidos = $request->post('apellidos');
             // Email NO se actualiza aquí
             
-            $user->rol = $request->post('rol');
             $user->empresa = $request->post('empresa');
             $user->telefono = $request->post('telefono');
             $user->direccion = $request->post('direccion');
@@ -616,5 +615,139 @@ class SiteController extends Controller
         }
 
         return $this->redirect(['site/configuracion']);
+    }
+
+    /**
+     * Genera y descarga una factura en PDF
+     * @param int $id ID de la solicitud
+     */
+    public function actionDescargarFactura($id)
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $user = Yii::$app->user->identity;
+        // Buscar la solicitud y verificar propiedad
+        $solicitud = \common\models\SolicitudesPresupuesto::findOne($id);
+
+        if (!$solicitud) {
+            throw new \yii\web\NotFoundHttpException('La solicitud no existe.');
+        }
+
+        // Verificar permisos: dueño o admin
+        if ($solicitud->email_contacto !== $user->email && !$user->isBackendUser()) {
+            throw new \yii\web\ForbiddenHttpException('No tienes permiso para ver esta factura.');
+        }
+
+        // Renderizar vista a HTML
+        $content = $this->renderPartial('invoice', [
+            'model' => $solicitud,
+            'solicitud' => $solicitud
+        ]);
+
+        // Configurar Mpdf
+        $pdf = new \Mpdf\Mpdf();
+        $pdf->WriteHTML($content);
+        
+        // Nombre del archivo
+        $filename = 'Factura_' . date('Y') . '-' . str_pad($solicitud->id, 5, '0', STR_PAD_LEFT) . '.pdf';
+
+        // Descargar
+        return $pdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
+
+    /**
+     * Genera y descarga un presupuesto en PDF
+     * @param int $id ID de la solicitud
+     */
+    public function actionDescargarPresupuesto($id)
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $user = Yii::$app->user->identity;
+        $solicitud = \common\models\SolicitudesPresupuesto::findOne($id);
+
+        if (!$solicitud) {
+            throw new \yii\web\NotFoundHttpException('La solicitud no existe.');
+        }
+
+        // Verificar permisos: dueño o admin
+        if ($solicitud->email_contacto !== $user->email && !$user->isBackendUser()) {
+            throw new \yii\web\ForbiddenHttpException('No tienes permiso para ver este presupuesto.');
+        }
+
+        // Renderizar vista a HTML
+        $content = $this->renderPartial('budget', [
+            'model' => $solicitud,
+            'solicitud' => $solicitud
+        ]);
+
+        // Configurar Mpdf
+        $pdf = new \Mpdf\Mpdf();
+        $pdf->WriteHTML($content);
+        
+        // Nombre del archivo
+        $filename = 'Presupuesto_' . date('Y') . '-' . str_pad($solicitud->id, 5, '0', STR_PAD_LEFT) . '.pdf';
+
+        // Descargar
+        return $pdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
+    /**
+     * Gestión de usuarios para Cliente Admin
+     */
+    public function actionUsuarios()
+    {
+        $user = Yii::$app->user->identity;
+        // Solo cliente_admin puede acceder
+        if ($user->rol !== \common\models\User::ROL_CLIENTE_ADMIN) {
+           throw new \yii\web\ForbiddenHttpException('No tienes permiso para gestionar usuarios.');
+        }
+
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => \common\models\User::find()
+                ->where(['empresa' => $user->empresa])
+                ->andWhere(['!=', 'id', $user->id]), // No mostrarse a sí mismo
+            'pagination' => ['pageSize' => 20],
+        ]);
+
+        return $this->render('usuarios', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionCreateUser()
+    {
+        $currentUser = Yii::$app->user->identity;
+        if ($currentUser->rol !== \common\models\User::ROL_CLIENTE_ADMIN) {
+           throw new \yii\web\ForbiddenHttpException('No tienes permiso.');
+        }
+
+        $model = new \frontend\models\SignupForm(); // Reutilizamos SignupForm o creamos uno simple
+        
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            // Forzamos datos empresariales
+            $user = new \common\models\User();
+            // $user->username = $model->email; // ERROR: Property is read-only
+            $user->email = $model->email;
+            $user->nombre = $model->username; // En SignupForm username es nombre
+            $user->setPassword($model->password);
+            $user->generateAuthKey();
+            $user->rol = \common\models\User::ROL_CLIENTE_USER;
+            $user->empresa = $currentUser->empresa;
+            $user->activo = 1;
+            $user->fecha_registro = date('Y-m-d H:i:s');
+            
+            if ($user->save()) {
+                Yii::$app->session->setFlash('success', 'Empleado creado correctamente.');
+                return $this->redirect(['usuarios']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Error al crear usuario: ' . json_encode($user->errors));
+            }
+        }
+
+        return $this->render('create_user', ['model' => $model]);
     }
 }

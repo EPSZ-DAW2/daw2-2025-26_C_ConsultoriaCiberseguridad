@@ -25,7 +25,7 @@ echo [INFO] Ejecutando 'composer install'...
 echo Esto puede tardar unos minutos dependiendo de tu conexion.
 echo.
 
-call composer install
+call composer install --ignore-platform-reqs
 
 if %errorlevel% neq 0 (
     color 0C

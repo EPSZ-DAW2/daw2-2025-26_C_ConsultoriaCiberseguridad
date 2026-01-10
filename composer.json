@@ -20,7 +20,8 @@
         "yiisoft/yii2-symfonymailer": "~2.0.3",
         "philippfrenzel/yii2fullcalendar": "^2.4",
         "pragmarx/google2fa": "^8.0",
-        "bacon/bacon-qr-code": "^2.0"
+        "bacon/bacon-qr-code": "^2.0",
+        "mpdf/mpdf": "^8.2"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

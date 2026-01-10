@@ -31,7 +31,10 @@ class CursosController extends Controller
                     [
                         'actions' => ['index', 'ver', 'contenido', 'examen', 'calificar', 'historial'],
                         'allow' => true,
-                        'roles' => ['@'], // Only logged in users (Clients)
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return Yii::$app->user->identity->hasContratoActivo(\common\models\Servicios::CATEGORIA_FORMACION);
+                        }
                     ],
                 ],
             ],

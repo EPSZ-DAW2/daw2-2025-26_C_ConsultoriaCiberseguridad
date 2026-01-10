@@ -93,41 +93,41 @@ if (!Yii::$app->user->isGuest) {
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Dashboard Empresa
                     </a>
+                    <!-- Mis Empleados (solo cliente_admin) -->
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/usuarios']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                        Mis Empleados
+                    </a>
                     <?php endif; ?>
 
-                    <!-- Mis Proyectos (cliente_admin y cliente_user con acceso) -->
-                    <?php if (Yii::$app->user->can('verMisProyectos')): ?>
+                    <!-- Mis Proyectos (Visible para todos los autenticados) -->
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/proyectos/index']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-folder-open"></i></div>
                         Mis Proyectos
                     </a>
-                    <?php endif; ?>
 
-                    <!-- Facturación (solo cliente_admin) -->
-                    <?php if (Yii::$app->user->can('verFacturacion')): ?>
-                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/facturacion']) ?>">
-                        <div class="sb-nav-link-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-                        Facturación
-                    </a>
-                    <?php endif; ?>
-
-
-                    <!-- Reportar Incidencia (cliente_admin y cliente_user) -->
-                    <?php if (Yii::$app->user->can('reportarIncidencia')): ?>
+                    <!-- Reportar Incidencia (Requiere SOC/Defensa) -->
+                    <?php if (Yii::$app->user->identity->hasContratoActivo(\common\models\Servicios::CATEGORIA_DEFENSA)): ?>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/incidencias/index']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-exclamation-triangle"></i></div>
                         Mis Incidencias
                     </a>
                     <?php endif; ?>
 
-                    <!-- Calendario -->
+                    <!-- Calendario (Requiere Gobernanza o Auditoría) -->
+                    <?php if (Yii::$app->user->identity->hasContratoActivo([\common\models\Servicios::CATEGORIA_GOBERNANZA, \common\models\Servicios::CATEGORIA_AUDITORIA])): ?>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/calendario/index']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
                         Calendario
                     </a>
+                    <a class="nav-link" href="<?= \yii\helpers\Url::to(['/documentos/index']) ?>">
+                        <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
+                        Gestor Documental
+                    </a>
+                    <?php endif; ?>
 
-                    <!-- Campus Virtual (cliente_admin y cliente_user) -->
-                    <?php if (Yii::$app->user->can('verMisCursos')): ?>
+                    <!-- Campus Virtual (Requiere Formación) -->
+                    <?php if (Yii::$app->user->identity->hasContratoActivo(\common\models\Servicios::CATEGORIA_FORMACION)): ?>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/cursos/index']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
                         Campus Virtual
@@ -181,49 +181,7 @@ if (!Yii::$app->user->isGuest) {
     </div>
 </div>
 
-<div id="cookie-banner" class="cookie-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
-    <div class="cookie-content bg-light p-4 rounded shadow-lg" style="max-width: 800px; width: 90%; margin: 20px;">
-        <h3 class="fw-bold mb-3">Aceptación de Cookies</h3>
-        <p class="mb-4">
-            ¡Hola! En nuestra web usamos cookies propias y de terceros, incluidos los servicios de terceros proveedores, 
-            para analizar el uso que haces de ella y mostrarte anuncios personalizados según tu perfil de navegación.
-            <br><br>
-            Puedes aceptarlas para seguir navegando, rechazarlas, o bien consultarlas para conocerlas en detalle en nuestra Política de Cookies.
-        </p>
-        
-        <div class="d-flex flex-column flex-md-row gap-3 justify-content-between">
-            <button id="reject-cookies" class="btn btn-danger flex-grow-1" style="background-color: #d32f2f; border-color: #d32f2f;">Rechazar todas las cookies</button>
-            <button id="config-cookies" class="btn btn-warning text-white flex-grow-1" style="background-color: #7cb342; border-color: #7cb342;">Configuración de cookies</button>
-            <button id="accept-cookies" class="btn btn-primary flex-grow-1" style="background-color: #0d47a1; border-color: #0d47a1;">Aceptar todas las cookies</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Mostrar si no hay decisión guardada
-        if (!localStorage.getItem("cookieConsent")) {
-            document.getElementById("cookie-banner").style.display = "flex";
-        }
-
-        // Aceptar todas
-        document.getElementById("accept-cookies").addEventListener("click", function() {
-            localStorage.setItem("cookieConsent", "accepted");
-            document.getElementById("cookie-banner").style.display = "none";
-        });
-
-        // Rechazar todas
-        document.getElementById("reject-cookies").addEventListener("click", function() {
-            localStorage.setItem("cookieConsent", "rejected");
-            document.getElementById("cookie-banner").style.display = "none";
-        });
-
-        // Configurar (por ahora solo cierra, en futuro abriría panel)
-        document.getElementById("config-cookies").addEventListener("click", function() {
-            alert("Aquí se abriría el panel de configuración de cookies.");
-        });
-    });
-</script>
+<?= $this->renderFile(Yii::getAlias('@frontend/views/site/_cookies_modal.php')) ?>
 
 <!-- El bootstrap ya se carga vía AppAsset -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script> -->

@@ -396,7 +396,7 @@ $this->registerCss("
                             
                             <div class="col-md-6">
                                 <label class="form-label">Rol / Cargo</label>
-                                <input type="text" class="form-control" name="rol" value="<?= Html::encode($user->rol ?? '') ?>" placeholder="Ej: Administrador, Mánager...">
+                                <input type="text" class="form-control bg-light" value="<?= Html::encode($user->rol ?? '') ?>" readonly disabled>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Empresa</label>
@@ -491,7 +491,7 @@ $this->registerCss("
                         <i class="fas fa-asterisk text-muted fs-5 me-3" style="width: 24px; text-align: center;"></i>
                         <div>
                             <div class="row-label fw-bold">Contraseña</div>
-                            <div class="small text-muted">Última modificación: Desconocido</div>
+
                         </div>
                     </div>
                     <i class="fas fa-chevron-right row-icon"></i>
@@ -810,11 +810,15 @@ $this->registerCss("
                             </div>
                             
                             <!-- Acciones (Mockup) -->
-                            <?php if ($solicitud->isEstadoSolicitudPresupuestoEnviado() || $solicitud->isEstadoSolicitudContratado()): ?>
+                            <?php if (($solicitud->isEstadoSolicitudPresupuestoEnviado() || $solicitud->isEstadoSolicitudContratado()) && $user->rol !== \common\models\User::ROL_CLIENTE_USER): ?>
                                 <div class="mt-3 pt-3 border-top d-flex justify-content-end gap-2">
-                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf me-1"></i> Ver Presupuesto</button>
+                                    <a href="<?= Url::to(['site/descargar-presupuesto', 'id' => $solicitud->id]) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+                                        <i class="fas fa-file-pdf me-1"></i> Ver Presupuesto
+                                    </a>
                                     <?php if ($solicitud->isEstadoSolicitudContratado()): ?>
-                                        <button class="btn btn-sm btn-outline-success"><i class="fas fa-file-invoice-dollar me-1"></i> Facturas</button>
+                                        <a href="<?= Url::to(['site/descargar-factura', 'id' => $solicitud->id]) ?>" class="btn btn-sm btn-outline-success" target="_blank">
+                                            <i class="fas fa-file-invoice-dollar me-1"></i> Facturas
+                                        </a>
                                     <?php endif; ?>
                                 </div>
                             <?php endif; ?>

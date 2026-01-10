@@ -2,7 +2,9 @@
 
 namespace frontend\controllers;
 
+use Yii;
 use common\models\EventosCalendario;
+use common\models\Servicios;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 
@@ -19,12 +21,16 @@ class CalendarioController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index'],
+                'only' => ['index', 'create', 'update', 'delete'],
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'], // Only authenticated users
+                        'matchCallback' => function ($rule, $action) {
+                            $user = Yii::$app->user->identity;
+                            return $user->hasContratoActivo([Servicios::CATEGORIA_GOBERNANZA, Servicios::CATEGORIA_AUDITORIA]);
+                        }
                     ],
                 ],
             ],

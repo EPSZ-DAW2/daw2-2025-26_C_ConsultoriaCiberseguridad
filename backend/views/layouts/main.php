@@ -60,8 +60,8 @@ AppAsset::register($this);
             $menuItems[] = ['label' => 'Catálogo Servicios', 'url' => ['/servicios/index']];
         }
 
-        // CALENDARIO (todos los roles backend pueden verlo)
-        if (Yii::$app->user->can('verCalendario')) {
+        // CALENDARIO (todos los roles backend pueden verlo excepto analista_soc)
+        if (Yii::$app->user->can('verCalendario') && Yii::$app->user->identity->rol !== \common\models\User::ROL_ANALISTA_SOC) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
 

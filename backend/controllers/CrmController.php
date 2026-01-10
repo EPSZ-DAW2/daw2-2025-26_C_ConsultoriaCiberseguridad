@@ -98,6 +98,32 @@ class CrmController extends Controller
         $model->estado_solicitud = $estado;
         if ($model->save(false)) {
             Yii::$app->session->setFlash('success', 'Estado actualizado a: ' . $estado);
+
+            // LOGICA AUTOMATIZACIÓN PROYECTO
+            if ($estado == SolicitudesPresupuesto::ESTADO_SOLICITUD_CONTRATADO) {
+                // 1. Buscar si existe usuario cliente con ese email
+                $cliente = \common\models\User::findOne(['email' => $model->email_contacto]);
+                
+                if (!$cliente) {
+                    Yii::$app->session->addFlash('warning', 'No se ha encontrado un usuario registrado con el email de contacto. El proyecto se creará sin cliente asignado (o asigna manualmente).');
+                }
+
+                // 2. Crear Proyecto
+                $proyecto = new \common\models\Proyectos();
+                $proyecto->nombre = "Implantación: " . ($model->servicio ? $model->servicio->nombre : 'Servicio Personalizado');
+                $proyecto->descripcion = "Generado automáticamente desde solicitud #" . $model->id . "\n\n" . $model->descripcion_necesidad;
+                $proyecto->cliente_id = $cliente ? $cliente->id : null; // Asignar si existe
+                $proyecto->servicio_id = $model->servicio_id;
+                $proyecto->fecha_inicio = date('Y-m-d');
+                $proyecto->estado = \common\models\Proyectos::ESTADO_PLANIFICACION;
+                $proyecto->creado_por = Yii::$app->user->id; 
+
+                if ($proyecto->save()) {
+                     Yii::$app->session->addFlash('success', 'Proyecto #' . $proyecto->id . ' creado automáticamente.');
+                } else {
+                     Yii::$app->session->addFlash('error', 'Error al crear proyecto automático: ' . json_encode($proyecto->errors));
+                }
+            }
         } else {
             Yii::$app->session->setFlash('error', 'Error al actualizar el estado.');
         }

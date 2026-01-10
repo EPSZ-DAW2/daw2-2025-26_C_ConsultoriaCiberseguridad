@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <h1 class="display-5 fw-bold">Bienvenido, <?= \yii\helpers\Html::encode(Yii::$app->user->identity->username) ?></h1>
             <p class="col-md-8 fs-4">Este es tu panel de control privado.</p>
             <p>Desde aquí podrás gestionar tus proyectos, ver el estado de tus servicios contratados y acceder a documentación exclusiva.</p>
-            <button class="btn btn-primary btn-lg" type="button">Ver mis proyectos</button>
+            <a href="<?= \yii\helpers\Url::to(['proyectos/index']) ?>" class="btn btn-primary btn-lg">Ver mis proyectos</a>
         </div>
     </div>
 

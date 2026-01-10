@@ -51,10 +51,19 @@ class ProyectosController extends Controller
      */
     public function actionIndex()
     {
-        $proyectos = Proyectos::find()
-            ->where(['cliente_id' => Yii::$app->user->id])
-            ->orderBy(['fecha_creacion' => SORT_DESC])
-            ->all();
+        $user = Yii::$app->user->identity;
+        $query = Proyectos::find();
+
+        if ($user->rol === \common\models\User::ROL_CLIENTE_ADMIN && !empty($user->empresa)) {
+            // Admin: ve suyos y de su empresa
+            $userIds = \common\models\User::find()->select('id')->where(['empresa' => $user->empresa])->column();
+            $query->where(['cliente_id' => $userIds]);
+        } else {
+            // User normal: solo suyos
+            $query->where(['cliente_id' => $user->id]);
+        }
+
+        $proyectos = $query->orderBy(['fecha_creacion' => SORT_DESC])->all();
 
         return $this->render('index', [
             'proyectos' => $proyectos,
@@ -70,9 +79,20 @@ class ProyectosController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        $user = Yii::$app->user->identity;
 
-        // asegurar que el proyecto pertenece al usuario actual
-        if ($model->cliente_id != Yii::$app->user->id) {
+        // Comprobar permiso
+        $canView = false;
+        if ($model->cliente_id == $user->id) {
+            $canView = true;
+        } elseif ($user->rol === \common\models\User::ROL_CLIENTE_ADMIN && !empty($user->empresa)) {
+            // Verificar si el dueño del proyecto es de la misma empresa
+            if ($model->cliente->empresa === $user->empresa) {
+                $canView = true;
+            }
+        }
+
+        if (!$canView) {
             throw new NotFoundHttpException('No tiene permiso para ver este proyecto.');
         }
 

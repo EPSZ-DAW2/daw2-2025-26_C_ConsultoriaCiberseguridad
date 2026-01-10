@@ -30,6 +30,10 @@ class IncidenciasController extends Controller
                             'actions' => ['create', 'index', 'view'],
                             'allow' => true,
                             'roles' => ['@'], // solo clientes autenticados
+                            'matchCallback' => function ($rule, $action) {
+                                // Módulo SOC requiere contrato 'Defensa'
+                                return Yii::$app->user->identity->hasContratoActivo(\common\models\Servicios::CATEGORIA_DEFENSA);
+                            }
                         ],
                     ],
                 ],
@@ -49,10 +53,23 @@ class IncidenciasController extends Controller
      */
     public function actionIndex()
     {
-        $incidencias = Incidencias::find()
-            ->where(['cliente_id' => Yii::$app->user->id, 'visible_cliente' => 1])
-            ->orderBy(['fecha_reporte' => SORT_DESC])
-            ->all();
+        $user = Yii::$app->user->identity;
+        $query = Incidencias::find()->where(['visible_cliente' => 1]);
+
+        if ($user->rol === \common\models\User::ROL_CLIENTE_ADMIN && !empty($user->empresa)) {
+            // Cliente Admin ve incidencias de toda su empresa
+            $empleadosIds = \common\models\User::find()
+                ->select('id')
+                ->where(['empresa' => $user->empresa])
+                ->column();
+            
+            $query->andWhere(['cliente_id' => $empleadosIds]);
+        } else {
+            // Usuario normal solo ve las suyas
+            $query->andWhere(['cliente_id' => $user->id]);
+        }
+
+        $incidencias = $query->orderBy(['fecha_reporte' => SORT_DESC])->all();
 
         return $this->render('index', [
             'incidencias' => $incidencias,
