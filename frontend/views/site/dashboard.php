@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="h-100 p-5 text-white bg-dark rounded-3">
                 <h2>Mis Servicios Activos</h2>
                 <p>Consulta el estado de los servicios de ciberseguridad que tienes contratados actualmente.</p>
-                <button class="btn btn-outline-light" type="button">Ver Servicios</button>
+                <a href="<?= \yii\helpers\Url::to(['site/configuracion', '#' => 'section-pagos']) ?>" class="btn btn-outline-light">Ver Servicios</a>
             </div>
         </div>
         <div class="col-md-6">
