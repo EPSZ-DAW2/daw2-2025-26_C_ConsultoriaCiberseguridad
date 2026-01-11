@@ -54,12 +54,12 @@ class ProyectosController extends Controller
         $user = Yii::$app->user->identity;
         $query = Proyectos::find();
 
-        if ($user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && !empty($user->empresa)) {
-            // Admin: ve suyos y de su empresa
+        if (!empty($user->empresa)) {
+            // Si tiene empresa, ve TODOS los proyectos de esa empresa (Admin y Empleados)
             $userIds = \common\models\User::find()->select('id')->where(['empresa' => $user->empresa])->column();
             $query->where(['cliente_id' => $userIds]);
         } else {
-            // User normal: solo suyos
+            // Usuario particular (sin empresa): solo suyos
             $query->where(['cliente_id' => $user->id]);
         }
 
@@ -85,11 +85,9 @@ class ProyectosController extends Controller
         $canView = false;
         if ($model->cliente_id == $user->id) {
             $canView = true;
-        } elseif ($user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && !empty($user->empresa)) {
-            // Verificar si el dueño del proyecto es de la misma empresa
-            if ($model->cliente->empresa === $user->empresa) {
-                $canView = true;
-            }
+        } elseif (!empty($user->empresa) && $model->cliente->empresa === $user->empresa) {
+            // Permitir si es de la misma empresa (para empleados también)
+            $canView = true;
         }
 
         if (!$canView) {
@@ -133,8 +131,12 @@ class ProyectosController extends Controller
 
         // 2. SEGURIDAD CRÍTICA
         // Comprobamos si el proyecto de este documento pertenece al usuario conectado
-        // Si el ID del cliente del proyecto NO coincide con el ID del usuario logueado -> BLOQUEAR
-        if ($documento->proyecto->cliente_id != Yii::$app->user->id) {
+        // O si pertenece a su empresa (Lógica de equipo)
+        $isOwner = $documento->proyecto->cliente_id == Yii::$app->user->id;
+        $isCompanyTeam = !empty(Yii::$app->user->identity->empresa) && 
+                         ($documento->proyecto->cliente->empresa === Yii::$app->user->identity->empresa);
+
+        if (!$isOwner && !$isCompanyTeam) {
             throw new \yii\web\ForbiddenHttpException('¡Alto ahí! No tienes permiso para descargar archivos de otros clientes.');
         }
 

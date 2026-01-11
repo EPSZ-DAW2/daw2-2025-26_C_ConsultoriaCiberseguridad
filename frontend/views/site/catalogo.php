@@ -50,7 +50,15 @@ $this->title = 'Catálogo de Servicios';
                             </div>
                         </div>
 
-                        <!-- Botones de Acción -->
+                        <?php 
+                        // Verificar si el usuario es cliente_user (empleado) sin privilegios de admin
+                        $isEmployee = !Yii::$app->user->isGuest && 
+                                      Yii::$app->user->identity->hasRole(\common\models\User::ROL_CLIENTE_USER) && 
+                                      !Yii::$app->user->identity->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) &&
+                                      !Yii::$app->user->identity->hasRole(\common\models\User::ROL_ADMIN);
+                        ?>
+
+                        <?php if (!$isEmployee): ?>
                         <div class="d-grid gap-2 mt-auto">
                              <a href="<?= \yii\helpers\Url::to(['site/checkout', 'servicio_id' => $servicio->id]) ?>" class="btn btn-primary">
                                 <i class="fas fa-credit-card"></i> Contratar con Tarjeta
@@ -59,6 +67,7 @@ $this->title = 'Catálogo de Servicios';
                                 <i class="fas fa-university"></i> Pago por Transferencia
                             </a>
                         </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

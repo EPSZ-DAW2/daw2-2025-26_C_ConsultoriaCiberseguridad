@@ -728,6 +728,12 @@ class SiteController extends Controller
            throw new \yii\web\ForbiddenHttpException('No tienes permiso.');
         }
 
+        // VALIDACIÓN DE EMPRESA: El Admin debe tener empresa para poder crear empleados vinculados
+        if (empty($currentUser->empresa)) {
+            Yii::$app->session->setFlash('warning', 'Para crear empleados, primero debes definir el nombre de tu EMPRESA en tu perfil.');
+            return $this->redirect(['configuracion']);
+        }
+
         $model = new \frontend\models\SignupForm(); // Reutilizamos SignupForm o creamos uno simple
         
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
