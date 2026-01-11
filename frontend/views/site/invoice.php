@@ -83,8 +83,15 @@
     </table>
 
     <div style="margin-top: 50px; font-size: 14px; color: #666;">
-        <p><strong>Forma de pago:</strong> Transferencia Bancaria</p>
-        <p><strong>IBAN:</strong> ES12 3456 7890 1234 5678 9012</p>
+    <div style="margin-top: 50px; font-size: 14px; color: #666;">
+        <?php if (stripos($model->origen_solicitud, 'Tarjeta') !== false): ?>
+             <p><strong>Forma de pago:</strong> Tarjeta de Crédito</p>
+             <p><strong>Estado:</strong> Pagado (ID Transacción: TX-<?= strtoupper(substr(md5($model->id . $model->fecha_solicitud), 0, 10)) ?>)</p>
+        <?php else: ?>
+             <p><strong>Forma de pago:</strong> Transferencia Bancaria</p>
+             <p><strong>IBAN:</strong> ES12 3456 7890 1234 5678 9012</p>
+             <p><strong>Estado:</strong> <?= $model->isEstadoSolicitudContratado() ? 'Pagado' : 'Pendiente' ?></p>
+        <?php endif; ?>
     </div>
 
     <div class="footer">

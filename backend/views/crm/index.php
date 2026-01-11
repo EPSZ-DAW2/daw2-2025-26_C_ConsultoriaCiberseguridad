@@ -79,24 +79,48 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
 
             [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {delete}',
-                'buttons' => [
-                    'view' => function ($url, $model, $key) {
-                        return Html::a('<i class="fas fa-eye"></i> Ver', $url, [
-                            'title' => 'Ver detalles',
-                            'class' => 'btn btn-sm btn-primary me-1',
+                'label' => 'Gestión Pagos',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $html = '<div class="btn-group" role="group">';
+                    
+                    // Botón GRIS: Enviar Presupuesto (Cambiar estado, ya NO descarga PDF)
+                    $html .= Html::a('<i class="fas fa-paper-plane"></i>', ['cambiar-estado', 'id' => $model->id, 'estado' => SolicitudesPresupuesto::ESTADO_SOLICITUD_PRESUPUESTO_ENVIADO], [
+                        'class' => 'btn btn-sm btn-secondary',
+                        'title' => 'Marcar como Presupuesto Enviado (Habilita descarga al cliente)',
+                        'data-confirm' => '¿Marcar como Presupuesto Enviado? El cliente podrá ver el botón de descarga en su perfil.',
+                        'data-method' => 'post'
+                    ]);
+
+                    // Botón AZUL: En Revisión (Cliente dice que pagó)
+                    if ($model->estado_solicitud !== SolicitudesPresupuesto::ESTADO_SOLICITUD_CONTRATADO) {
+                        $html .= Html::a('<i class="fas fa-search-dollar"></i>', ['cambiar-estado', 'id' => $model->id, 'estado' => SolicitudesPresupuesto::ESTADO_SOLICITUD_EN_REVISION], [
+                            'class' => 'btn btn-sm btn-info text-white',
+                            'title' => 'Marcar como En Revisión (Cliente avisa pago)',
+                            'data-method' => 'post'
                         ]);
-                    },
-                    'delete' => function ($url, $model, $key) {
-                        return Html::a('<i class="fas fa-trash"></i> Eliminar', ['delete', 'id' => $model->id], [
-                            'title' => 'Eliminar',
-                            'class' => 'btn btn-sm btn-danger',
-                            'data-confirm' => '¿Estás seguro de que quieres eliminar este elemento?',
-                            'data-method' => 'post',
+                    }
+
+                    // Botón VERDE: Contratar (Confirmar pago)
+                    if ($model->estado_solicitud !== SolicitudesPresupuesto::ESTADO_SOLICITUD_CONTRATADO) {
+                        $html .= Html::a('<i class="fas fa-check-circle"></i>', ['cambiar-estado', 'id' => $model->id, 'estado' => SolicitudesPresupuesto::ESTADO_SOLICITUD_CONTRATADO], [
+                            'class' => 'btn btn-sm btn-success',
+                            'title' => 'Confirmar Pago y Contratar (Automático)',
+                            'data-confirm' => '¿Confirmas que se ha recibido el pago? Esto creará el proyecto automáticamente.',
+                            'data-method' => 'post'
                         ]);
-                    },
-                ],
+                    } else {
+                        // Si ya está contratado, mostramos indicador
+                        $html .= '<span class="btn btn-sm btn-success disabled"><i class="fas fa-check-double"></i></span>';
+                    }
+
+                    $html .= '</div>';
+                    
+                    // Añadir botón de ver detalle standard
+                    $html .= ' ' . Html::a('<i class="fas fa-eye"></i>', ['view', 'id' => $model->id], ['class' => 'btn btn-sm btn-outline-primary', 'title' => 'Ver detalle']);
+
+                    return $html;
+                }
             ],
         ],
     ]); ?>

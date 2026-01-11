@@ -15,67 +15,53 @@ $this->title = 'Catálogo de Servicios';
 
     <div class="row">
         <?php foreach ($servicios as $servicio): ?>
-            
             <?php 
-                $precioVisual = number_format($servicio->precio_base, 0, ',', '.') . ' €';
+                $precioVisual = number_format($servicio->precio_base, 2, ',', '.') . ' €';
             ?>
 
             <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100 shadow-sm border-0">
                     
                     <img src="<?= $servicio->getImagenUrl() ?>" class="card-img-top" alt="<?= Html::encode($servicio->nombre) ?>" style="height: 200px; object-fit: cover;">
                     
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title"><?= Html::encode($servicio->nombre) ?></h5>
+                        <div class="mb-2">
+                            <h4 class="card-title fw-bold"><?= Html::encode($servicio->nombre) ?></h4>
+                            <p class="text-muted small mb-2">Categoría: <?= $servicio->categoria ?></p>
+                        </div>
                         
-                        <p class="card-text flex-grow-1">
-                            <?= Html::encode($servicio->descripcion ?? 'Servicio profesional de ciberseguridad.') ?>
+                        <p class="card-text text-muted flex-grow-1">
+                            <?= Html::encode($servicio->descripcion) ?>
                         </p>
                         
-                        <div class="mt-3 d-flex justify-content-between align-items-center">
-                            <div>
-                                <p class="text-primary fw-bold mb-1" style="font-size: 1.2rem;">
-                                    Desde <?= $precioVisual ?>
-                                </p>
-                                <?php if (!empty($servicio->duracion_estimada)): ?>
-                                    <small class="text-muted">Duración est.: <?= $servicio->duracion_estimada ?> días</small>
-                                <?php endif; ?>
-                            </div>
-
-                            <a href="<?= \yii\helpers\Url::to([
-                                'site/solicitar-presupuesto',
-                                'servicio_id' => $servicio->id
-                            ]) ?>"
-                               class="btn btn-success btn-sm"
-                               data-confirm="¿Deseas solicitar este servicio?">
-                                Contratar
-                            </a>
+                        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+                            <h2 class="text-primary fw-bold mb-0"><?= $precioVisual ?></h2>
+                            
+                            <!-- Botón Más Información -->
+                            <button class="btn btn-outline-info btn-sm btn-more-info" type="button" data-target="#info-<?= $servicio->id ?>" aria-expanded="false">
+                                <i class="fas fa-info-circle"></i> Info
+                            </button>
                         </div>
 
-                        <button class="btn btn-primary w-100 mt-2 btn-more-info" type="button"
-                                data-target="#collapseService-<?= $servicio->id ?>">
-                            Más información
-                        </button>
+                        <!-- Dropdown Más Info -->
+                        <div class="collapse mb-3" id="info-<?= $servicio->id ?>">
+                            <div class="card card-body bg-light text-small small border-0">
+                                <?= nl2br(Html::encode($servicio->Mas_informacion ?? 'Sin información adicional.')) ?>
+                            </div>
+                        </div>
 
-                    </div>
-                    
-                    <!-- Dropdown / Collapse Section - Inside Card -->
-                    <div class="collapse" id="collapseService-<?= $servicio->id ?>">
-                        <div class="card-footer bg-white border-top-0">
-                            <?php if (!empty($servicio->Mas_informacion)): ?>
-                                <p class="mb-0 text-secondary">
-                                    <?= nl2br(Html::encode($servicio->Mas_informacion)) ?>
-                                </p>
-                            <?php else: ?>
-                                <p class="mb-0 text-muted fst-italic small">
-                                    No hay información adicional disponible.
-                                </p>
-                            <?php endif; ?>
+                        <!-- Botones de Acción -->
+                        <div class="d-grid gap-2 mt-auto">
+                             <a href="<?= \yii\helpers\Url::to(['site/checkout', 'servicio_id' => $servicio->id]) ?>" class="btn btn-primary">
+                                <i class="fas fa-credit-card"></i> Contratar con Tarjeta
+                            </a>
+                            <a href="<?= \yii\helpers\Url::to(['site/solicitar-presupuesto', 'servicio_id' => $servicio->id]) ?>" class="btn btn-outline-secondary btn-sm" data-confirm="¿Deseas solicitar este servicio vía transferencia? Se creará una solicitud.">
+                                <i class="fas fa-university"></i> Pago por Transferencia
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-
         <?php endforeach; ?>
 
         <?php if (empty($servicios)): ?>
