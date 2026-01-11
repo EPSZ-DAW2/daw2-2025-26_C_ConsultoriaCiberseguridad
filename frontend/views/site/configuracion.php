@@ -464,7 +464,7 @@ $this->registerCss("
             <!-- Hero Card: Estado de Seguridad -->
             <div class="settings-card mb-4">
                 <div class="card-content d-flex align-items-center">
-                    <img src="<?= Url::to('@web/images/security_shield.png') ?>" alt="Seguridad" style="width: 48px; height: 48px; margin-right: 20px;">
+                    <img src="<?= Url::to('@web/template/assets/img/services/security_shield.png') ?>" alt="Seguridad" style="width: 48px; height: 48px; margin-right: 20px;">
                     <div>
                         <h3 style="font-size: 16px; margin: 0 0 4px 0;">Tu cuenta está protegida</h3>
                         <p class="text-muted small mb-0">La Revisión de Seguridad ha comprobado tu cuenta y no ha encontrado ninguna acción recomendada.</p>

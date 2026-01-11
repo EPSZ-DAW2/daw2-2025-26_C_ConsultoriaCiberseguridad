@@ -759,4 +759,73 @@ class SiteController extends Controller
 
         return $this->render('create_user', ['model' => $model]);
     }
+    /**
+     * Muestra la pasarela de pago simulada (Opción A)
+     */
+    public function actionCheckout($servicio_id)
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $servicio = \common\models\Servicios::findOne(['id' => $servicio_id, 'activo' => 1]);
+        if (!$servicio) {
+            throw new \yii\web\NotFoundHttpException('Servicio no encontrado.');
+        }
+
+        return $this->render('checkout', [
+            'servicio' => $servicio
+        ]);
+    }
+
+    /**
+     * Procesa el pago simulado y ejecuta la automatización
+     */
+    public function actionProcesarPago()
+    {
+        if (Yii::$app->user->isGuest || !Yii::$app->request->isPost) {
+            return $this->redirect(['site/index']);
+        }
+
+        $servicio_id = Yii::$app->request->post('servicio_id');
+        $user = Yii::$app->user->identity;
+
+        // 1. REGISTRA SOLICITUD AUTOMÁTICAMENTE (CONTRATADO)
+        $solicitud = new SolicitudesPresupuesto();
+        $solicitud->servicio_id = $servicio_id;
+        $solicitud->nombre_contacto = $user->nombre . ' ' . ($user->apellidos ?? '');
+        $solicitud->email_contacto = $user->email;
+        $solicitud->empresa = $user->empresa ?: 'Particular';
+        $solicitud->descripcion_necesidad = 'Contratación Directa vía Tarjeta de Crédito';
+        $solicitud->origen_solicitud = 'Web (Tarjeta)';
+        $solicitud->fecha_solicitud = date('Y-m-d H:i:s');
+        $solicitud->estado_solicitud = SolicitudesPresupuesto::ESTADO_SOLICITUD_CONTRATADO; // Directamente contratado
+        $solicitud->prioridad = 3; // Alta
+
+        if ($solicitud->save()) {
+            
+            // 2. CREA PROYECTO AUTOMÁTICAMENTE
+            $proyecto = new \common\models\Proyectos();
+            $proyecto->nombre = "Implantación: " . ($solicitud->servicio ? $solicitud->servicio->nombre : 'Servicio Contratado');
+            $proyecto->descripcion = "Proyecto generado tras pago con tarjeta exitoso.\nRef. Pago: TRX-" . time();
+            $proyecto->cliente_id = $user->id;
+            $proyecto->servicio_id = $solicitud->servicio_id;
+            $proyecto->fecha_inicio = date('Y-m-d');
+            $proyecto->estado = \common\models\Proyectos::ESTADO_PLANIFICACION;
+            
+            // Intentar asignar un consultor por defecto si existe (opcional, aquí lo dejamos null)
+            
+            if ($proyecto->save()) {
+                // EXITO TOTAL
+                Yii::$app->session->setFlash('success', '¡Pago realizado con éxito! Tu servicio ya está activo y disponible en "Mis Proyectos".');
+                return $this->redirect(['/proyectos/index']);
+            } else {
+                Yii::$app->session->setFlash('warning', 'Pago recibido, pero hubo un error al crear el proyecto. Contacta con soporte.');
+            }
+        } else {
+             Yii::$app->session->setFlash('error', 'Error al procesar la solicitud.');
+        }
+
+        return $this->redirect(['site/catalogo']);
+    }
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-01-2026 a las 12:44:15
+-- Tiempo de generación: 11-01-2026 a las 12:47:01
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -20,9 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `daw2_cybersec_manager`
 --
-
-CREATE DATABASE IF NOT EXISTS `daw2_cybersec_manager` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `daw2_cybersec_manager`;
 
 -- --------------------------------------------------------
 
@@ -223,7 +220,7 @@ CREATE TABLE `diapositivas` (
 INSERT INTO `diapositivas` (`id`, `curso_id`, `numero_orden`, `titulo`, `contenido_html`, `imagen_url`, `video_url`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
 (1, 1, 1, '¿Qué es el Phishing?', '<p>El <strong>Phishing</strong> es una técnica de ciberdelincuencia que utiliza el fraude, el engaño y el timo para manipular a sus víctimas y hacer que revelen información personal confidencial.</p><ul><li>Suplantación de bancos</li><li>Correos falsos de RRHH</li><li>Premios inexistentes</li></ul>', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Phishing_trusted_bank.svg/1200px-Phishing_trusted_bank.svg.png', NULL, NULL, '2026-01-09 10:00:00', NULL, NULL),
 (2, 1, 2, 'Ejemplo en Video', '<p>Mira este video para entender cómo operan los cibercriminales en tiempo real.</p>', NULL, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', NULL, '2026-01-09 10:00:00', NULL, NULL),
-(3, 1, 3, 'Cómo protegerse', '<h3>Tips de Seguridad</h3><ol><li>Verifica siempre el remitente (@empresa.com no @gmail.com).</li><li>No hagas clic en enlaces sospechosos ("Tu cuenta ha sido bloqueada").</li><li>Activa el doble factor de autenticación (2FA).</li></ol><p>¡Estás listo para el examen!</p>', NULL, NULL, NULL, '2026-01-09 10:00:00', NULL, NULL);
+(3, 1, 3, 'Cómo protegerse', '<h3>Tips de Seguridad</h3><ol><li>Verifica siempre el remitente (@empresa.com no @gmail.com).</li><li>No hagas clic en enlaces sospechosos (\"Tu cuenta ha sido bloqueada\").</li><li>Activa el doble factor de autenticación (2FA).</li></ol><p>¡Estás listo para el examen!</p>', NULL, NULL, NULL, '2026-01-09 10:00:00', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -247,6 +244,13 @@ CREATE TABLE `documentos` (
   `fecha_modificacion` datetime DEFAULT NULL COMMENT 'Si se modificó el archivo',
   `notas` text DEFAULT NULL COMMENT 'Notas adicionales sobre el documento'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Documentos entregables de los proyectos';
+
+--
+-- Volcado de datos para la tabla `documentos`
+--
+
+INSERT INTO `documentos` (`id`, `proyecto_id`, `nombre_archivo`, `descripcion`, `ruta_archivo`, `tipo_documento`, `tamaño_bytes`, `version`, `visible_cliente`, `hash_verificacion`, `subido_por`, `fecha_subida`, `fecha_modificacion`, `notas`) VALUES
+(1, 2, 'Diapositivas del Tema 1. Electricidad y magnetismo CON ANOTACIONES.pdf', 'Documento tema1', 'C:\\xampp\\htdocs\\daw2\\git/backend/../uploads/documentos/1768045738_Diapositivas del Tema 1. Electricidad y magnetismo CON ANOTACIONES.pdf', 'Procedimiento', 2114746, '1.0', 1, 'c32262f37424671ddb5162fab2976f5fba325cdd02b8ba2ecfded6156abd3a18', 1, '2026-01-10 12:48:58', NULL, 'hola');
 
 -- --------------------------------------------------------
 
@@ -274,6 +278,13 @@ CREATE TABLE `eventos_calendario` (
   `fecha_modificacion` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Calendario de eventos y auditorías';
 
+--
+-- Volcado de datos para la tabla `eventos_calendario`
+--
+
+INSERT INTO `eventos_calendario` (`id`, `proyecto_id`, `auditor_id`, `titulo`, `descripcion`, `fecha`, `hora_inicio`, `hora_fin`, `tipo_evento`, `ubicacion`, `estado_evento`, `recordatorio_enviado`, `notas`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
+(2, 2, 2, 'Auditoria de prueba', 'popop', '2026-01-03', '09:00:00', '11:00:00', 'Reunión Cliente', 'Sala', 'Programado', 1, 'holi', NULL, '2026-01-10 13:02:29', NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -299,15 +310,58 @@ CREATE TABLE `incidencias` (
   `sistema_afectado` varchar(255) DEFAULT NULL COMMENT 'Sistema o servidor afectado',
   `acciones_tomadas` text DEFAULT NULL COMMENT 'Descripción de acciones realizadas',
   `notas_internas` text DEFAULT NULL COMMENT 'Notas del equipo SOC',
-  `visible_cliente` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Si el cliente puede ver esta incidencia: 0=No, 1=Sí'
+  `visible_cliente` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Si el cliente puede ver esta incidencia: 0=No, 1=Sí',
+  `origen` varchar(100) DEFAULT 'Manual'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Sistema de ticketing SOC para incidencias de seguridad';
 
 --
 -- Volcado de datos para la tabla `incidencias`
 --
 
-INSERT INTO `incidencias` (`id`, `cliente_id`, `analista_id`, `titulo`, `descripcion`, `severidad`, `estado_incidencia`, `categoria_incidencia`, `fecha_reporte`, `fecha_asignacion`, `fecha_primera_respuesta`, `fecha_resolucion`, `tiempo_resolucion`, `sla_cumplido`, `ip_origen`, `sistema_afectado`, `acciones_tomadas`, `notas_internas`, `visible_cliente`) VALUES
-(1, 7, NULL, 'Correo sospechoso', 'Algo malo pasa', 'Media', 'Abierto', 'Phising', '2026-01-08 12:01:07', NULL, NULL, NULL, NULL, NULL, '192.100.1.230', 'Servidor web principla', NULL, NULL, 1);
+INSERT INTO `incidencias` (`id`, `cliente_id`, `analista_id`, `titulo`, `descripcion`, `severidad`, `estado_incidencia`, `categoria_incidencia`, `fecha_reporte`, `fecha_asignacion`, `fecha_primera_respuesta`, `fecha_resolucion`, `tiempo_resolucion`, `sla_cumplido`, `ip_origen`, `sistema_afectado`, `acciones_tomadas`, `notas_internas`, `visible_cliente`, `origen`) VALUES
+(1, 9, 6, 'Correo sospechoso', 'Algo malo pasa', 'Media', 'Resuelto', 'Phising', '2026-01-08 12:01:07', '2026-01-10 00:00:00', NULL, NULL, NULL, NULL, '192.100.1.230', 'Servidor web principla', NULL, NULL, 1, 'Manual'),
+(2, 9, NULL, 'Correo sospechoso mu malo', 'Movida tope chunga, tio', 'Alta', 'Abierto', 'Phising', '2026-01-10 12:38:21', NULL, NULL, NULL, NULL, NULL, '000.00.00.0', 'Servidor web principal ', NULL, NULL, 1, 'Manual'),
+(3, 9, 6, 'Aviso de Seguridad: Vulnerabilidad en SRV-DB-01 (CVE-2024-2311)', 'Detectada vulnerabilidad crítica o importante en el activo SRV-DB-01.\n\nCVE: CVE-2024-2311\nRiesgo: Crítico\nEstado del Parche: Pendiente\n\nSe requiere su autorización para proceder con la ventana de mantenimiento de emergencia.', 'Crítica', 'Asignado', NULL, '2026-01-10 17:15:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Gestión de Vulnerabilidades'),
+(4, 9, 6, 'Alerta de Seguridad: Escaneo de puertos detectado', 'Se ha detectado una actividad sospechosa en el sistema Gateway.\n\nDetalles:\nEscaneo rápido TCP desde IP interna desconocida\n\nFuente: IPS', 'Media', 'Asignado', NULL, '2026-01-10 17:15:09', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Monitorización SOC'),
+(5, 9, 6, 'Incidencia Demo 6962953f6edcb', 'Prueba de dashboard', 'Baja', 'Resuelto', NULL, '2026-01-09 19:06:55', NULL, NULL, '2026-01-11 11:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(6, 7, NULL, 'Incidencia Demo 6962953f748fe', 'Prueba de dashboard', 'Baja', 'Resuelto', NULL, '2026-01-02 19:06:55', NULL, NULL, '2026-01-03 09:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(7, 7, NULL, 'Incidencia Demo 6962953f75384', 'Prueba de dashboard', 'Informativa', 'Resuelto', NULL, '2026-01-03 19:06:55', NULL, NULL, '2026-01-05 04:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(8, 7, NULL, 'Incidencia Demo 6962953f75f65', 'Prueba de dashboard', 'Informativa', 'Resuelto', NULL, '2026-01-02 19:06:55', NULL, NULL, '2026-01-04 19:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(9, 7, NULL, 'Incidencia Demo 6962953f9579d', 'Prueba de dashboard', 'Alta', 'Resuelto', NULL, '2026-01-04 19:06:55', NULL, NULL, '2026-01-06 03:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(10, 7, NULL, 'Incidencia Demo 6962953f96411', 'Prueba de dashboard', 'Media', 'Resuelto', NULL, '2026-01-06 19:06:55', NULL, NULL, '2026-01-08 13:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(11, 7, NULL, 'Incidencia Demo 6962953f96dc4', 'Prueba de dashboard', 'Informativa', 'Resuelto', NULL, '2026-01-05 19:06:55', NULL, NULL, '2026-01-07 04:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(12, 14, 6, 'Incidencia Demo 6962953f97dd3', 'Prueba de dashboard', 'Crítica', 'Resuelto', NULL, '2026-01-06 19:06:55', NULL, NULL, '2026-01-08 09:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(13, 7, NULL, 'Incidencia Demo 6962953f98d4d', 'Prueba de dashboard', 'Alta', 'Resuelto', NULL, '2026-01-09 19:06:55', NULL, NULL, '2026-01-11 12:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(14, 7, NULL, 'Incidencia Demo 6962953f9997a', 'Prueba de dashboard', 'Baja', 'Resuelto', NULL, '2026-01-04 19:06:55', NULL, NULL, '2026-01-05 13:06:55', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Simulacion'),
+(15, 9, 1, 'Alerta de Seguridad: Cambio de privilegios sospechoso', 'Se ha detectado una actividad sospechosa en el sistema SRV-FILE-01.\n\nDetalles:\nEl usuario user_guest fue añadido al grupo Administradores\n\nFuente: Active Directory', 'Alta', 'Asignado', NULL, '2026-01-10 20:49:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 'Monitorización SOC');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `logs_defender`
+--
+
+CREATE TABLE `logs_defender` (
+  `id` int(11) NOT NULL,
+  `evento` varchar(255) NOT NULL,
+  `fuente` varchar(100) NOT NULL DEFAULT 'Microsoft Defender',
+  `gravedad` enum('Crítica','Alta','Media','Baja','Informativa') NOT NULL DEFAULT 'Media',
+  `fecha` datetime DEFAULT current_timestamp(),
+  `cliente_afectado_id` int(11) DEFAULT NULL,
+  `sistema` varchar(100) DEFAULT NULL,
+  `estado` enum('Pendiente','Procesado','Ignorado') NOT NULL DEFAULT 'Pendiente',
+  `detalles_tecnicos` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `logs_defender`
+--
+
+INSERT INTO `logs_defender` (`id`, `evento`, `fuente`, `gravedad`, `fecha`, `cliente_afectado_id`, `sistema`, `estado`, `detalles_tecnicos`) VALUES
+(1, 'Intento de fuerza bruta RDP', 'Firewall Perimetral', 'Alta', '2026-01-09 20:51:47', 9, 'SRV-AD-01', 'Pendiente', 'Múltiples intentos fallidos desde IP 45.23.12.99'),
+(2, 'Malware detectado: Trojan.Win32', 'Microsoft Defender', 'Crítica', '2026-01-09 23:51:47', 9, 'PC-RECEPCION', 'Pendiente', 'El antivirus bloqueó la ejecución de invoice.exe'),
+(3, 'Escaneo de puertos detectado', 'IPS', 'Media', '2026-01-10 07:51:47', 9, 'Gateway', 'Procesado', 'Escaneo rápido TCP desde IP interna desconocida'),
+(4, 'Cambio de privilegios sospechoso', 'Active Directory', 'Alta', '2026-01-10 05:51:47', 9, 'SRV-FILE-01', 'Procesado', 'El usuario user_guest fue añadido al grupo Administradores');
 
 -- --------------------------------------------------------
 
@@ -334,7 +388,11 @@ INSERT INTO `migration` (`version`, `apply_time`) VALUES
 ('m200409_110543_rbac_update_mssql_trigger', 1766693552),
 ('m260105_000001_add_video_url_to_cursos_table', 1767868579),
 ('m260108_103409_add_recovery_email_column_to_usuarios_table', 1767868580),
-('m260108_105433_add_totp_secret_column_to_usuarios_table', 1767869720);
+('m260108_105433_add_totp_secret_column_to_usuarios_table', 1767869720),
+('m260110_154627_fix_create_logs_defender_table', 1768060019),
+('m260110_161354_add_origen_column_to_incidencias_table', 1768061660),
+('m260110_211500_add_verification_token_to_usuarios', 1768075910),
+('m260110_214000_add_password_reset_token_to_usuarios', 1768077560);
 
 -- --------------------------------------------------------
 
@@ -361,7 +419,7 @@ CREATE TABLE `preguntas_cuestionario` (
 --
 
 INSERT INTO `preguntas_cuestionario` (`id`, `curso_id`, `enunciado_pregunta`, `opcion_a`, `opcion_b`, `opcion_c`, `opcion_correcta`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
-(1, 1, '¿Cuál de los siguientes es un indicio claro de Phishing?', 'El correo viene de @mibanco.com.', 'El correo tiene faltas de ortografía y mete urgencia ("¡Hazlo ya!").', 'El correo incluye mi nombre completo.', 'b', NULL, '2026-01-09 10:00:00', NULL, NULL),
+(1, 1, '¿Cuál de los siguientes es un indicio claro de Phishing?', 'El correo viene de @mibanco.com.', 'El correo tiene faltas de ortografía y mete urgencia (\"¡Hazlo ya!\").', 'El correo incluye mi nombre completo.', 'b', NULL, '2026-01-09 10:00:00', NULL, NULL),
 (2, 1, 'Si recibo un correo sospechoso, ¿qué debo hacer?', 'Responder preguntando si es real.', 'Hacer clic en el enlace para verificar.', 'Contactar a la entidad por otro medio oficial y borrar el correo.', 'c', NULL, '2026-01-09 10:00:00', NULL, NULL),
 (3, 1, '¿Qué significa el candado verde en el navegador?', 'Que el sitio es 100% legítimo y seguro.', 'Que la conexión está cifrada, pero el sitio podría ser fraudulento.', 'Que Google ha verificado la empresa.', 'b', NULL, '2026-01-09 10:00:00', NULL, NULL);
 
@@ -409,6 +467,24 @@ CREATE TABLE `proyectos` (
   `fecha_modificacion` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Proyectos contratados por clientes';
 
+--
+-- Volcado de datos para la tabla `proyectos`
+--
+
+INSERT INTO `proyectos` (`id`, `nombre`, `descripcion`, `cliente_id`, `servicio_id`, `consultor_id`, `auditor_id`, `fecha_inicio`, `fecha_fin_prevista`, `fecha_fin_real`, `estado`, `presupuesto`, `notas_internas`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
+(2, 'Proyecto de orientacion', 'hh', 9, 1, 4, 2, '0000-00-00', '0000-00-00', '0000-00-00', 'Planificación', 30.00, NULL, NULL, '2026-01-10 12:47:09', NULL, NULL),
+(3, 'Implantación: Gestión de vulnerabilidades', 'Generado automáticamente desde solicitud #9\n\nSolicitud iniciada desde el catálogo de servicios', 9, 4, NULL, NULL, '2026-01-10', NULL, NULL, 'Planificación', NULL, NULL, 11, '2026-01-10 17:43:32', NULL, NULL),
+(8, 'Implantación: Implantación y Auditoría ISO 27001', 'Generado automáticamente desde solicitud #13\n\nSolicitud iniciada desde el catálogo de servicios', 14, 1, NULL, NULL, '2026-01-10', NULL, NULL, 'Planificación', NULL, NULL, 11, '2026-01-10 18:48:25', NULL, NULL),
+(9, 'Implantación: Adecuación al Esquema Nacional de Seguridad', 'Generado automáticamente desde solicitud #14\n\nSolicitud iniciada desde el catálogo de servicios', 14, 2, NULL, NULL, '2026-01-10', NULL, NULL, 'Planificación', NULL, NULL, 11, '2026-01-10 18:49:33', NULL, NULL),
+(10, 'Implantación: Curso de concienciación general', 'Generado automáticamente desde solicitud #15\n\nSolicitud iniciada desde el catálogo de servicios', 14, 6, NULL, NULL, '2026-01-10', NULL, NULL, 'Planificación', NULL, NULL, 11, '2026-01-10 18:52:44', NULL, NULL),
+(11, 'Proyecto Demo 1 - Campaña de phishing simulado', 'Generado automáticamente para testing', 7, 5, NULL, NULL, '2026-01-10', '2027-01-10', NULL, 'En curso', 12800.00, NULL, NULL, '2026-01-10 19:06:55', NULL, NULL),
+(12, 'Proyecto Demo 2 - Monitorización y respuestas a incidentes', 'Generado automáticamente para testing', 7, 3, NULL, NULL, '2026-01-10', '2027-01-10', NULL, 'En curso', 11700.00, NULL, NULL, '2026-01-10 19:06:55', NULL, NULL),
+(13, 'Proyecto Demo 3 - Adecuación al Esquema Nacional de Seguridad', 'Generado automáticamente para testing', 7, 2, NULL, NULL, '2026-01-10', '2027-01-10', NULL, 'En curso', 12100.00, NULL, NULL, '2026-01-10 19:06:55', NULL, NULL),
+(14, 'Proyecto Demo 4 - Gestión de vulnerabilidades', 'Generado automáticamente para testing', 7, 4, NULL, NULL, '2026-01-10', '2027-01-10', NULL, 'En curso', 6300.00, NULL, NULL, '2026-01-10 19:06:55', NULL, NULL),
+(15, 'Proyecto Demo 5 - Monitorización y respuestas a incidentes', 'Generado automáticamente para testing', 7, 3, NULL, NULL, '2026-01-10', '2027-01-10', NULL, 'En curso', 10800.00, NULL, NULL, '2026-01-10 19:06:55', NULL, NULL),
+(16, 'Implantación: Ciberseguridad para diretivos', 'Generado automáticamente desde solicitud #16\n\nSolicitud iniciada desde el catálogo de servicios', 14, 7, NULL, NULL, '2026-01-10', NULL, NULL, 'Planificación', NULL, NULL, 11, '2026-01-10 20:02:15', NULL, NULL),
+(17, 'Proyecto de prueba', 'prueba', 14, 8, 4, 2, '2026-01-31', NULL, NULL, 'Planificación', NULL, NULL, NULL, '2026-01-10 21:50:32', NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -436,13 +512,13 @@ CREATE TABLE `servicios` (
 --
 
 INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `categoria`, `precio_base`, `duracion_estimada`, `requiere_auditoria`, `activo`, `Mas_informacion`, `creado_por`, `fecha_creacion`, `modificado_por`, `fecha_modificacion`) VALUES
-(1, 'Implantación y Auditoría ISO 27001', 'Acompañamiento integral para el diseño SGSI, analisis de riesgos y preparación para la certificación oficial', 'Ciberseguridad', 14500.00, 6, 1, 1, 'Se cobra por hitos (30% inicio, 40% mitad y 30% fin)\r\nPagas por (Política de seguridad, análisis de riesgos, declaración de aplicabilidad, plan de tratamiento de riesgos e informe de auditoría interna) que te permitan certificarte.', NULL, '2026-01-02 21:53:10', NULL, '2026-01-04 14:35:52'),
+(1, 'Implantación y Auditoría ISO 27001', 'Acompañamiento integral para el diseño SGSI, analisis de riesgos y preparación para la certificación oficial', 'Ciberseguridad', 14500.00, 6, 1, 1, 'Se cobra por hitos (30% inicio, 40% mitad y 30% fin)\r\nPagas por (Política de seguridad, análisis de riesgos, declaración de aplicabilidad, plan de tratamiento de riesgos e informe de auditoría interna) que te permitan certificarte.', NULL, '2026-01-02 21:53:10', NULL, '2026-01-11 11:33:44'),
 (2, 'Adecuación al Esquema Nacional de Seguridad', 'Adaptación de sistemas para el cumplinento con el RD311/2022 para administraciones publicas y proveedores', 'Consultoría', 18000.00, 12, 1, 1, 'Pagas por cumplir la ley (Acta de categorización del sistema, declaración de aplicabilidad, politica de seguridad, informe de insuficiencia, plan de adecuación e informe de auditoría de conformidad)', NULL, '2026-01-02 21:55:32', NULL, '2026-01-04 14:35:05'),
-(3, 'Monitorización y respuestas a incidentes', 'Vigilancia continua de activos digitales mediante SIEM y analistas de nivel 1 y 2 para detectar intrusiones en tiempo real', 'Ciberseguridad', 30000.00, 12, 0, 1, 'Pagas por tranquilidad y visibilidad mediante Acceso a Dashboard de seguridad en tiempo real, notificación de incidentes criticos, informe mensual ejecutivos de amenzasa bloqueadas y reunión trimestral de seguimiento de seguridad.', NULL, '2026-01-02 21:59:15', NULL, '2026-01-04 14:34:45'),
-(4, 'Gestión de vulnerabilidades', 'Escaneo periodicos automatizados para detectar fallos de seguridad en servidores y aplicaciones web antes que los atacantes', 'Ciberseguridad', 5400.00, 12, 0, 1, 'Pagas por saber donde tienes las brechas de seguridad antes que los hacker mediante Informe tecnicos de vulnerabilidades, guía de remediación para el equipo de IT, resumen ejecutivo de riesgos tecnológicos y certificado de escaneo trimestral.', NULL, '2026-01-02 22:01:10', NULL, '2026-01-04 14:34:26'),
+(3, 'Monitorización y respuestas a incidentes', 'Vigilancia continua de activos digitales mediante SIEM y analistas de nivel 1 y 2 para detectar intrusiones en tiempo real', 'Ciberseguridad', 30000.00, 12, 0, 1, 'Pagas por tranquilidad y visibilidad mediante Acceso a Dashboard de seguridad en tiempo real, notificación de incidentes criticos, informe mensual ejecutivos de amenzasa bloqueadas y reunión trimestral de seguimiento de seguridad.', NULL, '2026-01-02 21:59:15', NULL, '2026-01-10 18:22:04'),
+(4, 'Gestión de vulnerabilidades', 'Escaneo periodicos automatizados para detectar fallos de seguridad en servidores y aplicaciones web antes que los atacantes', 'Ciberseguridad', 5400.00, 12, 0, 1, 'Pagas por saber donde tienes las brechas de seguridad antes que los hacker mediante Informe tecnicos de vulnerabilidades, guía de remediación para el equipo de IT, resumen ejecutivo de riesgos tecnológicos y certificado de escaneo trimestral.', NULL, '2026-01-02 22:01:10', NULL, '2026-01-10 18:22:04'),
 (5, 'Campaña de phishing simulado', 'Envio controlado de correos trampa a empleados para medir el nivel de riesgo humano y educar en la detención de fraudes ', 'Formación', 11400.00, 12, 0, 1, 'Pagas por medir y educar a tus empleados mediante informe de tasas de click y apertura de correos, listado de usuarios comprometidos, pildora formativa de refuerzo y diploma de participación en la campaña.', NULL, '2026-01-02 22:03:23', NULL, '2026-01-04 14:33:45'),
 (6, 'Curso de concienciación general', 'Formación fundamental sobre higiene digital: contraseñas robustas, deteción de ingeniería social, protección del puesto de trabajo y cumplimiento básico de protección de datos', 'Formación', 36.00, 12, 0, 1, 'Pagas por el certificado nominal de superación, manual de buenas practicas de ciberhigiene, decálogo de cumplimiento RGPD para imprimir y checklist de puesto de trabajo seguro. ', NULL, '2026-01-02 22:06:44', NULL, '2026-01-04 14:46:11'),
-(7, 'Ciberseguridad para diretivos', 'Seminiario ejecutivo sobre gestion de riesgos empresariales, impacto legal de las brechas de seguridad y toma de decisión ante crisis (Ransomware)', 'Ciberseguridad', 3600.00, 12, 0, 1, 'Pagas por un programa de acompañamiento anual que incluye un taller inicial de gestión de crisis y ransomware, 4 charlas trimestrales (Online 45 min.) sobre nuevas amenazas, canal de consulta prioritario para dudas del diretivo y cuadro de mando de riesgo para la dirección más una guía de bolsillo de respuestas a incidentes.', NULL, '2026-01-02 22:09:47', NULL, '2026-01-04 14:45:38'),
+(7, 'Ciberseguridad para diretivos', 'Seminiario ejecutivo sobre gestion de riesgos empresariales, impacto legal de las brechas de seguridad y toma de decisión ante crisis (Ransomware)', 'Ciberseguridad', 3600.00, 12, 0, 1, 'Pagas por un programa de acompañamiento anual que incluye un taller inicial de gestión de crisis y ransomware, 4 charlas trimestrales (Online 45 min.) sobre nuevas amenazas, canal de consulta prioritario para dudas del diretivo y cuadro de mando de riesgo para la dirección más una guía de bolsillo de respuestas a incidentes.', NULL, '2026-01-02 22:09:47', NULL, '2026-01-10 18:22:04'),
 (8, 'Formación: Hacking Ético Básico', 'Curso introductorio sobre seguridad ofensiva y defensa, aprende técnicas de hacking ético y cómo protegerte de ellas.', 'Formación', 150.00, 10, 0, 1, 'Pagas por acceso al campus online con curso completo de Introducción al Phishing, certificado de superación, exámenes prácticos y materiales didácticos descargables.', NULL, '2026-01-09 10:00:00', NULL, NULL);
 
 -- --------------------------------------------------------
@@ -481,7 +557,20 @@ CREATE TABLE `solicitudes_presupuesto` (
 INSERT INTO `solicitudes_presupuesto` (`id`, `servicio_id`, `nombre_contacto`, `email_contacto`, `telefono_contacto`, `empresa`, `nif_cif`, `num_empleados`, `sector_actividad`, `descripcion_necesidad`, `alcance_solicitado`, `presupuesto_estimado`, `fecha_inicio_deseada`, `estado_solicitud`, `prioridad`, `fecha_solicitud`, `fecha_contacto`, `usuario_asignado_id`, `notas_comerciales`, `origen_solicitud`) VALUES
 (1, NULL, 'Pedro Domingues', 'pedro@pedro.com', NULL, 'No especificada (Contacto Web)', NULL, NULL, NULL, 'pedro', NULL, NULL, NULL, 'Pendiente', 2, '2026-01-02 21:17:56', NULL, NULL, NULL, 'Web'),
 (2, 2, 'prueba Gonzalez', 'prueba@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Pendiente', 1, '2026-01-08 12:28:25', NULL, NULL, NULL, 'Web'),
-(3, 3, 'prueba Gonzalez', 'prueba@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Pendiente', 1, '2026-01-08 12:29:13', NULL, NULL, NULL, 'Web');
+(3, 3, 'prueba Gonzalez', 'prueba@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Pendiente', 1, '2026-01-08 12:29:13', NULL, NULL, NULL, 'Web'),
+(4, NULL, 'Pedrino Dom Pa', 'pedro@pedro.com', NULL, 'No especificada (Contacto Web)', NULL, NULL, NULL, 'Yo', NULL, NULL, NULL, 'Pendiente', 2, '2026-01-10 12:14:58', NULL, NULL, NULL, 'Web'),
+(5, 5, 'Pepino', 'pepino@gmail.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Pendiente', 1, '2026-01-10 12:22:20', NULL, NULL, NULL, 'Web'),
+(6, 8, 'Laura Admin Empresa', 'clienteadmin@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Contratado', 1, '2026-01-10 12:39:49', NULL, NULL, NULL, 'Web'),
+(7, 6, 'Laura Admin Empresa', 'clienteadmin@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Contratado', 1, '2026-01-10 13:15:39', NULL, NULL, NULL, 'Web'),
+(8, 4, 'prueba Gonzalez', 'prueba@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Contratado', 1, '2026-01-10 13:36:46', NULL, NULL, NULL, 'Web'),
+(9, 4, 'Laura Admin Empresa', 'clienteadmin@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Contratado', 1, '2026-01-10 17:30:30', NULL, NULL, NULL, 'Web'),
+(10, 3, 'prueba3', 'prueba3@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Rechazado', 1, '2026-01-10 18:08:41', NULL, NULL, NULL, 'Web'),
+(11, 1, 'prueba3', 'prueba3@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Rechazado', 1, '2026-01-10 18:24:36', NULL, NULL, NULL, 'Web'),
+(12, 3, 'prueba3', 'prueba3@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Contratado', 1, '2026-01-10 18:47:00', NULL, NULL, NULL, 'Web'),
+(13, 1, 'prueba3', 'prueba3@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Contratado', 1, '2026-01-10 18:47:59', NULL, NULL, NULL, 'Web'),
+(14, 2, 'prueba3', 'prueba3@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Contratado', 1, '2026-01-10 18:49:06', NULL, NULL, NULL, 'Web'),
+(15, 6, 'prueba3', 'prueba3@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Contratado', 1, '2026-01-10 18:52:20', NULL, NULL, NULL, 'Web'),
+(16, 7, 'prueba3', 'prueba3@cibersec.com', NULL, 'Cliente Web', NULL, NULL, NULL, 'Solicitud iniciada desde el catálogo de servicios', NULL, NULL, NULL, 'Contratado', 1, '2026-01-10 20:01:35', NULL, NULL, NULL, 'Web');
 
 -- --------------------------------------------------------
 
@@ -514,6 +603,7 @@ CREATE TABLE `usuarios` (
   `password` varchar(255) NOT NULL COMMENT 'Hash de la contraseña (usar bcrypt/Argon2)',
   `nombre` varchar(100) NOT NULL COMMENT 'Nombre del usuario',
   `apellidos` varchar(150) DEFAULT NULL COMMENT 'Apellidos del usuario',
+  `rol` enum('cliente_user','cliente_admin','consultor','auditor','analista_soc','admin','manager','comercial') NOT NULL DEFAULT 'cliente_user' COMMENT 'Rol del usuario en el sistema RBAC',
   `empresa` varchar(200) DEFAULT NULL COMMENT 'Nombre de la empresa (solo para clientes)',
   `telefono` varchar(20) DEFAULT NULL COMMENT 'Teléfono de contacto',
   `direccion` text DEFAULT NULL COMMENT 'Dirección completa',
@@ -525,27 +615,30 @@ CREATE TABLE `usuarios` (
   `motivo_bloqueo` text DEFAULT NULL COMMENT 'Razón del bloqueo',
   `activo` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Usuario activo: 0=Inactivo, 1=Activo',
   `auth_key` varchar(32) NOT NULL DEFAULT '',
-  `verification_token` varchar(255) DEFAULT NULL COMMENT 'Token para verificación de email',
-  `password_reset_token` varchar(255) DEFAULT NULL COMMENT 'Token para recuperación de contraseña',
   `email_recuperacion` varchar(255) DEFAULT NULL,
   `totp_secret` varchar(255) DEFAULT NULL,
-  `totp_activo` tinyint(1) DEFAULT 0
+  `totp_activo` tinyint(1) DEFAULT 0,
+  `verification_token` varchar(255) DEFAULT NULL,
+  `password_reset_token` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Usuarios del sistema con autenticación y control de roles';
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `empresa`, `telefono`, `direccion`, `fecha_registro`, `ultimo_acceso`, `intentos_acceso`, `bloqueado`, `fecha_bloqueo`, `motivo_bloqueo`, `activo`, `auth_key`, `verification_token`, `password_reset_token`, `email_recuperacion`, `totp_secret`, `totp_activo`) VALUES
-(1, 'admin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Pedro', 'Admin', NULL, NULL, NULL, '2025-12-26 10:41:09', NULL, 0, 0, NULL, NULL, 1, 'cIwcYPb9TnINim4_YhZ715O5PHhY7ei_', NULL, NULL, NULL, NULL, 0),
-(2, 'auditor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Estela', 'Auditora', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'd605677f1938d8e599ad7659baaa6188', NULL, NULL, NULL, NULL, 0),
-(4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c', NULL, NULL, NULL, NULL, 0),
-(6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1', NULL, NULL, NULL, NULL, 0),
-(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', 'Gonzalez', 'Empresa Real', '567567567', 'Calle Falsa 123', '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB', NULL, NULL, 'pruebaRECU@cibersec.com', NULL, 0),
-(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4', NULL, NULL, NULL, NULL, 0),
-(9, 'clienteadmin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Laura', 'Admin Empresa', 'Acme Corp', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', NULL, NULL, NULL, NULL, 0),
-(10, 'manager@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Carlos', 'Manager', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1', NULL, NULL, NULL, NULL, 0),
-(11, 'comercial@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ana', 'Comercial', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'x9y8z7a6b5c4d3e2f1g0h9i8j7k6l5m4', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `rol`, `empresa`, `telefono`, `direccion`, `fecha_registro`, `ultimo_acceso`, `intentos_acceso`, `bloqueado`, `fecha_bloqueo`, `motivo_bloqueo`, `activo`, `auth_key`, `email_recuperacion`, `totp_secret`, `totp_activo`, `verification_token`, `password_reset_token`) VALUES
+(1, 'admin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Pedro', 'Admin', 'admin', NULL, NULL, NULL, '2025-12-26 10:41:09', NULL, 0, 0, NULL, NULL, 1, 'cIwcYPb9TnINim4_YhZ715O5PHhY7ei_', NULL, NULL, 0, NULL, NULL),
+(2, 'auditor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Estela', 'Auditora', 'auditor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'd605677f1938d8e599ad7659baaa6188', NULL, NULL, 0, NULL, NULL),
+(4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c', NULL, NULL, 0, NULL, NULL),
+(6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'analista_soc', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1', NULL, NULL, 0, NULL, NULL),
+(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', 'Gonzalez', 'cliente_user', 'Empresa Real', '567567567', 'Calle Falsa 123', '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 0, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB', 'pruebaRECU@cibersec.com', NULL, 0, NULL, NULL),
+(8, 'prueba2@cibersec.com', '$2y$13$YO.esNHzQbfFcJsKFBcUy.9c5FkTylZYBNInJ2hY4.5PQ5bJ8LONm', 'prueba2', NULL, 'cliente_user', NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 't5UFXE0ex_149REvSt2QHebMB4uval3G', NULL, NULL, 0, 'LIxdIlwHdUChJ6UrxCqQQL15g4pwqStl_1768077256', NULL),
+(9, 'clienteadmin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Laura', 'Admin Empresa', 'cliente_admin', 'Acme Corp', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', NULL, NULL, 0, NULL, NULL),
+(10, 'manager@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Carlos', 'Manager', 'manager', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1', NULL, NULL, 0, NULL, NULL),
+(11, 'comercial@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ana', 'Comercial', 'comercial', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'x9y8z7a6b5c4d3e2f1g0h9i8j7k6l5m4', NULL, NULL, 0, NULL, NULL),
+(12, 'pepino@gmail.com', '$2y$13$PKzw7MVQDMeYw8MHkNDj.u.m6knGmduCgqt9a/P4Z2lKxi/yG80oW', 'Pepino', ' PEPE JOI', 'cliente_user', 'Empresa Juanito', '654654654', 'Calle Falsa 123', '2026-01-10 12:17:40', NULL, 0, 0, NULL, NULL, 1, 'CgpVP1FbYbrRPQ5YohlMAlLtsnXsOccj', 'pepinoRECU@gmail.com', NULL, 0, NULL, NULL),
+(13, 'juan@cibersec.com', '$2y$13$xMvYBHOK6XoYQAC3hkLN3.RD2Vt9qkvxEQya1wCtsc8FcmpspUlsG', 'Juan Martinez', NULL, 'cliente_user', 'Acme Corp', NULL, NULL, '2026-01-10 17:46:59', NULL, 0, 0, NULL, NULL, 1, '7qUuPVKt8B5FRgrFi73guHxjCbpDqH2A', NULL, NULL, 0, NULL, NULL),
+(14, 'prueba3@cibersec.com', '$2y$13$ivS4nRs4uWWC/fOES8umSOqcb.VypLgd1Kq/1MSV4jVTz8gKSUC/W', 'prueba3', NULL, 'cliente_admin', NULL, NULL, NULL, '2026-01-10 18:07:07', NULL, 0, 0, NULL, NULL, 1, '_LmE1F5wHFSIuJRe8yIW6Xdp3AlEZPAh', NULL, NULL, 0, NULL, NULL);
 
 --
 -- Índices para tablas volcadas
@@ -632,6 +725,13 @@ ALTER TABLE `incidencias`
   ADD KEY `idx_fecha` (`fecha_reporte`);
 
 --
+-- Indices de la tabla `logs_defender`
+--
+ALTER TABLE `logs_defender`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx-logs_defender-cliente_id` (`cliente_afectado_id`);
+
+--
 -- Indices de la tabla `migration`
 --
 ALTER TABLE `migration`
@@ -703,8 +803,8 @@ ALTER TABLE `user`
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email_UNIQUE` (`email`),
-  ADD UNIQUE KEY `verification_token` (`verification_token`),
-  ADD UNIQUE KEY `password_reset_token` (`password_reset_token`);
+  ADD UNIQUE KEY `password_reset_token` (`password_reset_token`),
+  ADD KEY `idx_rol` (`rol`) COMMENT 'Índice para búsquedas por rol';
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -714,37 +814,43 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `cursos`
 --
 ALTER TABLE `cursos`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `diapositivas`
 --
 ALTER TABLE `diapositivas`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `documentos`
 --
 ALTER TABLE `documentos`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `eventos_calendario`
 --
 ALTER TABLE `eventos_calendario`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `incidencias`
 --
 ALTER TABLE `incidencias`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT de la tabla `logs_defender`
+--
+ALTER TABLE `logs_defender`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `preguntas_cuestionario`
 --
 ALTER TABLE `preguntas_cuestionario`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `progreso_usuario`
@@ -756,19 +862,19 @@ ALTER TABLE `progreso_usuario`
 -- AUTO_INCREMENT de la tabla `proyectos`
 --
 ALTER TABLE `proyectos`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitudes_presupuesto`
 --
 ALTER TABLE `solicitudes_presupuesto`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `user`
@@ -780,7 +886,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Restricciones para tablas volcadas
@@ -809,9 +915,9 @@ ALTER TABLE `auth_item_child`
 -- Filtros para la tabla `cursos`
 --
 ALTER TABLE `cursos`
-  ADD CONSTRAINT `fk_cursos_servicio` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_cursos_creador` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_cursos_modificador` FOREIGN KEY (`modificado_por`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_cursos_modificador` FOREIGN KEY (`modificado_por`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_cursos_servicio` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `diapositivas`

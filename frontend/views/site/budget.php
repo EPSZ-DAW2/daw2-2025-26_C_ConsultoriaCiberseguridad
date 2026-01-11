@@ -88,8 +88,29 @@
             </tr>
         </tfoot>
     </table>
+    
+    <div style="margin-top: 40px; border: 2px solid #003366; padding: 20px; background-color: #eef4f9;">
+        <h3 style="color: #003366; margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Instrucciones de Pago</h3>
+        <p>Para confirmar la contratación, por favor realice una transferencia bancaria:</p>
+        
+        <table width="100%">
+            <tr>
+                <td width="50%">
+                    <p><strong>Beneficiario:</strong> CyberSec Manager S.L.</p>
+                    <p><strong>IBAN:</strong> ES91 0049 1234 5678 9012 3456</p>
+                    <p><strong>Concepto:</strong> Ref #<?= str_pad($solicitud->id, 5, '0', STR_PAD_LEFT) ?></p>
+                </td>
+                <td width="50%" valign="top">
+                    <p style="font-size: 13px; color: #555;">
+                        <br>
+                        <em>Por favor, envíe el justificante de pago a comercial@cybersec.com para agilizar la activación del servicio.</em>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-    <div style="margin-top: 50px; font-size: 14px; color: #666;">
+    <div style="margin-top: 30px; font-size: 14px; color: #666;">
         <p><strong>Términos y condiciones:</strong></p>
         <ul>
             <li>Este presupuesto tiene una validez de 30 días.</li>

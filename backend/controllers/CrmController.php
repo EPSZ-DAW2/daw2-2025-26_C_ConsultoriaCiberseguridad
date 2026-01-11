@@ -24,7 +24,7 @@ class CrmController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['index', 'view', 'update', 'cambiar-estado'],
+                            'actions' => ['index', 'view', 'update', 'delete', 'cambiar-estado', 'generar-pdf-pago'],
                             'roles' => ['gestionarCRM'], // Solo comercial y admin
                         ],
                     ],
@@ -149,5 +149,31 @@ class CrmController extends Controller
         }
 
         throw new NotFoundHttpException('La solicitud no existe.');
+    }
+    /**
+     * Genera y descarga el PDF de instrucciones de pago (Opción B)
+     */
+    public function actionGenerarPdfPago($id)
+    {
+        $model = $this->findModel($id);
+        
+        // Aseguramos estado Pendiente
+        if ($model->estado_solicitud !== SolicitudesPresupuesto::ESTADO_SOLICITUD_PENDIENTE) {
+             $model->estado_solicitud = SolicitudesPresupuesto::ESTADO_SOLICITUD_PENDIENTE;
+             $model->save(false);
+        }
+
+        // Renderizar vista
+        $content = $this->renderPartial('_pdf_pago', [
+            'model' => $model,
+        ]);
+
+        // Generar PDF
+        $pdf = new \Mpdf\Mpdf();
+        $pdf->WriteHTML($content);
+        
+        $filename = 'Instrucciones_Pago_' . str_pad($model->id, 5, '0', STR_PAD_LEFT) . '.pdf';
+        
+        return $pdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
     }
 }
