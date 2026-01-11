@@ -525,6 +525,8 @@ CREATE TABLE `usuarios` (
   `motivo_bloqueo` text DEFAULT NULL COMMENT 'Razón del bloqueo',
   `activo` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Usuario activo: 0=Inactivo, 1=Activo',
   `auth_key` varchar(32) NOT NULL DEFAULT '',
+  `verification_token` varchar(255) DEFAULT NULL COMMENT 'Token para verificación de email',
+  `password_reset_token` varchar(255) DEFAULT NULL COMMENT 'Token para recuperación de contraseña',
   `email_recuperacion` varchar(255) DEFAULT NULL,
   `totp_secret` varchar(255) DEFAULT NULL,
   `totp_activo` tinyint(1) DEFAULT 0
@@ -534,16 +536,16 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `empresa`, `telefono`, `direccion`, `fecha_registro`, `ultimo_acceso`, `intentos_acceso`, `bloqueado`, `fecha_bloqueo`, `motivo_bloqueo`, `activo`, `auth_key`, `email_recuperacion`, `totp_secret`, `totp_activo`) VALUES
-(1, 'admin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Pedro', 'Admin', NULL, NULL, NULL, '2025-12-26 10:41:09', NULL, 0, 0, NULL, NULL, 1, 'cIwcYPb9TnINim4_YhZ715O5PHhY7ei_', NULL, NULL, 0),
-(2, 'auditor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Estela', 'Auditora', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'd605677f1938d8e599ad7659baaa6188', NULL, NULL, 0),
-(4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c', NULL, NULL, 0),
-(6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1', NULL, NULL, 0),
-(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', 'Gonzalez', 'Empresa Real', '567567567', 'Calle Falsa 123', '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB', 'pruebaRECU@cibersec.com', NULL, 0),
-(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4', NULL, NULL, 0),
-(9, 'clienteadmin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Laura', 'Admin Empresa', 'Acme Corp', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', NULL, NULL, 0),
-(10, 'manager@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Carlos', 'Manager', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1', NULL, NULL, 0),
-(11, 'comercial@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ana', 'Comercial', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'x9y8z7a6b5c4d3e2f1g0h9i8j7k6l5m4', NULL, NULL, 0);
+INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `empresa`, `telefono`, `direccion`, `fecha_registro`, `ultimo_acceso`, `intentos_acceso`, `bloqueado`, `fecha_bloqueo`, `motivo_bloqueo`, `activo`, `auth_key`, `verification_token`, `password_reset_token`, `email_recuperacion`, `totp_secret`, `totp_activo`) VALUES
+(1, 'admin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Pedro', 'Admin', NULL, NULL, NULL, '2025-12-26 10:41:09', NULL, 0, 0, NULL, NULL, 1, 'cIwcYPb9TnINim4_YhZ715O5PHhY7ei_', NULL, NULL, NULL, NULL, 0),
+(2, 'auditor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Estela', 'Auditora', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'd605677f1938d8e599ad7659baaa6188', NULL, NULL, NULL, NULL, 0),
+(4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c', NULL, NULL, NULL, NULL, 0),
+(6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1', NULL, NULL, NULL, NULL, 0),
+(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', 'Gonzalez', 'Empresa Real', '567567567', 'Calle Falsa 123', '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB', NULL, NULL, 'pruebaRECU@cibersec.com', NULL, 0),
+(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4', NULL, NULL, NULL, NULL, 0),
+(9, 'clienteadmin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Laura', 'Admin Empresa', 'Acme Corp', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', NULL, NULL, NULL, NULL, 0),
+(10, 'manager@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Carlos', 'Manager', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1', NULL, NULL, NULL, NULL, 0),
+(11, 'comercial@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ana', 'Comercial', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'x9y8z7a6b5c4d3e2f1g0h9i8j7k6l5m4', NULL, NULL, NULL, NULL, 0);
 
 --
 -- Índices para tablas volcadas
@@ -701,7 +703,8 @@ ALTER TABLE `user`
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email_UNIQUE` (`email`),
-  ADD KEY `idx_rol` (`rol`) COMMENT 'Índice para búsquedas por rol';
+  ADD UNIQUE KEY `verification_token` (`verification_token`),
+  ADD UNIQUE KEY `password_reset_token` (`password_reset_token`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
