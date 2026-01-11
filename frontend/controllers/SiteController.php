@@ -703,14 +703,15 @@ class SiteController extends Controller
     public function actionUsuarios()
     {
         $user = Yii::$app->user->identity;
-        // Solo cliente_admin puede acceder
-        if (!$user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN)) {
+        // Solo cliente_admin puede acceder (validación ampliada)
+        if (!$user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && $user->rol !== 'cliente_admin' && $user->rol !== 'admin') {
            throw new \yii\web\ForbiddenHttpException('No tienes permiso para gestionar usuarios.');
         }
 
         $dataProvider = new \yii\data\ActiveDataProvider([
             'query' => \common\models\User::find()
                 ->where(['empresa' => $user->empresa])
+                ->andWhere(['rol' => \common\models\User::ROL_CLIENTE_USER]) // Solo mostrar empleados básicos
                 ->andWhere(['!=', 'id', $user->id]), // No mostrarse a sí mismo
             'pagination' => ['pageSize' => 20],
         ]);
@@ -723,7 +724,7 @@ class SiteController extends Controller
     public function actionCreateUser()
     {
         $currentUser = Yii::$app->user->identity;
-        if (!$currentUser->hasRole(\common\models\User::ROL_CLIENTE_ADMIN)) {
+        if (!$currentUser->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && $currentUser->rol !== 'cliente_admin' && $currentUser->rol !== 'admin') {
            throw new \yii\web\ForbiddenHttpException('No tienes permiso.');
         }
 
