@@ -60,8 +60,11 @@ AppAsset::register($this);
             $menuItems[] = ['label' => 'Catálogo Servicios', 'url' => ['/servicios/index']];
         }
 
-        // CALENDARIO (todos los roles backend pueden verlo excepto analista_soc)
-        if (Yii::$app->user->can('verCalendario') && !Yii::$app->user->identity->hasRole(\common\models\User::ROL_ANALISTA_SOC)) {
+        // CALENDARIO (todos los roles backend pueden verlo excepto analista_soc y comercial)
+        if (Yii::$app->user->can('verCalendario') && 
+            !Yii::$app->user->identity->hasRole(\common\models\User::ROL_ANALISTA_SOC) &&
+            !Yii::$app->user->identity->hasRole(\common\models\User::ROL_COMERCIAL)
+        ) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
 
