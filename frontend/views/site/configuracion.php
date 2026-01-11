@@ -810,7 +810,7 @@ $this->registerCss("
                             </div>
                             
                             <!-- Acciones (Mockup) -->
-                            <?php if (($solicitud->isEstadoSolicitudPresupuestoEnviado() || $solicitud->isEstadoSolicitudContratado()) && $user->rol !== \common\models\User::ROL_CLIENTE_USER): ?>
+                            <?php if (($solicitud->isEstadoSolicitudPresupuestoEnviado() || $solicitud->isEstadoSolicitudContratado()) && !$user->hasRole(\common\models\User::ROL_CLIENTE_USER)): ?>
                                 <div class="mt-3 pt-3 border-top d-flex justify-content-end gap-2">
                                     <a href="<?= Url::to(['site/descargar-presupuesto', 'id' => $solicitud->id]) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
                                         <i class="fas fa-file-pdf me-1"></i> Ver Presupuesto

@@ -704,7 +704,7 @@ class SiteController extends Controller
     {
         $user = Yii::$app->user->identity;
         // Solo cliente_admin puede acceder
-        if ($user->rol !== \common\models\User::ROL_CLIENTE_ADMIN) {
+        if (!$user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN)) {
            throw new \yii\web\ForbiddenHttpException('No tienes permiso para gestionar usuarios.');
         }
 
@@ -723,7 +723,7 @@ class SiteController extends Controller
     public function actionCreateUser()
     {
         $currentUser = Yii::$app->user->identity;
-        if ($currentUser->rol !== \common\models\User::ROL_CLIENTE_ADMIN) {
+        if (!$currentUser->hasRole(\common\models\User::ROL_CLIENTE_ADMIN)) {
            throw new \yii\web\ForbiddenHttpException('No tienes permiso.');
         }
 
@@ -737,12 +737,19 @@ class SiteController extends Controller
             $user->nombre = $model->username; // En SignupForm username es nombre
             $user->setPassword($model->password);
             $user->generateAuthKey();
-            $user->rol = \common\models\User::ROL_CLIENTE_USER;
+            $user->rol = \common\models\User::ROL_CLIENTE_USER; // Mantener por compatibilidad temporalmente
             $user->empresa = $currentUser->empresa;
             $user->activo = 1;
             $user->fecha_registro = date('Y-m-d H:i:s');
-            
+
             if ($user->save()) {
+                // Asignar rol RBAC al nuevo usuario
+                $auth = Yii::$app->authManager;
+                $role = $auth->getRole(\common\models\User::ROL_CLIENTE_USER);
+                if ($role) {
+                    $auth->assign($role, $user->id);
+                }
+
                 Yii::$app->session->setFlash('success', 'Empleado creado correctamente.');
                 return $this->redirect(['usuarios']);
             } else {

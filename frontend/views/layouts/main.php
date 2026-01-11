@@ -13,9 +13,9 @@ $nombreUsuario = 'Invitado';
 $rolUsuario = '';
 
 if (!Yii::$app->user->isGuest) {
-    $nombreUsuario = Yii::$app->user->identity->nombre; 
-    
-    $rolUsuario = ucfirst(Yii::$app->user->identity->rol ?? 'Usuario'); 
+    $nombreUsuario = Yii::$app->user->identity->nombre;
+
+    $rolUsuario = ucfirst(Yii::$app->user->identity->getRoleName() ?? 'Usuario');
 }
 ?>
 

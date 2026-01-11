@@ -16,27 +16,27 @@ use yii\helpers\ArrayHelper;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php
-    // Preparar listas de usuarios por rol
-    $clientes = User::find()
-        ->where(['activo' => 1])
-        ->andWhere(['rol' => 'cliente_admin'])
-        ->all();
+    // Preparar listas de usuarios por rol usando RBAC
+    $clientes = User::byRole(
+        User::find()->where(['activo' => 1]),
+        'cliente_admin'
+    )->all();
     $clientesLista = ArrayHelper::map($clientes, 'id', function($user) {
         return $user->nombre . ' ' . $user->apellidos . ' (' . $user->empresa . ')';
     });
 
-    $consultores = User::find()
-        ->where(['activo' => 1])
-        ->andWhere(['rol' => 'consultor'])
-        ->all();
+    $consultores = User::byRole(
+        User::find()->where(['activo' => 1]),
+        'consultor'
+    )->all();
     $consultoresLista = ArrayHelper::map($consultores, 'id', function($user) {
         return $user->nombre . ' ' . $user->apellidos;
     });
 
-    $auditores = User::find()
-        ->where(['activo' => 1])
-        ->andWhere(['rol' => 'auditor'])
-        ->all();
+    $auditores = User::byRole(
+        User::find()->where(['activo' => 1]),
+        'auditor'
+    )->all();
     $auditoresLista = ArrayHelper::map($auditores, 'id', function($user) {
         return $user->nombre . ' ' . $user->apellidos;
     });

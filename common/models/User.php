@@ -48,18 +48,86 @@ class User extends ActiveRecord implements IdentityInterface
     const ROL_ANALISTA_SOC = 'analista_soc';
 
     /**
+     * Get primary role from RBAC system
+     * @return string|null
+     */
+    public function getRoleName()
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($this->id);
+        $rolePriority = [
+            'admin', 'manager', 'comercial', 'consultor',
+            'auditor', 'analista_soc', 'cliente_admin', 'cliente_user'
+        ];
+
+        foreach ($rolePriority as $role) {
+            if (isset($roles[$role])) {
+                return $role;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check if user has specific RBAC role
+     * @param string $roleName
+     * @return bool
+     */
+    public function hasRole($roleName)
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($this->id);
+        return isset($roles[$roleName]);
+    }
+
+    /**
+     * Get all RBAC roles for user
+     * @return array
+     */
+    public function getAllRoles()
+    {
+        return array_keys(Yii::$app->authManager->getRolesByUser($this->id));
+    }
+
+    /**
+     * Filter query by RBAC role(s)
+     * @param \yii\db\ActiveQuery $query
+     * @param string|array $roles Role name(s) to filter by
+     * @return \yii\db\ActiveQuery
+     */
+    public static function byRole($query, $roles)
+    {
+        $roles = (array)$roles;
+        $userIds = [];
+
+        $auth = Yii::$app->authManager;
+        foreach ($roles as $roleName) {
+            $roleUserIds = $auth->getUserIdsByRole($roleName);
+            $userIds = array_merge($userIds, $roleUserIds);
+        }
+
+        $userIds = array_unique($userIds);
+
+        if (empty($userIds)) {
+            // Return empty query
+            return $query->where('1=0');
+        }
+
+        return $query->where(['id' => $userIds]);
+    }
+
+    /**
      * @return bool Si el usuario debe acceder al backend
      */
     public function isBackendUser()
     {
-        return in_array($this->rol, [
+        $backendRoles = [
             self::ROL_ADMIN,
             self::ROL_MANAGER,
             self::ROL_CONSULTOR,
             self::ROL_AUDITOR,
             self::ROL_COMERCIAL,
             self::ROL_ANALISTA_SOC
-        ]);
+        ];
+        return !empty(array_intersect($this->getAllRoles(), $backendRoles));
     }
 
     /**

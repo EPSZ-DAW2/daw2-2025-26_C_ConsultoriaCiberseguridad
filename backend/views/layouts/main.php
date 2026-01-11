@@ -61,7 +61,7 @@ AppAsset::register($this);
         }
 
         // CALENDARIO (todos los roles backend pueden verlo excepto analista_soc)
-        if (Yii::$app->user->can('verCalendario') && Yii::$app->user->identity->rol !== \common\models\User::ROL_ANALISTA_SOC) {
+        if (Yii::$app->user->can('verCalendario') && !Yii::$app->user->identity->hasRole(\common\models\User::ROL_ANALISTA_SOC)) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
 
@@ -81,7 +81,7 @@ AppAsset::register($this);
         }
 
         // RENTABILIDAD (manager y admin)
-        if (Yii::$app->user->can('verRentabilidad') || in_array(Yii::$app->user->identity->rol, ['manager', 'admin'])) {
+        if (Yii::$app->user->can('verRentabilidad')) {
             $menuItems[] = ['label' => 'Executive Dashboard', 'url' => ['/manager/dashboard']];
         }
 

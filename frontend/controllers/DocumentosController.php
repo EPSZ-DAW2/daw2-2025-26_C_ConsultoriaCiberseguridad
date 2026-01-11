@@ -50,7 +50,7 @@ class DocumentosController extends Controller
         // Find projects where the user is the client (or belongs to the company if admin)
         // We reuse logic similar to Incidents/Proyectos but simplified here
         $userIds = [$user->id];
-        if ($user->rol === \common\models\User::ROL_CLIENTE_ADMIN && !empty($user->empresa)) {
+        if ($user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && !empty($user->empresa)) {
              $userIds = \common\models\User::find()->select('id')->where(['empresa' => $user->empresa])->column();
         }
 
@@ -98,8 +98,8 @@ class DocumentosController extends Controller
         // Simple check: Is the project assigned to me or my company?
         // (Reusing simple check for demonstration, ideally encapsulated in a service)
         $isMyProject = ($project->cliente_id == $user->id);
-        
-        if (!$isMyProject && $user->rol === \common\models\User::ROL_CLIENTE_ADMIN && !empty($user->empresa)) {
+
+        if (!$isMyProject && $user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && !empty($user->empresa)) {
             // Check if project client is in my company
             $isMyProject = ($project->cliente->empresa === $user->empresa);
         }

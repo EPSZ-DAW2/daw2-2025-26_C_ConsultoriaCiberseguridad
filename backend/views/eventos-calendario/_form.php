@@ -20,11 +20,11 @@ use yii\helpers\ArrayHelper;
     $proyectos = Proyectos::find()->all();
     $proyectosLista = ArrayHelper::map($proyectos, 'id', 'nombre');
 
-    // Preparar lista de auditores
-    $auditores = User::find()
-        ->where(['activo' => 1])
-        ->andWhere(['rol' => 'auditor'])
-        ->all();
+    // Preparar lista de auditores usando RBAC
+    $auditores = User::byRole(
+        User::find()->where(['activo' => 1]),
+        'auditor'
+    )->all();
     $auditoresLista = ArrayHelper::map($auditores, 'id', function($user) {
         return $user->nombre . ' ' . $user->apellidos;
     });

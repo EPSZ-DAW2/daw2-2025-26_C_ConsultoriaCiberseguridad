@@ -377,9 +377,12 @@ class Usuarios extends \yii\db\ActiveRecord
      */
     public function isRolInvitado()
     {
-        return $this->rol === self::ROL_INVITADO;
+        return $this->hasRole(self::ROL_INVITADO);
     }
 
+    /**
+     * @deprecated Use RBAC assignment instead
+     */
     public function setRolToInvitado()
     {
         $this->rol = self::ROL_INVITADO;
@@ -390,9 +393,12 @@ class Usuarios extends \yii\db\ActiveRecord
      */
     public function isRolCliente()
     {
-        return $this->rol === self::ROL_CLIENTE;
+        return $this->hasRole(self::ROL_CLIENTE);
     }
 
+    /**
+     * @deprecated Use RBAC assignment instead
+     */
     public function setRolToCliente()
     {
         $this->rol = self::ROL_CLIENTE;
@@ -403,9 +409,12 @@ class Usuarios extends \yii\db\ActiveRecord
      */
     public function isRolConsultor()
     {
-        return $this->rol === self::ROL_CONSULTOR;
+        return $this->hasRole(self::ROL_CONSULTOR);
     }
 
+    /**
+     * @deprecated Use RBAC assignment instead
+     */
     public function setRolToConsultor()
     {
         $this->rol = self::ROL_CONSULTOR;
@@ -416,9 +425,12 @@ class Usuarios extends \yii\db\ActiveRecord
      */
     public function isRolAuditor()
     {
-        return $this->rol === self::ROL_AUDITOR;
+        return $this->hasRole(self::ROL_AUDITOR);
     }
 
+    /**
+     * @deprecated Use RBAC assignment instead
+     */
     public function setRolToAuditor()
     {
         $this->rol = self::ROL_AUDITOR;
@@ -429,9 +441,12 @@ class Usuarios extends \yii\db\ActiveRecord
      */
     public function isRolAnalistasoc()
     {
-        return $this->rol === self::ROL_ANALISTA_SOC;
+        return $this->hasRole(self::ROL_ANALISTA_SOC);
     }
 
+    /**
+     * @deprecated Use RBAC assignment instead
+     */
     public function setRolToAnalistasoc()
     {
         $this->rol = self::ROL_ANALISTA_SOC;
@@ -442,9 +457,12 @@ class Usuarios extends \yii\db\ActiveRecord
      */
     public function isRolAdmin()
     {
-        return $this->rol === self::ROL_ADMIN;
+        return $this->hasRole(self::ROL_ADMIN);
     }
 
+    /**
+     * @deprecated Use RBAC assignment instead
+     */
     public function setRolToAdmin()
     {
         $this->rol = self::ROL_ADMIN;
