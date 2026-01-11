@@ -514,7 +514,6 @@ CREATE TABLE `usuarios` (
   `password` varchar(255) NOT NULL COMMENT 'Hash de la contraseña (usar bcrypt/Argon2)',
   `nombre` varchar(100) NOT NULL COMMENT 'Nombre del usuario',
   `apellidos` varchar(150) DEFAULT NULL COMMENT 'Apellidos del usuario',
-  `rol` enum('cliente_user','cliente_admin','consultor','auditor','analista_soc','admin','manager','comercial') NOT NULL DEFAULT 'cliente_user' COMMENT 'Rol del usuario en el sistema RBAC',
   `empresa` varchar(200) DEFAULT NULL COMMENT 'Nombre de la empresa (solo para clientes)',
   `telefono` varchar(20) DEFAULT NULL COMMENT 'Teléfono de contacto',
   `direccion` text DEFAULT NULL COMMENT 'Dirección completa',
@@ -535,16 +534,16 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `rol`, `empresa`, `telefono`, `direccion`, `fecha_registro`, `ultimo_acceso`, `intentos_acceso`, `bloqueado`, `fecha_bloqueo`, `motivo_bloqueo`, `activo`, `auth_key`, `email_recuperacion`, `totp_secret`, `totp_activo`) VALUES
-(1, 'admin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Pedro', 'Admin', 'admin', NULL, NULL, NULL, '2025-12-26 10:41:09', NULL, 0, 0, NULL, NULL, 1, 'cIwcYPb9TnINim4_YhZ715O5PHhY7ei_', NULL, NULL, 0),
-(2, 'auditor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Estela', 'Auditora', 'auditor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'd605677f1938d8e599ad7659baaa6188', NULL, NULL, 0),
-(4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c', NULL, NULL, 0),
-(6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'analista_soc', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1', NULL, NULL, 0),
-(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', 'Gonzalez', 'cliente_user', 'Empresa Real', '567567567', 'Calle Falsa 123', '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB', 'pruebaRECU@cibersec.com', NULL, 0),
-(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, 'cliente_user', NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4', NULL, NULL, 0),
-(9, 'clienteadmin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Laura', 'Admin Empresa', 'cliente_admin', 'Acme Corp', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', NULL, NULL, 0),
-(10, 'manager@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Carlos', 'Manager', 'manager', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1', NULL, NULL, 0),
-(11, 'comercial@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ana', 'Comercial', 'comercial', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'x9y8z7a6b5c4d3e2f1g0h9i8j7k6l5m4', NULL, NULL, 0);
+INSERT INTO `usuarios` (`id`, `email`, `password`, `nombre`, `apellidos`, `empresa`, `telefono`, `direccion`, `fecha_registro`, `ultimo_acceso`, `intentos_acceso`, `bloqueado`, `fecha_bloqueo`, `motivo_bloqueo`, `activo`, `auth_key`, `email_recuperacion`, `totp_secret`, `totp_activo`) VALUES
+(1, 'admin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Pedro', 'Admin', NULL, NULL, NULL, '2025-12-26 10:41:09', NULL, 0, 0, NULL, NULL, 1, 'cIwcYPb9TnINim4_YhZ715O5PHhY7ei_', NULL, NULL, 0),
+(2, 'auditor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Estela', 'Auditora', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'd605677f1938d8e599ad7659baaa6188', NULL, NULL, 0),
+(4, 'consultor@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Jose', 'Consultor', 'Empresa Interna', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, '624b20b9f12fe140cfebd39761912c1c', NULL, NULL, 0),
+(6, 'analistasoc@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Iris', 'Analista SOC', 'SOC 24/7', NULL, NULL, '2025-12-26 11:09:25', NULL, 0, 0, NULL, NULL, 1, 'fe28b3a15afe5fb6331b67813af64af1', NULL, NULL, 0),
+(7, 'prueba@cibersec.com', '$2y$13$HOPt.sSvwbu.fHNrGxaaM.jGvjNwCDe/q5eT/PVoSkXK.z4RLU.Z.', 'prueba', 'Gonzalez', 'Empresa Real', '567567567', 'Calle Falsa 123', '2025-12-26 12:20:39', NULL, 0, 0, NULL, NULL, 1, 'Lq5SZkO5XLxp4-UZauw4-K6gIKxdMIJB', 'pruebaRECU@cibersec.com', NULL, 0),
+(8, 'prueba2@prueba.com', '$2y$13$2MGOHExL9CzAXY40LIuTaunTqjkF1Sk5pbuNjz6yMIFbwW4dEn8ii', 'prueba2', NULL, NULL, NULL, NULL, '2026-01-02 15:59:08', NULL, 0, 0, NULL, NULL, 1, 'sNnto1_RsnqvwuhSs8vmlfjtdfQPf9U4', NULL, NULL, 0),
+(9, 'clienteadmin@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Laura', 'Admin Empresa', 'Acme Corp', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', NULL, NULL, 0),
+(10, 'manager@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Carlos', 'Manager', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1', NULL, NULL, 0),
+(11, 'comercial@cibersec.com', '$2y$13$hrDlx4YWApIJhEuXURc.q.DLEUz4QEAor./AVVpv3klM54qD82Mg.', 'Ana', 'Comercial', 'Empresa Interna', NULL, NULL, '2026-01-07 20:00:00', NULL, 0, 0, NULL, NULL, 1, 'x9y8z7a6b5c4d3e2f1g0h9i8j7k6l5m4', NULL, NULL, 0);
 
 --
 -- Índices para tablas volcadas
