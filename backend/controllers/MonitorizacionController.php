@@ -78,9 +78,9 @@ class MonitorizacionController extends Controller
         // Intentamos asignar al cliente del log, si no hay, asignamos al primer cliente disponible (Demo)
         $clienteId = $log->cliente_afectado_id;
         if (!$clienteId) {
-            // Buscar un usuario con rol cliente_admin de prueba
-            $cliente = \common\models\User::find()->where(['rol' => 'cliente_admin'])->one();
-            $clienteId = $cliente ? $cliente->id : \Yii::$app->user->id; 
+            // Buscar un usuario con rol cliente_admin de prueba usando RBAC
+            $cliente = \common\models\User::byRole(\common\models\User::find(), 'cliente_admin')->one();
+            $clienteId = $cliente ? $cliente->id : \Yii::$app->user->id;
         }
 
         // Crear incidencia
@@ -118,8 +118,8 @@ class MonitorizacionController extends Controller
             ['Cambio de privilegios sospechoso', 'Active Directory', 'Alta', 'SRV-FILE-01', 'El usuario user_guest fue añadido al grupo Administradores'],
         ];
 
-        // Buscar un cliente para asignar
-        $cliente = \common\models\User::find()->where(['rol' => 'cliente_admin'])->one();
+        // Buscar un cliente para asignar usando RBAC
+        $cliente = \common\models\User::byRole(\common\models\User::find(), 'cliente_admin')->one();
         $clienteId = $cliente ? $cliente->id : null;
 
         foreach ($fakerLogs as $logData) {
@@ -140,8 +140,8 @@ class MonitorizacionController extends Controller
      */
     public function actionNotificarVulnerabilidad($servidor, $cve, $riesgo, $parche)
     {
-        // Buscar cliente (Demo: asignamos al primer admin o al usuario actual)
-        $cliente = \common\models\User::find()->where(['rol' => 'cliente_admin'])->one();
+        // Buscar cliente (Demo: asignamos al primer admin o al usuario actual) usando RBAC
+        $cliente = \common\models\User::byRole(\common\models\User::find(), 'cliente_admin')->one();
         $clienteId = $cliente ? $cliente->id : \Yii::$app->user->id;
 
         $incidencia = new \common\models\Incidencias();

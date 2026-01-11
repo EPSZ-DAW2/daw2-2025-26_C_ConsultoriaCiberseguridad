@@ -56,13 +56,13 @@ class IncidenciasController extends Controller
         $user = Yii::$app->user->identity;
         $query = Incidencias::find()->where(['visible_cliente' => 1]);
 
-        if ($user->rol === \common\models\User::ROL_CLIENTE_ADMIN && !empty($user->empresa)) {
+        if ($user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && !empty($user->empresa)) {
             // Cliente Admin ve incidencias de toda su empresa
             $empleadosIds = \common\models\User::find()
                 ->select('id')
                 ->where(['empresa' => $user->empresa])
                 ->column();
-            
+
             $query->andWhere(['cliente_id' => $empleadosIds]);
         } else {
             // Usuario normal solo ve las suyas

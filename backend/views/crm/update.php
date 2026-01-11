@@ -37,13 +37,13 @@ $this->params['breadcrumbs'][] = 'Editar';
                     ], ['prompt' => 'Seleccionar prioridad']) ?>
 
                     <?php
-                    // Obtener usuarios comerciales y admins
-                    $usuarios = User::find()
-                        ->where(['activo' => 1])
-                        ->andWhere(['IN', 'rol', ['comercial', 'admin', 'manager']])
-                        ->all();
+                    // Obtener usuarios comerciales y admins usando RBAC
+                    $usuarios = User::byRole(
+                        User::find()->where(['activo' => 1]),
+                        ['comercial', 'admin', 'manager']
+                    )->all();
                     $usuariosLista = ArrayHelper::map($usuarios, 'id', function($user) {
-                        return $user->nombre . ' ' . $user->apellidos . ' (' . $user->rol . ')';
+                        return $user->nombre . ' ' . $user->apellidos . ' (' . $user->getRoleName() . ')';
                     });
                     ?>
 

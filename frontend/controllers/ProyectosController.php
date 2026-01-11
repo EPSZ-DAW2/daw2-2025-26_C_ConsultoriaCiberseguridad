@@ -54,7 +54,7 @@ class ProyectosController extends Controller
         $user = Yii::$app->user->identity;
         $query = Proyectos::find();
 
-        if ($user->rol === \common\models\User::ROL_CLIENTE_ADMIN && !empty($user->empresa)) {
+        if ($user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && !empty($user->empresa)) {
             // Admin: ve suyos y de su empresa
             $userIds = \common\models\User::find()->select('id')->where(['empresa' => $user->empresa])->column();
             $query->where(['cliente_id' => $userIds]);
@@ -85,7 +85,7 @@ class ProyectosController extends Controller
         $canView = false;
         if ($model->cliente_id == $user->id) {
             $canView = true;
-        } elseif ($user->rol === \common\models\User::ROL_CLIENTE_ADMIN && !empty($user->empresa)) {
+        } elseif ($user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && !empty($user->empresa)) {
             // Verificar si el dueño del proyecto es de la misma empresa
             if ($model->cliente->empresa === $user->empresa) {
                 $canView = true;

@@ -162,16 +162,29 @@ class Cursos extends \yii\db\ActiveRecord
      */
     public static function getCursosAgrupadosPorProyecto($userId, $activeProjectsOnly = true)
     {
+        // Buscar usuario para verificar si tiene empresa
+        $user = \common\models\User::findOne($userId);
+
         $proyectosQuery = Proyectos::find()
             ->alias('p')
             ->joinWith('servicio s')
-            ->where(['p.cliente_id' => $userId])
             ->andWhere(['s.categoria' => Servicios::CATEGORIA_FORMACION]);
 
+        // Buscar por empresa (si tiene) o por usuario directo (igual que hasContratoActivo)
+        if (!empty($user->empresa)) {
+            // Buscar proyectos de cualquiera de la empresa
+            $userIds = \common\models\User::find()->select('id')->where(['empresa' => $user->empresa])->column();
+            $proyectosQuery->andWhere(['p.cliente_id' => $userIds]);
+        } else {
+            // Solo proyectos del usuario
+            $proyectosQuery->andWhere(['p.cliente_id' => $userId]);
+        }
+
         if ($activeProjectsOnly) {
+            // Excluir solo Cancelado y Suspendido (igual que hasContratoActivo)
             $proyectosQuery->andWhere([
-                'IN', 'p.estado',
-                [Proyectos::ESTADO_EN_CURSO, Proyectos::ESTADO_EN_REVISION]
+                'NOT IN', 'p.estado',
+                [Proyectos::ESTADO_CANCELADO, Proyectos::ESTADO_SUSPENDIDO]
             ]);
         }
 
@@ -210,17 +223,30 @@ class Cursos extends \yii\db\ActiveRecord
             return false;
         }
 
+        // Buscar usuario para verificar si tiene empresa
+        $user = \common\models\User::findOne($userId);
+
         $proyectosQuery = Proyectos::find()
             ->alias('p')
             ->joinWith('servicio s')
-            ->where(['p.cliente_id' => $userId])
             ->andWhere(['p.servicio_id' => $curso->servicio_id])
             ->andWhere(['s.categoria' => Servicios::CATEGORIA_FORMACION]);
 
+        // Buscar por empresa (si tiene) o por usuario directo (igual que hasContratoActivo)
+        if (!empty($user->empresa)) {
+            // Buscar proyectos de cualquiera de la empresa
+            $userIds = \common\models\User::find()->select('id')->where(['empresa' => $user->empresa])->column();
+            $proyectosQuery->andWhere(['p.cliente_id' => $userIds]);
+        } else {
+            // Solo proyectos del usuario
+            $proyectosQuery->andWhere(['p.cliente_id' => $userId]);
+        }
+
         if ($activeProjectsOnly) {
+            // Excluir solo Cancelado y Suspendido (igual que hasContratoActivo)
             $proyectosQuery->andWhere([
-                'IN', 'p.estado',
-                [Proyectos::ESTADO_EN_CURSO, Proyectos::ESTADO_EN_REVISION]
+                'NOT IN', 'p.estado',
+                [Proyectos::ESTADO_CANCELADO, Proyectos::ESTADO_SUSPENDIDO]
             ]);
         }
 
