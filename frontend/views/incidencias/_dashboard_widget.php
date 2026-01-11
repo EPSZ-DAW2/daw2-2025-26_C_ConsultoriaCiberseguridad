@@ -61,7 +61,10 @@ if ($score < 50) $chartColor = '#f44336'; // Red
             <div class="d-flex flex-wrap gap-3 mt-4">
                 <?= \yii\helpers\Html::a('<i class="fas fa-life-ring me-2"></i>Solicitar Ayuda', ['create'], ['class' => 'btn btn-primary btn-lg px-4 rounded-pill shadow-sm']) ?>
 
-                <?php if (Yii::$app->user->identity->hasRole('cliente_admin')): ?>
+                <?php 
+                $user = Yii::$app->user->identity;
+                if ($user->hasRole('cliente_admin') || $user->rol === 'cliente_admin' || $user->rol === 'admin'): 
+                ?>
                     <?= \yii\helpers\Html::a('<i class="fas fa-users-cog me-2"></i>Administrar Usuarios', ['/site/usuarios'], ['class' => 'btn btn-outline-secondary btn-lg px-4 rounded-pill']) ?>
                 <?php endif; ?>
             </div>
