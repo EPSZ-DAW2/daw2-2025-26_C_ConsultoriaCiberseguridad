@@ -15,16 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+
 
     <?= DetailView::widget([
         'model' => $model,
@@ -32,20 +23,42 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'nombre',
             'descripcion:ntext',
-            'cliente_id',
-            'servicio_id',
-            'consultor_id',
-            'auditor_id',
-            'fecha_inicio',
-            'fecha_fin_prevista',
-            'fecha_fin_real',
+            [
+                'attribute' => 'cliente_id',
+                'value' => $model->cliente ? $model->cliente->nombre . ' ' . $model->cliente->apellidos : null,
+                'label' => 'Cliente',
+            ],
+            [
+                'attribute' => 'servicio_id',
+                'value' => $model->servicio ? $model->servicio->nombre : null,
+                'label' => 'Servicio',
+            ],
+            [
+                'attribute' => 'consultor_id',
+                'value' => $model->consultor ? $model->consultor->nombre . ' ' . $model->consultor->apellidos : null,
+                'label' => 'Consultor',
+            ],
+            [
+                'attribute' => 'auditor_id',
+                'value' => $model->auditor ? $model->auditor->nombre . ' ' . $model->auditor->apellidos : null,
+                'label' => 'Auditor',
+            ],
+            'fecha_inicio:date',
+            'fecha_fin_prevista:date',
+            'fecha_fin_real:date',
             'estado',
-            'presupuesto',
+            'presupuesto:currency',
             'notas_internas:ntext',
-            'creado_por',
-            'fecha_creacion',
-            'modificado_por',
-            'fecha_modificacion',
+            [
+                'attribute' => 'creado_por',
+                'value' => $model->creadoPor ? $model->creadoPor->nombre : $model->creado_por,
+            ],
+            'fecha_creacion:datetime',
+            [
+                'attribute' => 'modificado_por',
+                'value' => $model->modificadoPor ? $model->modificadoPor->nombre : $model->modificado_por,
+            ],
+            'fecha_modificacion:datetime',
         ],
     ]) ?>
 

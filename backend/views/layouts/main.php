@@ -21,6 +21,8 @@ AppAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="d-flex flex-column h-100">
 <?php $this->beginBody() ?>
@@ -61,7 +63,7 @@ AppAsset::register($this);
         }
 
         // CALENDARIO (todos los roles backend pueden verlo)
-        if (Yii::$app->user->can('verCalendario')) {
+        if (Yii::$app->user->can('verPanel')) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
 

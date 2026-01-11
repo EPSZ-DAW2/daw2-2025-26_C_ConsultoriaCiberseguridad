@@ -15,37 +15,52 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
-            'proyecto_id',
-            'auditor_id',
+            [
+                'attribute' => 'proyecto_id',
+                'value' => function($model) {
+                    return $model->proyecto ? $model->proyecto->nombre : '(Sin Proyecto)';
+                }
+            ],
+            [
+                'attribute' => 'auditor_id',
+                'value' => function($model) {
+                     // Asumiendo relación 'auditor' o buscar usuario
+                     $auditor = \common\models\Usuarios::findOne($model->auditor_id);
+                     return $auditor ? $auditor->nombre . ' ' . $auditor->apellidos : '-';
+                }
+            ],
             'titulo',
             'descripcion:ntext',
-            'fecha',
+            'fecha:date',
             'hora_inicio',
             'hora_fin',
             'tipo_evento',
             'ubicacion',
             'estado_evento',
-            'recordatorio_enviado',
+            'recordatorio_enviado:boolean',
             'notas:ntext',
-            'creado_por',
-            'fecha_creacion',
-            'modificado_por',
-            'fecha_modificacion',
+            [
+                'attribute' => 'creado_por',
+                'value' => function($model) {
+                    $u = \common\models\Usuarios::findOne($model->creado_por);
+                    return $u ? $u->nombre . ' ' . $u->apellidos : $model->creado_por;
+                }
+            ],
+            'fecha_creacion:datetime',
+            [
+                 'attribute' => 'modificado_por',
+                 'value' => function($model) {
+                     $u = \common\models\Usuarios::findOne($model->modificado_por);
+                     return $u ? $u->nombre . ' ' . $u->apellidos : $model->modificado_por;
+                 }
+            ],
+            'fecha_modificacion:datetime',
         ],
     ]) ?>
 

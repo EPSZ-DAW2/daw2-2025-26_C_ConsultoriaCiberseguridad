@@ -76,6 +76,27 @@ class Proyectos extends \yii\db\ActiveRecord
             [['creado_por'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::class, 'targetAttribute' => ['creado_por' => 'id']],
             [['modificado_por'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::class, 'targetAttribute' => ['modificado_por' => 'id']],
             [['servicio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Servicios::class, 'targetAttribute' => ['servicio_id' => 'id']],
+            [['servicio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Servicios::class, 'targetAttribute' => ['servicio_id' => 'id']],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \yii\behaviors\TimestampBehavior::class,
+                'createdAtAttribute' => 'fecha_creacion',
+                'updatedAtAttribute' => 'fecha_modificacion',
+                'value' => new \yii\db\Expression('NOW()'),
+            ],
+            [
+                'class' => \yii\behaviors\BlameableBehavior::class,
+                'createdByAttribute' => 'creado_por',
+                'updatedByAttribute' => 'modificado_por',
+            ],
         ];
     }
 
@@ -88,10 +109,10 @@ class Proyectos extends \yii\db\ActiveRecord
             'id' => 'ID',
             'nombre' => 'Nombre',
             'descripcion' => 'Descripcion',
-            'cliente_id' => 'Cliente ID',
-            'servicio_id' => 'Servicio ID',
-            'consultor_id' => 'Consultor ID',
-            'auditor_id' => 'Auditor ID',
+            'cliente_id' => 'Cliente',
+            'servicio_id' => 'Servicio',
+            'consultor_id' => 'Consultor',
+            'auditor_id' => 'Auditor',
             'fecha_inicio' => 'Fecha Inicio',
             'fecha_fin_prevista' => 'Fecha Fin Prevista',
             'fecha_fin_real' => 'Fecha Fin Real',

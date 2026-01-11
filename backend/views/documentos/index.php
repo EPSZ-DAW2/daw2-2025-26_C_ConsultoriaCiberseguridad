@@ -53,7 +53,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'visibleButtons' => [
                     'update' => Yii::$app->user->can('subirDocs'),
                     'delete' => Yii::$app->user->can('subirDocs'),
-                ]
+                ],
+                'buttons' => [
+                    'delete' => function ($url, $model, $key) {
+                        return Html::a('<i class="fas fa-trash"></i>', $url, [
+                            'title' => Yii::t('yii', 'Delete'),
+                            'data-confirm' => '¿Estás seguro de que quieres eliminar este DOCUMENTO?',
+                            'data-method' => 'post',
+                        ]);
+                    },
+                ],
             ],
         ],
     ]); ?>

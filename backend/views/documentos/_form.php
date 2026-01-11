@@ -38,6 +38,8 @@ use yii\helpers\ArrayHelper;
     
     <?= $form->field($model, 'notas')->textarea(['rows' => 6]) ?>
 
+    <?= $form->field($model, 'visible_cliente')->checkbox() ?>
+
     <div class="form-group">
         <?= Html::submitButton('Subir Documento', ['class' => 'btn btn-success']) ?>
     </div>

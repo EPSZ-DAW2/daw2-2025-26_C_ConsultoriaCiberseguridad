@@ -12,9 +12,24 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'cliente_id')->textInput() ?>
+    <?php
+        use common\models\Usuarios;
+        use yii\helpers\ArrayHelper;
+    ?>
 
-    <?= $form->field($model, 'analista_id')->textInput() ?>
+    <?= $form->field($model, 'cliente_id')->dropDownList(
+        ArrayHelper::map(Usuarios::find()->where(['rol' => Usuarios::ROL_CLIENTE_USER])->orderBy('nombre')->all(), 'id', function($model) {
+            return $model->nombre . ' ' . $model->apellidos . ' (' . ($model->empresa ?? 'Sin Empresa') . ')';
+        }),
+        ['prompt' => 'Seleccione Cliente...']
+    ) ?>
+
+    <?= $form->field($model, 'analista_id')->dropDownList(
+        ArrayHelper::map(Usuarios::find()->where(['rol' => 'analista_soc'])->orderBy('nombre')->all(), 'id', function($model) {
+            return $model->nombre . ' ' . $model->apellidos;
+        }),
+        ['prompt' => 'Seleccione Analista...']
+    ) ?>
 
     <?= $form->field($model, 'titulo')->textInput(['maxlength' => true]) ?>
 
@@ -26,17 +41,17 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'categoria_incidencia')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'fecha_reporte')->textInput() ?>
+    <?= $form->field($model, 'fecha_reporte')->textInput(['type' => 'datetime-local']) ?>
 
-    <?= $form->field($model, 'fecha_asignacion')->textInput() ?>
+    <?= $form->field($model, 'fecha_asignacion')->textInput(['type' => 'datetime-local']) ?>
 
-    <?= $form->field($model, 'fecha_primera_respuesta')->textInput() ?>
+    <?= $form->field($model, 'fecha_primera_respuesta')->textInput(['type' => 'datetime-local']) ?>
 
-    <?= $form->field($model, 'fecha_resolucion')->textInput() ?>
+    <?= $form->field($model, 'fecha_resolucion')->textInput(['type' => 'datetime-local']) ?>
 
     <?= $form->field($model, 'tiempo_resolucion')->textInput() ?>
 
-    <?= $form->field($model, 'sla_cumplido')->textInput() ?>
+    <?= $form->field($model, 'sla_cumplido')->checkbox() ?>
 
     <?= $form->field($model, 'ip_origen')->textInput(['maxlength' => true]) ?>
 
@@ -46,7 +61,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'notas_internas')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'visible_cliente')->textInput() ?>
+    <?= $form->field($model, 'visible_cliente')->checkbox() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

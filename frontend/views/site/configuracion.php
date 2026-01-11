@@ -522,23 +522,29 @@ $this->registerCss("
                                     // o pasaremos el secreto al form.
                                     
                                     // OJO: Generar secreto aquí rompe MVC estricto pero es efectivo para vista rápida.
-                                    // Mejor: Un botón "Mostrar QR" que haga submit a una vista intermedia o ajax.
-                                    // MODO SIMPLE: Usar una imagen generada por helper de Google Charts o similar si librería falla, 
-                                    // pero tenemos bacon-qr instalado.
                                     
-                                    $google2fa = new \PragmaRX\Google2FA\Google2FA();
-                                    $secret = $google2fa->generateSecretKey();
-                                    // La URL 'otpauth'
-                                    $qrCodeUrl = $google2fa->getQRCodeUrl(
-                                        Yii::$app->name,
-                                        $user->email,
-                                        $secret
-                                    );
-                                    
-                                    // Usamos un servicio público de QR para no depender de librerías de imagen complejas 
-                                    // (bacon qr a veces requiere imagick).
-                                    // Google Charts API para QR está deprecated pero funciona, o goqr.me
-                                    $qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrCodeUrl);
+                                    $secret = null;
+                                    $qrImageUrl = '';
+                                    $google2fa = null;
+
+                                    if (class_exists('\PragmaRX\Google2FA\Google2FA')) {
+                                        try {
+                                            $google2fa = new \PragmaRX\Google2FA\Google2FA();
+                                            $secret = $google2fa->generateSecretKey();
+                                            // La URL 'otpauth'
+                                            $qrCodeUrl = $google2fa->getQRCodeUrl(
+                                                Yii::$app->name,
+                                                $user->email,
+                                                $secret
+                                            );
+                                            // Usamos un servicio público de QR
+                                            $qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrCodeUrl);
+                                        } catch (\Exception $e) {
+                                            $secret = 'ERROR-LIB-2FA';
+                                        }
+                                    } else {
+                                        $secret = 'LIBRERIA-NO-ENCONTRADA';
+                                    }
                                 ?>
                                 <img src="<?= $qrImageUrl ?>" alt="QR Code" style="width: 150px; height: 150px;">
                             </div>

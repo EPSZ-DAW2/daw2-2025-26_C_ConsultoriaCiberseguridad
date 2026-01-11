@@ -9,8 +9,17 @@ return [
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
-    'authManager' => [
+        'authManager' => [
             'class' => 'yii\rbac\DbManager',
+        ],
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'locale' => 'es-ES',
+            'currencyCode' => 'EUR',
+            'decimalSeparator' => ',',
+            'thousandSeparator' => '.',
+            'defaultTimeZone' => 'Europe/Madrid',
+            'timeZone' => 'Europe/Madrid',
         ],
     ],
 ];

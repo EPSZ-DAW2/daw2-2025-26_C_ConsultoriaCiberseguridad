@@ -16,14 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
+
         
         <?= Html::a('⬇️ Descargar PDF', ['descargar', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
     </p>
@@ -32,18 +25,29 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'proyecto_id',
+            [
+                'attribute' => 'proyecto_id',
+                'value' => function($model) {
+                    return $model->proyecto ? $model->proyecto->nombre : '(Sin Proyecto)';
+                }
+            ],
             'nombre_archivo',
             'descripcion:ntext',
             'ruta_archivo:ntext',
             'tipo_documento',
-            'tamaño_bytes',
+            'tamaño_bytes:shortSize',
             'version',
-            'visible_cliente',
+            'visible_cliente:boolean',
             'hash_verificacion',
-            'subido_por',
-            'fecha_subida',
-            'fecha_modificacion',
+            [
+                'attribute' => 'subido_por',
+                'value' => function($model) {
+                    $u = \common\models\Usuarios::findOne($model->subido_por);
+                    return $u ? $u->nombre . ' ' . $u->apellidos : $model->subido_por;
+                }
+            ],
+            'fecha_subida:datetime',
+            'fecha_modificacion:datetime',
             'notas:ntext',
         ],
     ]) ?>

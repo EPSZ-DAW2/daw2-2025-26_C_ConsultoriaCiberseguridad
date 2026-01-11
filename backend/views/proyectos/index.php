@@ -34,14 +34,26 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'nombre',
             'descripcion:ntext',
-            'cliente_id',
-            'servicio_id',
+            [
+                'attribute' => 'cliente_id',
+                'value' => function ($model) {
+                    return $model->cliente ? $model->cliente->nombre . ' ' . $model->cliente->apellidos : null;
+                },
+                'label' => 'Cliente',
+            ],
+            [
+                'attribute' => 'servicio_id',
+                'value' => function ($model) {
+                    return $model->servicio ? $model->servicio->nombre : null;
+                },
+                'label' => 'Servicio',
+            ],
             //'consultor_id',
             //'auditor_id',
-            //'fecha_inicio',
-            //'fecha_fin_prevista',
+            'fecha_inicio:date',
+            'fecha_fin_prevista:date',
             //'fecha_fin_real',
-            //'estado',
+            'estado',
             //'presupuesto',
             //'notas_internas:ntext',
             //'creado_por',
@@ -56,7 +68,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'visibleButtons' => [
                     'update' => Yii::$app->user->can('gestionarProyectos'),
                     'delete' => Yii::$app->user->can('gestionarProyectos'),
-                ]
+                ],
+                'buttons' => [
+                    'delete' => function ($url, $model, $key) {
+                        return Html::a('<i class="fas fa-trash"></i>', $url, [
+                            'title' => Yii::t('yii', 'Delete'),
+                            'data-confirm' => '⚠️ ¡ATENCIÓN! ¿Estás seguro de que quieres eliminar este PROYECTO? Esta acción NO se puede deshacer y eliminará todos los Documentos y Eventos asociados.',
+                            'data-method' => 'post',
+                        ]);
+                    },
+                ],
             ],
         ],
     ]); ?>

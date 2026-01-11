@@ -28,7 +28,7 @@ class EventosCalendarioController extends Controller
                         [
                             'actions' => ['index', 'view'],
                             'allow' => true,
-                            'roles' => ['verCalendario'], // ver calendario: consultor, auditor, manager, comercial, analista_soc, admin
+                            'roles' => ['verPanel'], // ver calendario: consultor, auditor, manager, comercial, analista_soc, admin
                         ],
                         [
                             'actions' => ['create', 'update', 'delete'],
@@ -63,9 +63,11 @@ class EventosCalendarioController extends Controller
         foreach ($eventosBD as $evento) {
             $eventoGrafico = new \yii2fullcalendar\models\Event();
             $eventoGrafico->id = $evento->id;
-            $eventoGrafico->title = $evento->titulo; // Asegúrate que tu columna se llama 'titulo'
-            $eventoGrafico->start = $evento->fecha_evento; // Asegúrate que tu columna se llama 'fecha_evento'
-            // $eventoGrafico->end = $evento->fecha_fin; // Descomenta si tienes fecha fin
+            $eventoGrafico->title = '[' . $evento->proyecto->nombre . '] ' . $evento->titulo;
+            $eventoGrafico->start = $evento->fecha . 'T' . $evento->hora_inicio;
+            if ($evento->hora_fin) {
+                $eventoGrafico->end = $evento->fecha . 'T' . $evento->hora_fin;
+            }
             
             $eventosParaCalendario[] = $eventoGrafico;
         }

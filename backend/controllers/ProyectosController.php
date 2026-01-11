@@ -28,7 +28,7 @@ class ProyectosController extends Controller
                         [
                             'actions' => ['index', 'view'],
                             'allow' => true,
-                            'roles' => ['verProyectos'], // consultor, auditor, manager, comercial, analista_soc, admin
+                            'roles' => ['verPanel'], // consultor, auditor, manager, comercial, analista_soc, admin
                         ],
                         [
                             'actions' => ['create', 'update', 'delete'],

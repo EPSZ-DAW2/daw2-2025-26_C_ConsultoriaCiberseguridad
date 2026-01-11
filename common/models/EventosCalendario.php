@@ -84,14 +84,34 @@ class EventosCalendario extends \yii\db\ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \yii\behaviors\TimestampBehavior::class,
+                'createdAtAttribute' => 'fecha_creacion',
+                'updatedAtAttribute' => 'fecha_modificacion',
+                'value' => new \yii\db\Expression('NOW()'),
+            ],
+            [
+                'class' => \yii\behaviors\BlameableBehavior::class,
+                'createdByAttribute' => 'creado_por',
+                'updatedByAttribute' => 'modificado_por',
+            ],
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
             'id' => 'ID',
-            'proyecto_id' => 'Proyecto ID',
-            'auditor_id' => 'Auditor ID',
+            'proyecto_id' => 'Proyecto',
+            'auditor_id' => 'Auditor',
             'titulo' => 'Titulo',
             'descripcion' => 'Descripcion',
             'fecha' => 'Fecha',

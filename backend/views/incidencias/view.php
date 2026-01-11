@@ -15,39 +15,42 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
-            'cliente_id',
-            'analista_id',
+            [
+                'attribute' => 'cliente_id',
+                'value' => function($model) {
+                    $u = \common\models\Usuarios::findOne($model->cliente_id);
+                    return $u ? $u->nombre . ' ' . $u->apellidos . ' (' . ($u->empresa ?? '-') . ')' : '-';
+                },
+            ],
+            [
+                'attribute' => 'analista_id',
+                'value' => function($model) {
+                    $u = \common\models\Usuarios::findOne($model->analista_id);
+                    return $u ? $u->nombre . ' ' . $u->apellidos : '-';
+                },
+            ],
             'titulo',
             'descripcion:ntext',
             'severidad',
             'estado_incidencia',
             'categoria_incidencia',
-            'fecha_reporte',
-            'fecha_asignacion',
-            'fecha_primera_respuesta',
-            'fecha_resolucion',
+            'fecha_reporte:datetime',
+            'fecha_asignacion:datetime',
+            'fecha_primera_respuesta:datetime',
+            'fecha_resolucion:datetime',
             'tiempo_resolucion',
-            'sla_cumplido',
+            'sla_cumplido:boolean',
             'ip_origen',
             'sistema_afectado',
             'acciones_tomadas:ntext',
             'notas_internas:ntext',
-            'visible_cliente',
+            'visible_cliente:boolean',
         ],
     ]) ?>
 
