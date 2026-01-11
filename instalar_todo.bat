@@ -143,6 +143,16 @@ if %errorlevel% neq 0 (
     echo [EXITO] Todas las dependencias estan listas.
     echo [INFO] Si se descargo 'composer.phar', puedes borrarlo si quieres,
     echo        pero es util tenerlo para futuras actualizaciones.
+    
+    echo.
+    echo [4/3] Aplicando migraciones de base de datos...
+    "%PHP_CMD%" yii migrate --interactive=0
+    
+    if %errorlevel% equ 0 (
+        echo [EXITO] Base de datos actualizada correctamente.
+    ) else (
+        echo [ERROR] Hubo un problema al aplicar las migraciones.
+    )
 )
 
 echo.
