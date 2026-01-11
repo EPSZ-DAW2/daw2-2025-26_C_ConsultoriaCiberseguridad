@@ -24,6 +24,7 @@ class CrmController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
+                            'actions' => ['index', 'view', 'update', 'delete', 'cambiar-estado'],
                             'roles' => ['gestionarCRM'], // Solo comercial y admin
                         ],
                     ],
@@ -81,11 +82,16 @@ class CrmController extends Controller
     /**
      * Cambia el estado de una solicitud
      */
+
     public function actionCambiarEstado($id, $estado)
     {
         $model = $this->findModel($id);
         $estadosPermitidos = [
             SolicitudesPresupuesto::ESTADO_SOLICITUD_PENDIENTE,
+            SolicitudesPresupuesto::ESTADO_SOLICITUD_CONTACTADO,
+            SolicitudesPresupuesto::ESTADO_SOLICITUD_EN_REVISION,
+            SolicitudesPresupuesto::ESTADO_SOLICITUD_PRESUPUESTO_ENVIADO,
+            SolicitudesPresupuesto::ESTADO_SOLICITUD_NEGOCIACION,
             SolicitudesPresupuesto::ESTADO_SOLICITUD_CONTRATADO,
             SolicitudesPresupuesto::ESTADO_SOLICITUD_RECHAZADO,
         ];
@@ -129,6 +135,16 @@ class CrmController extends Controller
         }
 
         return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+    /**
+     * Elimina una solicitud existente
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
     }
 
     /**

@@ -146,11 +146,29 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="mt-4">
         <?= Html::a(
-            'Aceptar',
+            'Contactado',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Contactado'],
+            ['class' => 'btn btn-primary me-2', 'data-method' => 'post']
+        ) ?>
+
+        <?= Html::a(
+            'En Revisión',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'En Revisión'],
+            ['class' => 'btn btn-info me-2 text-white', 'data-method' => 'post']
+        ) ?>
+
+        <?= Html::a(
+            'Presupuesto Enviado',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Presupuesto Enviado'],
+            ['class' => 'btn btn-warning me-2', 'data-method' => 'post']
+        ) ?>
+
+        <?= Html::a(
+            'Aceptar / Contratar',
             ['cambiar-estado', 'id' => $model->id, 'estado' => 'Contratado'],
             [
                 'class' => 'btn btn-success me-2',
-                'data-confirm' => '¿Está seguro de aceptar esta solicitud?',
+                'data-confirm' => '¿Está seguro de aceptar esta solicitud? Se creará un proyecto automáticamente.',
                 'data-method' => 'post'
             ]
         ) ?>
@@ -170,7 +188,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ['cambiar-estado', 'id' => $model->id, 'estado' => 'Pendiente'],
             [
                 'class' => 'btn btn-secondary',
-                'data-confirm' => '¿Está seguro de marcar esta solicitud como pendiente?',
                 'data-method' => 'post'
             ]
         ) ?>

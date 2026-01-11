@@ -17,9 +17,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'descripcion')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'categoria')->dropDownList([ 
-        'Gobernanza' => 'Gobernanza', 
-        'Defensa' => 'Defensa', 
-        'Auditoría' => 'Auditoría', 
+        'Consultoría' => 'Consultoría', 
+        'Ciberseguridad' => 'Ciberseguridad', 
         'Formación' => 'Formación', 
     ], ['prompt' => 'Seleccione una categoría...']) ?>
 
