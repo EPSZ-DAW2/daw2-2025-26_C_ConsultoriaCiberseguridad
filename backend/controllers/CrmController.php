@@ -24,7 +24,7 @@ class CrmController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['index', 'view', 'update', 'delete', 'cambiar-estado'],
+                            'actions' => ['index', 'view', 'update', 'cambiar-estado'],
                             'roles' => ['gestionarCRM'], // Solo comercial y admin
                         ],
                     ],
@@ -137,15 +137,7 @@ class CrmController extends Controller
         return $this->redirect(['view', 'id' => $model->id]);
     }
 
-    /**
-     * Elimina una solicitud existente
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
-    }
 
     /**
      * Encuentra el modelo basado en su ID

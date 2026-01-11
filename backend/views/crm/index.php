@@ -80,20 +80,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {delete}',
+                'template' => '{view}',
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         return Html::a('<i class="fas fa-eye"></i> Ver', $url, [
                             'title' => 'Ver detalles',
-                            'class' => 'btn btn-sm btn-primary me-1',
-                        ]);
-                    },
-                    'delete' => function ($url, $model, $key) {
-                        return Html::a('<i class="fas fa-trash"></i> Eliminar', ['delete', 'id' => $model->id], [
-                            'title' => 'Eliminar',
-                            'class' => 'btn btn-sm btn-danger',
-                            'data-confirm' => '¿Estás seguro de que quieres eliminar este elemento?',
-                            'data-method' => 'post',
+                            'class' => 'btn btn-sm btn-primary',
                         ]);
                     },
                 ],
