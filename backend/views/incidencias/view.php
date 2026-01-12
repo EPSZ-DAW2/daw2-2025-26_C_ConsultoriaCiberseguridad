@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var common\models\Incidencias $model */
 
-$this->title = $model->id;
+$this->title = $model->titulo;
 $this->params['breadcrumbs'][] = ['label' => 'Incidencias', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -15,7 +15,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-
+    <p>
+        <?= Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Borrar', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -23,17 +32,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             [
                 'attribute' => 'cliente_id',
-                'value' => function($model) {
-                    $u = \common\models\Usuarios::findOne($model->cliente_id);
-                    return $u ? $u->nombre . ' ' . $u->apellidos . ' (' . ($u->empresa ?? '-') . ')' : '-';
-                },
+                'value' => $model->cliente ? $model->cliente->nombre . ' ' . $model->cliente->apellidos . ' (' . $model->cliente->empresa . ')' : null,
             ],
             [
                 'attribute' => 'analista_id',
-                'value' => function($model) {
-                    $u = \common\models\Usuarios::findOne($model->analista_id);
-                    return $u ? $u->nombre . ' ' . $u->apellidos : '-';
-                },
+                'value' => $model->analista ? $model->analista->nombre . ' ' . $model->analista->apellidos : null,
             ],
             'titulo',
             'descripcion:ntext',

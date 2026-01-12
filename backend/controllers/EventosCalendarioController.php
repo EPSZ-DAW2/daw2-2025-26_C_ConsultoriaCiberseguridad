@@ -28,7 +28,13 @@ class EventosCalendarioController extends Controller
                         [
                             'actions' => ['index', 'view'],
                             'allow' => true,
-                            'roles' => ['verPanel'], // ver calendario: consultor, auditor, manager, comercial, analista_soc, admin
+                            'roles' => ['verCalendario'], 
+                            'matchCallback' => function ($rule, $action) {
+                                // Excluir explícitamente a analista_soc y comercial
+                                $user = \Yii::$app->user->identity;
+                                return !$user->hasRole(\common\models\User::ROL_ANALISTA_SOC) 
+                                    && !$user->hasRole(\common\models\User::ROL_COMERCIAL);
+                            }
                         ],
                         [
                             'actions' => ['create', 'update', 'delete'],
@@ -64,9 +70,13 @@ class EventosCalendarioController extends Controller
             $eventoGrafico = new \yii2fullcalendar\models\Event();
             $eventoGrafico->id = $evento->id;
             $eventoGrafico->title = '[' . $evento->proyecto->nombre . '] ' . $evento->titulo;
-            $eventoGrafico->start = $evento->fecha . 'T' . $evento->hora_inicio;
+            // Asegurar formato Y-m-d para la fecha, ignorando hora si viene en ese campo
+            $fechaIso = date('Y-m-d', strtotime($evento->fecha));
+            
+            $eventoGrafico->start = $fechaIso . 'T' . $evento->hora_inicio;
+            
             if ($evento->hora_fin) {
-                $eventoGrafico->end = $evento->fecha . 'T' . $evento->hora_fin;
+                $eventoGrafico->end = $fechaIso . 'T' . $evento->hora_fin;
             }
             
             $eventosParaCalendario[] = $eventoGrafico;

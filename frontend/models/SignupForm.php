@@ -42,6 +42,18 @@ class SignupForm extends Model
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'Usuario',
+            'email' => 'Correo Electrónico',
+            'password' => 'Contraseña',
+        ];
+    }
+
+    /**
      * Signs user up.
      *
      * @return bool whether the creating new account was successful and the email was sent
@@ -57,7 +69,7 @@ class SignupForm extends Model
         // ASIGNACIÓN DE DATOS (Formulario -> Base de Datos)
         $user->nombre = $this->username; // Guardamos lo que escriban en 'Username' dentro de 'nombre'
         $user->email = $this->email;
-        $user->activo = 1; // 1 = Activo
+        $user->activo = User::STATUS_INACTIVE; // Inactivo hasta verificar
         $user->fecha_registro = date('Y-m-d H:i:s'); // Fecha actual
         
         // IMPORTANTE: Si tu base de datos obliga a tener 'apellidos', 
@@ -66,6 +78,7 @@ class SignupForm extends Model
         
         $user->setPassword($this->password);
         $user->generateAuthKey();
+        $user->generateEmailVerificationToken();
         
         // Guardar usuario
         if ($user->save()) {
@@ -75,9 +88,30 @@ class SignupForm extends Model
             if ($clienteRole) {
                 $auth->assign($clienteRole, $user->id);
             }
-            return true;
+            
+            // Enviar correo
+            return $this->sendEmail($user);
         }
 
         return null;
+    }
+
+    /**
+     * Sends confirmation email to user
+     * @param User $user user model to with email should be send
+     * @return bool whether the email was sent
+     */
+    protected function sendEmail($user)
+    {
+        return Yii::$app
+            ->mailer
+            ->compose(
+                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
+                ['user' => $user]
+            )
+            ->setFrom([Yii::$app->params['supportEmail'] => 'Equipo Técnico de CyberSec'])
+            ->setTo($this->email)
+            ->setSubject('Registro de cuenta en ' . Yii::$app->name)
+            ->send();
     }
 }

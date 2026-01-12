@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var common\models\EventosCalendario $model */
 
-$this->title = $model->id;
+$this->title = $model->titulo;
 $this->params['breadcrumbs'][] = ['label' => 'Eventos Calendarios', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -15,7 +15,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-
+    <p>
+        <?= Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Borrar', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -23,16 +32,26 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             [
                 'attribute' => 'proyecto_id',
+                'label' => 'Proyecto',
                 'value' => function($model) {
                     return $model->proyecto ? $model->proyecto->nombre : '(Sin Proyecto)';
                 }
             ],
             [
-                'attribute' => 'auditor_id',
+                'label' => 'Cliente',
                 'value' => function($model) {
-                     // Asumiendo relación 'auditor' o buscar usuario
-                     $auditor = \common\models\Usuarios::findOne($model->auditor_id);
-                     return $auditor ? $auditor->nombre . ' ' . $auditor->apellidos : '-';
+                    if ($model->proyecto && $model->proyecto->cliente) {
+                        return $model->proyecto->cliente->nombre . ' ' . $model->proyecto->cliente->apellidos . 
+                               ($model->proyecto->cliente->empresa ? ' (' . $model->proyecto->cliente->empresa . ')' : '');
+                    }
+                    return '(Sin Cliente asignado al proyecto)';
+                }
+            ],
+            [
+                'attribute' => 'auditor_id',
+                'label' => 'Auditor',
+                'value' => function($model) {
+                     return $model->auditor ? $model->auditor->nombre . ' ' . $model->auditor->apellidos : '(No asignado)';
                 }
             ],
             'titulo',
@@ -48,17 +67,15 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'creado_por',
                 'value' => function($model) {
-                    $u = \common\models\Usuarios::findOne($model->creado_por);
-                    return $u ? $u->nombre . ' ' . $u->apellidos : $model->creado_por;
+                    return $model->creadoPor ? $model->creadoPor->nombre . ' ' . $model->creadoPor->apellidos : $model->creado_por;
                 }
             ],
             'fecha_creacion:datetime',
             [
-                 'attribute' => 'modificado_por',
-                 'value' => function($model) {
-                     $u = \common\models\Usuarios::findOne($model->modificado_por);
-                     return $u ? $u->nombre . ' ' . $u->apellidos : $model->modificado_por;
-                 }
+                'attribute' => 'modificado_por',
+                'value' => function($model) {
+                    return $model->modificadoPor ? $model->modificadoPor->nombre . ' ' . $model->modificadoPor->apellidos : $model->modificado_por;
+                }
             ],
             'fecha_modificacion:datetime',
         ],

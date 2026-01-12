@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\models\User;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\Incidencias $model */
@@ -13,23 +15,32 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php
-        use common\models\Usuarios;
-        use yii\helpers\ArrayHelper;
+    <?php
+    // Preparar listas de usuarios por rol (usando columna 'rol' para asegurar compatibilidad)
+    $clientes = User::find()
+        ->where(['activo' => 1])
+        ->andWhere(['rol' => ['cliente_admin', 'cliente_user']])
+        ->orderBy('nombre')
+        ->all();
+        
+    $clientesLista = ArrayHelper::map($clientes, 'id', function($user) {
+        return $user->nombre . ' ' . $user->apellidos . ' (' . ($user->empresa ?? '-') . ')';
+    });
+
+    $analistas = User::find()
+        ->where(['activo' => 1])
+        ->andWhere(['rol' => 'analista_soc'])
+        ->orderBy('nombre')
+        ->all();
+        
+    $analistasLista = ArrayHelper::map($analistas, 'id', function($user) {
+        return $user->nombre . ' ' . $user->apellidos;
+    });
     ?>
 
-    <?= $form->field($model, 'cliente_id')->dropDownList(
-        ArrayHelper::map(Usuarios::find()->where(['rol' => Usuarios::ROL_CLIENTE_USER])->orderBy('nombre')->all(), 'id', function($model) {
-            return $model->nombre . ' ' . $model->apellidos . ' (' . ($model->empresa ?? 'Sin Empresa') . ')';
-        }),
-        ['prompt' => 'Seleccione Cliente...']
-    ) ?>
+    <?= $form->field($model, 'cliente_id')->dropDownList($clientesLista, ['prompt' => 'Seleccione Cliente...']) ?>
 
-    <?= $form->field($model, 'analista_id')->dropDownList(
-        ArrayHelper::map(Usuarios::find()->where(['rol' => 'analista_soc'])->orderBy('nombre')->all(), 'id', function($model) {
-            return $model->nombre . ' ' . $model->apellidos;
-        }),
-        ['prompt' => 'Seleccione Analista...']
-    ) ?>
+    <?= $form->field($model, 'analista_id')->dropDownList($analistasLista, ['prompt' => 'Seleccione Analista...']) ?>
 
     <?= $form->field($model, 'titulo')->textInput(['maxlength' => true]) ?>
 

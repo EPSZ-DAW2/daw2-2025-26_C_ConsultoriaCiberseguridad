@@ -27,6 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             return $model->proyecto ? $model->proyecto->nombre : '(Sin Proyecto)';
                         }
                     ],
+                    [
+                        'attribute' => 'auditor_id',
+                        'label' => 'Auditor',
+                        'value' => function($model) {
+                             return $model->auditor ? $model->auditor->nombre . ' ' . $model->auditor->apellidos : '(No asignado)';
+                        }
+                    ],
                     'titulo',
                     'descripcion:ntext',
                     'fecha:date',

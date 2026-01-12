@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <h1 class="display-5 fw-bold">Bienvenido, <?= \yii\helpers\Html::encode(Yii::$app->user->identity->username) ?></h1>
             <p class="col-md-8 fs-4">Este es tu panel de control privado.</p>
             <p>Desde aquí podrás gestionar tus proyectos, ver el estado de tus servicios contratados y acceder a documentación exclusiva.</p>
-            <button class="btn btn-primary btn-lg" type="button">Ver mis proyectos</button>
+            <a href="<?= \yii\helpers\Url::to(['proyectos/index']) ?>" class="btn btn-primary btn-lg">Ver mis proyectos</a>
         </div>
     </div>
 
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="h-100 p-5 text-white bg-dark rounded-3">
                 <h2>Mis Servicios Activos</h2>
                 <p>Consulta el estado de los servicios de ciberseguridad que tienes contratados actualmente.</p>
-                <button class="btn btn-outline-light" type="button">Ver Servicios</button>
+                <a href="<?= \yii\helpers\Url::to(['site/configuracion', '#' => 'section-pagos']) ?>" class="btn btn-outline-light">Ver Servicios</a>
             </div>
         </div>
         <div class="col-md-6">

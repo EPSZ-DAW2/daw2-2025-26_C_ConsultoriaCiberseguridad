@@ -35,6 +35,7 @@ class IncidenciasController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'close' => ['POST'],
                     ],
                 ],
             ]
@@ -122,6 +123,28 @@ class IncidenciasController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Closes an existing Incidencias model.
+     * @param int $id ID
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionClose($id)
+    {
+        $model = $this->findModel($id);
+        
+        // Estado "Resuelto" o "Cerrado" según tu lógica de negocio
+        $model->estado_incidencia = 'Cerrado';
+        
+        if ($model->save()) {
+             \Yii::$app->session->setFlash('success', 'Incidencia #' . $id . ' cerrada correctamente.');
+        } else {
+             \Yii::$app->session->setFlash('error', 'No se pudo cerrar la incidencia.');
+        }
 
         return $this->redirect(['index']);
     }

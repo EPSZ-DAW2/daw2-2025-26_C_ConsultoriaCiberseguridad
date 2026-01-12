@@ -2,9 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
+use common\models\User;
 use common\models\Proyectos;
-use common\models\Usuarios;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\EventosCalendario $model */
@@ -15,17 +15,24 @@ use common\models\Usuarios;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'proyecto_id')->dropDownList(
-        ArrayHelper::map(Proyectos::find()->orderBy('nombre')->all(), 'id', 'nombre'),
-        ['prompt' => 'Seleccione un Proyecto...']
-    ) ?>
+    <?php
+    // Preparar lista de proyectos activos
+    $proyectos = Proyectos::find()->all();
+    $proyectosLista = ArrayHelper::map($proyectos, 'id', 'nombre');
 
-    <?= $form->field($model, 'auditor_id')->dropDownList(
-        ArrayHelper::map(Usuarios::find()->where(['rol' => 'auditor'])->orderBy('nombre')->all(), 'id', function($model) {
-            return $model->nombre . ' ' . $model->apellidos;
-        }),
-        ['prompt' => 'Seleccione un Auditor...']
-    ) ?>
+    // Preparar lista de auditores usando RBAC
+    $auditores = User::byRole(
+        User::find()->where(['activo' => 1]),
+        'auditor'
+    )->all();
+    $auditoresLista = ArrayHelper::map($auditores, 'id', function($user) {
+        return $user->nombre . ' ' . $user->apellidos;
+    });
+    ?>
+
+    <?= $form->field($model, 'proyecto_id')->dropDownList($proyectosLista, ['prompt' => 'Seleccionar proyecto']) ?>
+
+    <?= $form->field($model, 'auditor_id')->dropDownList($auditoresLista, ['prompt' => 'Seleccionar auditor']) ?>
 
     <?= $form->field($model, 'titulo')->textInput(['maxlength' => true]) ?>
 
@@ -52,37 +59,6 @@ use common\models\Usuarios;
     <?= $form->field($model, 'recordatorio_enviado')->checkbox() ?>
     
     <?= $form->field($model, 'notas')->textarea(['rows' => 6]) ?>
-
-    <?php
-        // Lista de usuarios internos para Creado/Modificado
-        $internalUsers = ArrayHelper::map(
-            Usuarios::find()->orderBy('nombre')->all(),
-            'id', 
-            function($model) { return $model->nombre . ' ' . $model->apellidos; }
-        );
-    ?>
-
-    <?= $form->field($model, 'creado_por')->dropDownList($internalUsers, [
-        'prompt' => 'Seleccione Usuario...',
-        'disabled' => true // Generalmente no editable manualmente
-    ]) ?>
-
-    <?= $form->field($model, 'fecha_creacion')->textInput([
-         'type' => 'datetime-local',
-         'value' => $model->fecha_creacion ? str_replace(' ', 'T', substr($model->fecha_creacion, 0, 16)) : '',
-         'readonly' => true
-    ]) ?>
-
-    <?= $form->field($model, 'modificado_por')->dropDownList($internalUsers, [
-        'prompt' => 'Seleccione Usuario...',
-        'disabled' => true
-    ]) ?>
-
-    <?= $form->field($model, 'fecha_modificacion')->textInput([
-         'type' => 'datetime-local',
-         'value' => $model->fecha_modificacion ? str_replace(' ', 'T', substr($model->fecha_modificacion, 0, 16)) : '',
-         'readonly' => true
-    ]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

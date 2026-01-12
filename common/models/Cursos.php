@@ -8,6 +8,7 @@ use Yii;
  * This is the model class for table "cursos".
  *
  * @property int $id
+ * @property int|null $servicio_id ID del servicio de formación al que pertenece el curso
  * @property string $nombre Nombre del curso (ej: "Concienciación Phishing")
  * @property string|null $descripcion Descripción del contenido del curso
  * @property string|null $video_url URL del video del curso (o iframe)
@@ -19,6 +20,7 @@ use Yii;
  * @property int|null $modificado_por
  * @property string|null $fecha_modificacion
  *
+ * @property Servicios $servicio
  * @property Usuarios $creadoPor
  * @property Diapositivas[] $diapositivas
  * @property Usuarios $modificadoPor
@@ -55,6 +57,7 @@ class Cursos extends \yii\db\ActiveRecord
             [['fecha_creacion', 'fecha_modificacion'], 'safe'],
             [['nombre'], 'string', 'max' => 200],
             [['imagen_portada', 'video_url'], 'string', 'max' => 255],
+            [['servicio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Servicios::class, 'targetAttribute' => ['servicio_id' => 'id']],
             [['creado_por'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::class, 'targetAttribute' => ['creado_por' => 'id']],
             [['modificado_por'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::class, 'targetAttribute' => ['modificado_por' => 'id']],
         ];
@@ -79,6 +82,16 @@ class Cursos extends \yii\db\ActiveRecord
             'video_url' => 'URL del Video',
             'servicio_id' => 'Servicio Asociado',
         ];
+    }
+
+    /**
+     * Gets query for [[Servicio]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getServicio()
+    {
+        return $this->hasOne(Servicios::class, ['id' => 'servicio_id']);
     }
 
     /**
@@ -139,6 +152,105 @@ class Cursos extends \yii\db\ActiveRecord
     public function getUsuarios()
     {
         return $this->hasMany(Usuarios::class, ['id' => 'usuario_id'])->viaTable('progreso_usuario', ['curso_id' => 'id']);
+    }
+
+    /**
+     * Obtiene los cursos accesibles por un usuario agrupados por proyecto.
+     * @param int $userId ID del usuario
+     * @param bool $activeProjectsOnly Si true, solo proyectos activos
+     * @return array Array de arrays con 'proyecto', 'servicio' y 'cursos'
+     */
+    public static function getCursosAgrupadosPorProyecto($userId, $activeProjectsOnly = true)
+    {
+        // Buscar usuario para verificar si tiene empresa
+        $user = \common\models\User::findOne($userId);
+
+        $proyectosQuery = Proyectos::find()
+            ->alias('p')
+            ->joinWith('servicio s')
+            ->andWhere(['s.categoria' => Servicios::CATEGORIA_FORMACION]);
+
+        // Buscar por empresa (si tiene) o por usuario directo (igual que hasContratoActivo)
+        if (!empty($user->empresa)) {
+            // Buscar proyectos de cualquiera de la empresa
+            $userIds = \common\models\User::find()->select('id')->where(['empresa' => $user->empresa])->column();
+            $proyectosQuery->andWhere(['p.cliente_id' => $userIds]);
+        } else {
+            // Solo proyectos del usuario
+            $proyectosQuery->andWhere(['p.cliente_id' => $userId]);
+        }
+
+        if ($activeProjectsOnly) {
+            // Excluir solo Cancelado y Suspendido (igual que hasContratoActivo)
+            $proyectosQuery->andWhere([
+                'NOT IN', 'p.estado',
+                [Proyectos::ESTADO_CANCELADO, Proyectos::ESTADO_SUSPENDIDO]
+            ]);
+        }
+
+        $proyectos = $proyectosQuery->all();
+        $resultado = [];
+
+        foreach ($proyectos as $proyecto) {
+            $cursosDelServicio = self::find()
+                ->where(['servicio_id' => $proyecto->servicio_id])
+                ->andWhere(['activo' => 1])
+                ->all();
+
+            if (!empty($cursosDelServicio)) {
+                $resultado[] = [
+                    'proyecto' => $proyecto,
+                    'servicio' => $proyecto->servicio,
+                    'cursos' => $cursosDelServicio,
+                ];
+            }
+        }
+
+        return $resultado;
+    }
+
+    /**
+     * Verifica si un usuario puede acceder a un curso específico.
+     * @param int $cursoId ID del curso
+     * @param int $userId ID del usuario
+     * @param bool $activeProjectsOnly Si true, solo proyectos activos
+     * @return bool True si puede acceder
+     */
+    public static function usuarioPuedeAccederCurso($cursoId, $userId, $activeProjectsOnly = true)
+    {
+        $curso = self::findOne($cursoId);
+        if (!$curso || !$curso->activo) {
+            return false;
+        }
+
+        // Buscar usuario para verificar si tiene empresa
+        $user = \common\models\User::findOne($userId);
+
+        $proyectosQuery = Proyectos::find()
+            ->alias('p')
+            ->joinWith('servicio s')
+            ->andWhere(['p.servicio_id' => $curso->servicio_id])
+            ->andWhere(['s.categoria' => Servicios::CATEGORIA_FORMACION]);
+
+        // Buscar por empresa (si tiene) o por usuario directo (igual que hasContratoActivo)
+        if (!empty($user->empresa)) {
+            // Buscar proyectos de cualquiera de la empresa
+            $userIds = \common\models\User::find()->select('id')->where(['empresa' => $user->empresa])->column();
+            $proyectosQuery->andWhere(['p.cliente_id' => $userIds]);
+        } else {
+            // Solo proyectos del usuario
+            $proyectosQuery->andWhere(['p.cliente_id' => $userId]);
+        }
+
+        if ($activeProjectsOnly) {
+            // Excluir solo Cancelado y Suspendido (igual que hasContratoActivo)
+            $proyectosQuery->andWhere([
+                'NOT IN', 'p.estado',
+                [Proyectos::ESTADO_CANCELADO, Proyectos::ESTADO_SUSPENDIDO]
+            ]);
+        }
+
+        return $proyectosQuery->exists();
     }
 
 }

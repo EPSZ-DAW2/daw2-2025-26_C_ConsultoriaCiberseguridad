@@ -144,4 +144,53 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
+    <div class="mt-4">
+        <?= Html::a(
+            'Contactado',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Contactado'],
+            ['class' => 'btn btn-primary me-2', 'data-method' => 'post']
+        ) ?>
+
+        <?= Html::a(
+            'En Revisión',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'En Revisión'],
+            ['class' => 'btn btn-info me-2 text-white', 'data-method' => 'post']
+        ) ?>
+
+        <?= Html::a(
+            'Presupuesto Enviado',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Presupuesto Enviado'],
+            ['class' => 'btn btn-warning me-2', 'data-method' => 'post']
+        ) ?>
+
+        <?= Html::a(
+            'Aceptar / Contratar',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Contratado'],
+            [
+                'class' => 'btn btn-success me-2',
+                'data-confirm' => '¿Está seguro de aceptar esta solicitud? Se creará un proyecto automáticamente.',
+                'data-method' => 'post'
+            ]
+        ) ?>
+
+        <?= Html::a(
+            'Rechazar',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Rechazado'],
+            [
+                'class' => 'btn btn-danger me-2',
+                'data-confirm' => '¿Está seguro de rechazar esta solicitud?',
+                'data-method' => 'post'
+            ]
+        ) ?>
+
+        <?= Html::a(
+            'Marcar como pendiente',
+            ['cambiar-estado', 'id' => $model->id, 'estado' => 'Pendiente'],
+            [
+                'class' => 'btn btn-secondary',
+                'data-method' => 'post'
+            ]
+        ) ?>
+    </div>
+
 </div>

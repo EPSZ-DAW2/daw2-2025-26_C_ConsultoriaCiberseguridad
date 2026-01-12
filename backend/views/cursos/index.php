@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Crear Cursos', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Crear curso', ['create-wizard'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -42,6 +42,9 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Cursos $model, $key, $index, $column) {
+                    if ($action === 'update') {
+                        return Url::toRoute(['update-wizard', 'id' => $model->id]);
+                    }
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],

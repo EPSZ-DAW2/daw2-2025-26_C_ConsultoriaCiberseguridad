@@ -89,22 +89,9 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $this->layout = 'blank';
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        // Redirigir siempre al login del frontend
+        $frontendUrl = str_replace('/backend/web', '/frontend/web', Yii::$app->request->baseUrl);
+        return $this->redirect($frontendUrl . '/index.php?r=site/login');
     }
 
     /**
@@ -116,6 +103,7 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        $frontendUrl = str_replace('/backend/web', '/frontend/web', Yii::$app->request->baseUrl);
+        return $this->redirect($frontendUrl . '/index.php?r=site/login');
     }
 }

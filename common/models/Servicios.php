@@ -32,8 +32,11 @@ class Servicios extends \yii\db\ActiveRecord
     /**
      * ENUM field values
      */
-    const CATEGORIA_GOBERNANZA = 'Gobernanza';
-    const CATEGORIA_DEFENSA = 'Defensa';
+    /**
+     * ENUM field values
+     */
+    const CATEGORIA_GOBERNANZA = 'Consultoría'; // Antes Gobernanza
+    const CATEGORIA_DEFENSA = 'Ciberseguridad'; // Antes Defensa
     const CATEGORIA_AUDITORIA = 'Auditoría';
     const CATEGORIA_FORMACION = 'Formación';
 
@@ -137,8 +140,8 @@ class Servicios extends \yii\db\ActiveRecord
     public static function optsCategoria()
     {
         return [
-            self::CATEGORIA_GOBERNANZA => 'Gobernanza',
-            self::CATEGORIA_DEFENSA => 'Defensa',
+            self::CATEGORIA_GOBERNANZA => 'Consultoría',
+            self::CATEGORIA_DEFENSA => 'Ciberseguridad',
             self::CATEGORIA_AUDITORIA => 'Auditoría',
             self::CATEGORIA_FORMACION => 'Formación',
         ];

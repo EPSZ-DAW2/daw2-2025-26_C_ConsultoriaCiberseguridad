@@ -2,7 +2,9 @@
 
 namespace frontend\controllers;
 
+use Yii;
 use common\models\EventosCalendario;
+use common\models\Servicios;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 
@@ -19,12 +21,18 @@ class CalendarioController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index'],
+                'only' => ['index', 'create', 'update', 'delete'],
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'], // Only authenticated users
+                        /*
+                        'matchCallback' => function ($rule, $action) {
+                            $user = Yii::$app->user->identity;
+                            return $user->hasContratoActivo([Servicios::CATEGORIA_GOBERNANZA, Servicios::CATEGORIA_AUDITORIA]);
+                        }
+                        */
                     ],
                 ],
             ],
@@ -57,9 +65,12 @@ class CalendarioController extends Controller
             $eventoGrafico = new \yii2fullcalendar\models\Event();
             $eventoGrafico->id = $evento->id;
             $eventoGrafico->title = '[' . $evento->proyecto->nombre . '] ' . $evento->titulo;
-            $eventoGrafico->start = $evento->fecha . 'T' . $evento->hora_inicio;
+            // Asegurar formato Y-m-d para la fecha
+            $fechaIso = date('Y-m-d', strtotime($evento->fecha));
+            
+            $eventoGrafico->start = $fechaIso . 'T' . $evento->hora_inicio;
             if ($evento->hora_fin) {
-                $eventoGrafico->end = $evento->fecha . 'T' . $evento->hora_fin;
+                $eventoGrafico->end = $fechaIso . 'T' . $evento->hora_fin;
             }
             // Optional: Customize color based on event type
             // $eventoGrafico->color = ... 

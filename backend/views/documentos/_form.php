@@ -38,7 +38,9 @@ use yii\helpers\ArrayHelper;
     
     <?= $form->field($model, 'notas')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'visible_cliente')->checkbox() ?>
+    <?= $form->field($model, 'visible_cliente', [
+        'options' => ['style' => 'margin-top: 15px; margin-bottom: 15px;']
+    ])->checkbox(['label' => 'Hacer visible para el cliente']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Subir Documento', ['class' => 'btn btn-success']) ?>

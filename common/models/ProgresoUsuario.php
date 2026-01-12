@@ -158,4 +158,33 @@ class ProgresoUsuario extends \yii\db\ActiveRecord
     {
         $this->estado = self::ESTADO_SUSPENSO;
     }
+
+    /**
+     * Obtiene el historial de cursos completados de un usuario.
+     * @param int $userId ID del usuario
+     * @return ProgresoUsuario[] Cursos completados (aprobados o suspendidos)
+     */
+    public static function getHistorialUsuario($userId)
+    {
+        return self::find()
+            ->alias('pu')
+            ->joinWith(['curso', 'curso.servicio'])
+            ->where(['pu.usuario_id' => $userId])
+            ->andWhere(['IN', 'pu.estado', [self::ESTADO_APROBADO, self::ESTADO_SUSPENSO]])
+            ->orderBy(['pu.fecha_fin' => SORT_DESC])
+            ->all();
+    }
+
+    /**
+     * Verifica si el usuario aún tiene acceso activo al curso.
+     * @return bool True si tiene proyecto activo con este curso
+     */
+    public function tieneAccesoActivo()
+    {
+        return Cursos::usuarioPuedeAccederCurso(
+            $this->curso_id,
+            $this->usuario_id,
+            true
+        );
+    }
 }

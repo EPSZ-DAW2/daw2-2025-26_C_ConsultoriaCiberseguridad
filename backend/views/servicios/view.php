@@ -16,8 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+        <?= Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Borrar', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
@@ -34,9 +34,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'descripcion:ntext',
             'categoria',
             'precio_base',
-            'duracion_estimada',
-            'requiere_auditoria',
-            'activo',
+            [
+                'attribute' => 'duracion_estimada',
+                'value' => $model->duracion_estimada . ' días',
+            ],
+            [
+                'attribute' => 'requiere_auditoria',
+                'value' => $model->requiere_auditoria ? 'Sí' : 'No',
+            ],
+            [
+                'attribute' => 'activo',
+                'value' => $model->activo ? 'Sí' : 'No',
+                'label' => 'Activo en el catálogo',
+            ],
             'creado_por',
             'fecha_creacion',
             'modificado_por',

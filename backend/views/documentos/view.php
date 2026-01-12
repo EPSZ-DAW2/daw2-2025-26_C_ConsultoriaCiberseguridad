@@ -16,7 +16,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-
+        <?= Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Borrar', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
         
         <?= Html::a('⬇️ Descargar PDF', ['descargar', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
     </p>
@@ -37,8 +44,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'tipo_documento',
             'tamaño_bytes:shortSize',
             'version',
-            'visible_cliente:boolean',
-            'hash_verificacion',
+            [
+                'attribute' => 'visible_cliente',
+                'format' => 'boolean',
+                'label' => 'Visible para el cliente',
+            ],
+
             [
                 'attribute' => 'subido_por',
                 'value' => function($model) {

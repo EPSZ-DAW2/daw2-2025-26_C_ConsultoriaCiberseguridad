@@ -4,6 +4,7 @@ use common\models\Documentos;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
+use backend\components\FilterActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
@@ -19,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if (Yii::$app->user->can('subirDocs')): ?>
     <p>
-        <?= Html::a('Create Documentos', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Crear Documento', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?php endif; ?>
 
@@ -46,7 +47,15 @@ $this->params['breadcrumbs'][] = $this->title;
             //'fecha_modificacion',
             //'notas:ntext',
             [
-                'class' => ActionColumn::className(),
+                'class' => FilterActionColumn::className(),
+                'filter' => Html::button('<i class="fas fa-search"></i>', [
+                    'class' => 'btn btn-primary btn-sm',
+                    'title' => 'Buscar',
+                    'onclick' => '
+                        var $grid = $(this).closest(".grid-view");
+                        $grid.yiiGridView("applyFilter");
+                    ',
+                ]),
                 'urlCreator' => function ($action, Documentos $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  },

@@ -39,7 +39,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'usuarios', 'create-user'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -107,7 +107,13 @@ class SiteController extends Controller
             }
             
             if ($loginResult === true) {
-                return $this->goBack();
+                // Redirigir según el tipo de usuario
+                if (Yii::$app->user->identity->isBackendUser()) {
+                    $backendUrl = str_replace('/frontend/web', '/backend/web', Yii::$app->request->baseUrl);
+                    return $this->redirect($backendUrl . '/index.php?r=site/index');
+                } else {
+                    return $this->goHome();
+                }
             }
         }
 
@@ -237,12 +243,12 @@ class SiteController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->session->setFlash('success', 'Compruebe su correo electrónico para más instrucciones.');
 
                 return $this->goHome();
             }
 
-            Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
+            Yii::$app->session->setFlash('error', 'Lo sentimos, no podemos restablecer la contraseña para la dirección de correo proporcionada.');
         }
 
         return $this->render('requestPasswordResetToken', [
@@ -266,7 +272,7 @@ class SiteController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('success', 'New password saved.');
+            Yii::$app->session->setFlash('success', 'Nueva contraseña guardada.');
 
             return $this->goHome();
         }
@@ -290,12 +296,14 @@ class SiteController extends Controller
         } catch (InvalidArgumentException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
-        if ($model->verifyEmail()) {
-            Yii::$app->session->setFlash('success', 'Your email has been confirmed!');
-            return $this->goHome();
+        if ($user = $model->verifyEmail()) {
+            if (Yii::$app->user->login($user)) {
+                Yii::$app->session->setFlash('success', '¡Su correo ha sido confirmado y ha iniciado sesión!');
+                return $this->goHome();
+            }
         }
 
-        Yii::$app->session->setFlash('error', 'Sorry, we are unable to verify your account with provided token.');
+        Yii::$app->session->setFlash('error', 'Lo sentimos, no podemos verificar su cuenta con el token proporcionado.');
         return $this->goHome();
     }
 
@@ -309,10 +317,10 @@ class SiteController extends Controller
         $model = new ResendVerificationEmailForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->session->setFlash('success', 'Compruebe su correo electrónico para más instrucciones.');
                 return $this->goHome();
             }
-            Yii::$app->session->setFlash('error', 'Sorry, we are unable to resend verification email for the provided email address.');
+            Yii::$app->session->setFlash('error', 'Lo sentimos, no podemos reenviar el correo de verificación a la dirección proporcionada.');
         }
 
         return $this->render('resendVerificationEmail', [
@@ -372,7 +380,34 @@ class SiteController extends Controller
 
     public function actionConfiguracion()
     {
-        return $this->render('configuracion');
+        $user = Yii::$app->user->identity;
+        $secret = null;
+        $qrCodeUrl = null;
+
+        if (!$user->totp_activo) {
+            $google2fa = $user->getGoogle2fa();
+            
+            // Generar o recuperar secreto temporal de la sesión
+            if (!Yii::$app->session->has('2fa_setup_secret')) {
+                Yii::$app->session->set('2fa_setup_secret', $google2fa->generateSecretKey());
+            }
+            $secret = Yii::$app->session->get('2fa_setup_secret');
+
+            // Generar URL para el QR
+            $qrCodeUrl = $google2fa->getQRCodeUrl(
+                Yii::$app->name,
+                $user->email,
+                $secret
+            );
+        } else {
+            // Si ya está activo, limpiamos cualquier secreto temporal porsiaca
+            Yii::$app->session->remove('2fa_setup_secret');
+        }
+
+        return $this->render('configuracion', [
+            'secret' => $secret,
+            'qrCodeUrl' => $qrCodeUrl
+        ]);
     }
 
     public function actionSolicitarPresupuesto($servicio_id)
@@ -488,7 +523,6 @@ class SiteController extends Controller
             $user->apellidos = $request->post('apellidos');
             // Email NO se actualiza aquí
             
-            $user->rol = $request->post('rol');
             $user->empresa = $request->post('empresa');
             $user->telefono = $request->post('telefono');
             $user->direccion = $request->post('direccion');
@@ -583,5 +617,216 @@ class SiteController extends Controller
         }
 
         return $this->redirect(['site/configuracion']);
+    }
+
+    /**
+     * Genera y descarga una factura en PDF
+     * @param int $id ID de la solicitud
+     */
+    public function actionDescargarFactura($id)
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $user = Yii::$app->user->identity;
+        // Buscar la solicitud y verificar propiedad
+        $solicitud = \common\models\SolicitudesPresupuesto::findOne($id);
+
+        if (!$solicitud) {
+            throw new \yii\web\NotFoundHttpException('La solicitud no existe.');
+        }
+
+        // Verificar permisos: dueño o admin
+        if ($solicitud->email_contacto !== $user->email && !$user->isBackendUser()) {
+            throw new \yii\web\ForbiddenHttpException('No tienes permiso para ver esta factura.');
+        }
+
+        // Renderizar vista a HTML
+        $content = $this->renderPartial('invoice', [
+            'model' => $solicitud,
+            'solicitud' => $solicitud
+        ]);
+
+        // Configurar Mpdf
+        $pdf = new \Mpdf\Mpdf();
+        $pdf->WriteHTML($content);
+        
+        // Nombre del archivo
+        $filename = 'Factura_' . date('Y') . '-' . str_pad($solicitud->id, 5, '0', STR_PAD_LEFT) . '.pdf';
+
+        // Descargar
+        return $pdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
+
+    /**
+     * Genera y descarga un presupuesto en PDF
+     * @param int $id ID de la solicitud
+     */
+    public function actionDescargarPresupuesto($id)
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $user = Yii::$app->user->identity;
+        $solicitud = \common\models\SolicitudesPresupuesto::findOne($id);
+
+        if (!$solicitud) {
+            throw new \yii\web\NotFoundHttpException('La solicitud no existe.');
+        }
+
+        // Verificar permisos: dueño o admin
+        if ($solicitud->email_contacto !== $user->email && !$user->isBackendUser()) {
+            throw new \yii\web\ForbiddenHttpException('No tienes permiso para ver este presupuesto.');
+        }
+
+        // Renderizar vista a HTML
+        $content = $this->renderPartial('budget', [
+            'model' => $solicitud,
+            'solicitud' => $solicitud
+        ]);
+
+        // Configurar Mpdf
+        $pdf = new \Mpdf\Mpdf();
+        $pdf->WriteHTML($content);
+        
+        // Nombre del archivo
+        $filename = 'Presupuesto_' . date('Y') . '-' . str_pad($solicitud->id, 5, '0', STR_PAD_LEFT) . '.pdf';
+
+        // Descargar
+        return $pdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
+    /**
+     * Gestión de usuarios para Cliente Admin
+     */
+    public function actionUsuarios()
+    {
+        $user = Yii::$app->user->identity;
+        // Solo cliente_admin puede acceder (validación ampliada)
+        if (!$user->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && $user->rol !== 'cliente_admin' && $user->rol !== 'admin') {
+           throw new \yii\web\ForbiddenHttpException('No tienes permiso para gestionar usuarios.');
+        }
+
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => \common\models\User::find()
+                ->where(['empresa' => $user->empresa])
+                ->andWhere(['rol' => \common\models\User::ROL_CLIENTE_USER]) // Solo mostrar empleados básicos
+                ->andWhere(['!=', 'id', $user->id]), // No mostrarse a sí mismo
+            'pagination' => ['pageSize' => 20],
+        ]);
+
+        return $this->render('usuarios', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionCreateUser()
+    {
+        $currentUser = Yii::$app->user->identity;
+        if (!$currentUser->hasRole(\common\models\User::ROL_CLIENTE_ADMIN) && $currentUser->rol !== 'cliente_admin' && $currentUser->rol !== 'admin') {
+           throw new \yii\web\ForbiddenHttpException('No tienes permiso.');
+        }
+
+        $model = new \frontend\models\SignupForm(); // Reutilizamos SignupForm o creamos uno simple
+        
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            // Forzamos datos empresariales
+            $user = new \common\models\User();
+            // $user->username = $model->email; // ERROR: Property is read-only
+            $user->email = $model->email;
+            $user->nombre = $model->username; // En SignupForm username es nombre
+            $user->setPassword($model->password);
+            $user->generateAuthKey();
+            $user->rol = \common\models\User::ROL_CLIENTE_USER; // Mantener por compatibilidad temporalmente
+            $user->empresa = $currentUser->empresa;
+            $user->activo = 1;
+            $user->fecha_registro = date('Y-m-d H:i:s');
+
+            if ($user->save()) {
+                // Asignar rol RBAC al nuevo usuario
+                $auth = Yii::$app->authManager;
+                $role = $auth->getRole(\common\models\User::ROL_CLIENTE_USER);
+                if ($role) {
+                    $auth->assign($role, $user->id);
+                }
+
+                Yii::$app->session->setFlash('success', 'Empleado creado correctamente.');
+                return $this->redirect(['usuarios']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Error al crear usuario: ' . json_encode($user->errors));
+            }
+        }
+
+        return $this->render('create_user', ['model' => $model]);
+    }
+    /**
+     * Muestra la pasarela de pago simulada (Opción A)
+     */
+    public function actionCheckout($servicio_id)
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $servicio = \common\models\Servicios::findOne(['id' => $servicio_id, 'activo' => 1]);
+        if (!$servicio) {
+            throw new \yii\web\NotFoundHttpException('Servicio no encontrado.');
+        }
+
+        return $this->render('checkout', [
+            'servicio' => $servicio
+        ]);
+    }
+
+    /**
+     * Procesa el pago simulado y ejecuta la automatización
+     */
+    public function actionProcesarPago()
+    {
+        if (Yii::$app->user->isGuest || !Yii::$app->request->isPost) {
+            return $this->redirect(['site/index']);
+        }
+
+        $servicio_id = Yii::$app->request->post('servicio_id');
+        $user = Yii::$app->user->identity;
+
+        // 1. REGISTRA SOLICITUD AUTOMÁTICAMENTE (CONTRATADO)
+        $solicitud = new SolicitudesPresupuesto();
+        $solicitud->servicio_id = $servicio_id;
+        $solicitud->nombre_contacto = $user->nombre . ' ' . ($user->apellidos ?? '');
+        $solicitud->email_contacto = $user->email;
+        $solicitud->empresa = $user->empresa ?: 'Particular';
+        $solicitud->descripcion_necesidad = 'Contratación Directa vía Tarjeta de Crédito';
+        $solicitud->origen_solicitud = 'Web (Tarjeta)';
+        $solicitud->fecha_solicitud = date('Y-m-d H:i:s');
+        $solicitud->estado_solicitud = SolicitudesPresupuesto::ESTADO_SOLICITUD_CONTRATADO; // Directamente contratado
+        $solicitud->prioridad = 3; // Alta
+
+        if ($solicitud->save()) {
+            
+            // 2. CREA PROYECTO AUTOMÁTICAMENTE
+            $proyecto = new \common\models\Proyectos();
+            $proyecto->nombre = "Implantación: " . ($solicitud->servicio ? $solicitud->servicio->nombre : 'Servicio Contratado');
+            $proyecto->descripcion = "Proyecto generado tras pago con tarjeta exitoso.\nRef. Pago: TRX-" . time();
+            $proyecto->cliente_id = $user->id;
+            $proyecto->servicio_id = $solicitud->servicio_id;
+            $proyecto->fecha_inicio = date('Y-m-d');
+            $proyecto->estado = \common\models\Proyectos::ESTADO_PLANIFICACION;
+            
+            // Intentar asignar un consultor por defecto si existe (opcional, aquí lo dejamos null)
+            
+            if ($proyecto->save()) {
+                // EXITO TOTAL
+                Yii::$app->session->setFlash('success', '¡Pago realizado con éxito! Tu servicio ya está activo y disponible en "Mis Proyectos".');
+                return $this->redirect(['/proyectos/index']);
+            } else {
+                Yii::$app->session->setFlash('warning', 'Pago recibido, pero hubo un error al crear el proyecto. Contacta con soporte.');
+            }
+        } else {
+             Yii::$app->session->setFlash('error', 'Error al procesar la solicitud.');
+        }
+
+        return $this->redirect(['site/catalogo']);
     }
 }

@@ -15,21 +15,27 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="incidencias-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Incidencias', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <?= Html::a('<i class="fas fa-user-shield"></i> Mis Incidencias', ['index', 'IncidenciasSearch[analista_id]' => Yii::$app->user->id], ['class' => 'btn btn-outline-primary']) ?>
+            <?= Html::a('<i class="fas fa-folder-open"></i> Abiertas', ['index', 'IncidenciasSearch[estado_incidencia]' => 'Abierto'], ['class' => 'btn btn-outline-warning']) ?>
+            <?= Html::a('Todas', ['index'], ['class' => 'btn btn-outline-secondary']) ?>
+        </div>
+        <?= Html::a('<i class="fas fa-plus-circle"></i> Reporte Manual', ['create'], ['class' => 'btn btn-secondary btn-sm']) ?>
+    </div>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'summary' => 'Mostrando <b>{begin}-{end}</b> de <b>{totalCount}</b> incidencias',
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+            [
+                'attribute' => 'id',
+                'headerOptions' => ['style' => 'width:60px'],
+                'contentOptions' => ['class' => 'text-center fw-bold'],
+            ],
             [
                 'attribute' => 'cliente_id',
                 'value' => function($model) {
@@ -46,12 +52,17 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'severidad',
                 'format' => 'raw',
+                'headerOptions' => ['style' => 'width:100px'],
                 'value' => function($model) {
                     $claseAnimacion = ($model->severidad == 'Crítica') ? 'prioridad-critica' : '';
-                    $badgeClass = $model->severidad == 'Crítica' ? 'danger' :
-                                ($model->severidad == 'Alta' ? 'warning' :
-                                ($model->severidad == 'Media' ? 'info' : 'success'));
-                    return '<span class="badge bg-' . $badgeClass . ' ' . $claseAnimacion . '">' .
+                    // Mapeo a colores Bootstrap SOC
+                    $badgeClass = 'secondary';
+                    if ($model->severidad == 'Crítica') $badgeClass = 'danger';
+                    if ($model->severidad == 'Alta') $badgeClass = 'warning text-dark';
+                    if ($model->severidad == 'Media') $badgeClass = 'info text-dark';
+                    if ($model->severidad == 'Baja') $badgeClass = 'success';
+                    
+                    return '<span class="badge w-100 bg-' . $badgeClass . ' ' . $claseAnimacion . '">' .
                            Html::encode($model->severidad) . '</span>';
                 },
                 'filter' => Incidencias::optsSeveridad(),
@@ -70,6 +81,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'fecha_reporte:datetime',
             [
                 'class' => ActionColumn::className(),
+                'template' => '{view} {update} {close}', // Quitamos delete, añadimos close
+                'buttons' => [
+                    'close' => function ($url, $model, $key) {
+                        return Html::a('<i class="fas fa-check-double"></i>', ['close', 'id' => $model->id], [
+                            'title' => 'Cerrar Incidencia',
+                            'class' => 'text-success ms-2',
+                            'data' => [
+                                'confirm' => '¿Cerrar esta incidencia inmediatamente?',
+                                'method' => 'post',
+                            ],
+                        ]);
+                    },
+                ],
                 'urlCreator' => function ($action, Incidencias $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }

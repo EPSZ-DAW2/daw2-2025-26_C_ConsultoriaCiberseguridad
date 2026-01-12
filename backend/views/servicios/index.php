@@ -4,6 +4,7 @@ use common\models\Servicios;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
+use backend\components\FilterActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
@@ -18,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Servicios', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Crear Servicio', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -42,7 +43,15 @@ $this->params['breadcrumbs'][] = $this->title;
             //'modificado_por',
             //'fecha_modificacion',
             [
-                'class' => ActionColumn::className(),
+                'class' => FilterActionColumn::className(),
+                'filter' => Html::button('<i class="fas fa-search"></i>', [
+                    'class' => 'btn btn-primary btn-sm',
+                    'title' => 'Buscar',
+                    'onclick' => '
+                        var $grid = $(this).closest(".grid-view");
+                        $grid.yiiGridView("applyFilter");
+                    ',
+                ]),
                 'urlCreator' => function ($action, Servicios $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }

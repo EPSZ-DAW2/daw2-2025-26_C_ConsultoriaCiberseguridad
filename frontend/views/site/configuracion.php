@@ -5,7 +5,7 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 
-$this->title = 'Configuración';
+$this->title = 'Perfil';
 $user = Yii::$app->user->identity;
 
 // Registrar CSS específico para esta página
@@ -208,7 +208,7 @@ $this->registerCss("
 <div class="chrome-settings-layout">
     <!-- Sidebar -->
     <div class="settings-sidebar d-none d-md-block">
-        <div style="padding: 18px 24px; font-size: 22px; color: #202124;">Configuración</div>
+        <div style="padding: 18px 24px; font-size: 22px; color: #202124;">Perfil</div>
         
         <a href="#" class="settings-menu-item active" data-target="section-inicio">
             <i class="fas fa-home"></i> Inicio
@@ -396,7 +396,7 @@ $this->registerCss("
                             
                             <div class="col-md-6">
                                 <label class="form-label">Rol / Cargo</label>
-                                <input type="text" class="form-control" name="rol" value="<?= Html::encode($user->rol ?? '') ?>" placeholder="Ej: Administrador, Mánager...">
+                                <input type="text" class="form-control bg-light" value="<?= Html::encode($user->rol ?? '') ?>" readonly disabled>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Empresa</label>
@@ -464,7 +464,7 @@ $this->registerCss("
             <!-- Hero Card: Estado de Seguridad -->
             <div class="settings-card mb-4">
                 <div class="card-content d-flex align-items-center">
-                    <img src="<?= Url::to('@web/images/security_shield.png') ?>" alt="Seguridad" style="width: 48px; height: 48px; margin-right: 20px;">
+                    <img src="<?= Url::to('@web/template/assets/img/services/security_shield.png') ?>" alt="Seguridad" style="width: 48px; height: 48px; margin-right: 20px;">
                     <div>
                         <h3 style="font-size: 16px; margin: 0 0 4px 0;">Tu cuenta está protegida</h3>
                         <p class="text-muted small mb-0">La Revisión de Seguridad ha comprobado tu cuenta y no ha encontrado ninguna acción recomendada.</p>
@@ -485,128 +485,6 @@ $this->registerCss("
                     <p class="text-muted small mb-0">Asegúrate de poder acceder siempre a tu cuenta manteniendo al día esta información</p>
                 </div>
 
-                <!-- 2FA (Dinámico) -->
-                <div class="settings-row" onclick="toggleTotpSection()" style="cursor: pointer;">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-shield-alt text-muted fs-5 me-3" style="width: 24px; text-align: center;"></i>
-                        <div>
-                            <div class="row-label fw-bold">Verificación en dos pasos</div>
-                            <div class="small text-muted">
-                                <?= $user->totp_activo ? '<span class="text-success">Activado</span> <i class="fas fa-check-circle small"></i>' : 'La verificación en dos pasos está desactivada' ?>
-                            </div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right row-icon"></i>
-                </div>
-
-                <!-- Panel 2FA (Oculto) -->
-                <div id="totp-section" class="p-4 bg-light border-top" style="display: none;">
-                    <?php if (!$user->totp_activo): ?>
-                        <div id="totp-setup-step-1">
-                            <h5 class="mb-3">Protege tu cuenta con la verificación en 2 pasos</h5>
-                            <p class="text-muted small">Cada vez que inicies sesión, necesitarás introducir un código único que genera tu aplicación de autenticación (Google Authenticator, Authy, etc.).</p>
-                            <button class="btn btn-primary btn-sm" onclick="startTotpSetup()">Empezar configuración</button>
-                        </div>
-                        
-                        <div id="totp-setup-step-2" style="display: none;">
-                            <h6 class="fw-bold">1. Escanea este código QR</h6>
-                            <p class="small text-muted">Abre tu aplicación de autenticación y escanea el código.</p>
-                            
-                            <!-- Placeholder QR / Se llenará vía JS o Iframe de imagen -->
-                            <div class="text-center my-3 bg-white p-3 d-inline-block rounded shadow-sm border">
-                                <?php 
-                                    // Generamos secreto y URL QR al vuelo para mostrar (esto debería hacerse mejor en controlador AJAX, 
-                                    // pero para prototipo rápido usamos lógica inline o llamada futura).
-                                    // Para simplificar: usaremos un iframe o img src si tuviéramos endpoint.
-                                    // Aquí usaremos la librería PHP instalada para pintar el QR directamente si es posible,
-                                    // o pasaremos el secreto al form.
-                                    
-                                    // OJO: Generar secreto aquí rompe MVC estricto pero es efectivo para vista rápida.
-                                    
-                                    $secret = null;
-                                    $qrImageUrl = '';
-                                    $google2fa = null;
-
-                                    if (class_exists('\PragmaRX\Google2FA\Google2FA')) {
-                                        try {
-                                            $google2fa = new \PragmaRX\Google2FA\Google2FA();
-                                            $secret = $google2fa->generateSecretKey();
-                                            // La URL 'otpauth'
-                                            $qrCodeUrl = $google2fa->getQRCodeUrl(
-                                                Yii::$app->name,
-                                                $user->email,
-                                                $secret
-                                            );
-                                            // Usamos un servicio público de QR
-                                            $qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qrCodeUrl);
-                                        } catch (\Exception $e) {
-                                            $secret = 'ERROR-LIB-2FA';
-                                        }
-                                    } else {
-                                        $secret = 'LIBRERIA-NO-ENCONTRADA';
-                                    }
-                                ?>
-                                <img src="<?= $qrImageUrl ?>" alt="QR Code" style="width: 150px; height: 150px;">
-                            </div>
-                            
-                            <div class="mb-3 text-center">
-                                <small class="text-muted d-block">¿No puedes escanearlo? Clave manual:</small>
-                                <code class="fw-bold text-dark"><?= $secret ?></code>
-                            </div>
-
-                            <h6 class="fw-bold mt-4">2. Introduce el código de 6 dígitos</h6>
-                            <form action="<?= Url::to(['site/enable-totp']) ?>" method="post" class="mt-2">
-                                <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
-                                <input type="hidden" name="totp_secret" value="<?= $secret ?>">
-                                
-                                <div class="row g-2 align-items-center">
-                                    <div class="col-auto">
-                                        <input type="text" name="totp_code" class="form-control form-control-sm text-center" placeholder="123456" maxlength="6" required style="width: 120px; letter-spacing: 4px; font-weight: bold;">
-                                    </div>
-                                    <div class="col-auto">
-                                        <button type="submit" class="btn btn-success btn-sm">Verificar y Activar</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                    <?php else: ?>
-                        <!-- DESACTIVAR 2FA -->
-                        <div class="alert alert-success d-flex align-items-center mb-4">
-                            <i class="fas fa-check-circle fs-4 me-3"></i>
-                            <div>
-                                <strong>La autenticación en dos pasos está activa.</strong>
-                                <div class="small">Tu cuenta está más segura. Se te pedirá un código al iniciar sesión.</div>
-                            </div>
-                        </div>
-
-                        <h6 class="fw-bold text-danger">Desactivar verificación en dos pasos</h6>
-                        <p class="small text-muted mb-3">Si desactivas esto, tu cuenta será más vulnerable a robos de contraseña.</p>
-                        
-                        <form action="<?= Url::to(['site/disable-totp']) ?>" method="post">
-                             <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
-                             <div class="mb-3" style="max-width: 300px;">
-                                <label class="form-label small fw-bold">Confirma tu contraseña para desactivar</label>
-                                <input type="password" name="current_password" class="form-control form-control-sm" required>
-                             </div>
-                             <button type="button" class="btn btn-secondary btn-sm me-2" onclick="toggleTotpSection()">Cancelar</button>
-                             <button type="submit" class="btn btn-danger btn-sm">Desactivar 2FA</button>
-                        </form>
-                    <?php endif; ?>
-                </div>
-
-                <script>
-                function toggleTotpSection() {
-                    var el = document.getElementById('totp-section');
-                    el.style.display = (el.style.display === 'none') ? 'block' : 'none';
-                }
-                function startTotpSetup() {
-                    document.getElementById('totp-setup-step-1').style.display = 'none';
-                    document.getElementById('totp-setup-step-2').style.display = 'block';
-                }
-                </script>
-
-
 
                 <!-- Contraseña (Funcional - Link) -->
                 <div class="settings-row" onclick="document.querySelector('[data-target=\'section-contrasena\']').click()">
@@ -614,7 +492,7 @@ $this->registerCss("
                         <i class="fas fa-asterisk text-muted fs-5 me-3" style="width: 24px; text-align: center;"></i>
                         <div>
                             <div class="row-label fw-bold">Contraseña</div>
-                            <div class="small text-muted">Última modificación: Desconocido</div>
+
                         </div>
                     </div>
                     <i class="fas fa-chevron-right row-icon"></i>
@@ -673,6 +551,127 @@ $this->registerCss("
                         form.style.display = 'block';
                     } else {
                         form.style.display = 'none';
+                    }
+                }
+                </script>
+
+                 <!-- 2FA ROW -->
+                 <div class="settings-row border-top" onclick="toggle2FA()" style="cursor: pointer;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-mobile-alt text-muted fs-5 me-3" style="width: 24px; text-align: center;"></i>
+                        <div>
+                            <div class="row-label fw-bold">Verificación en dos pasos</div>
+                            <div class="small text-muted">
+                                <?= $user->totp_activo ? '<span class="text-success fw-bold">Activado <i class="fas fa-check-circle"></i></span>' : 'Desactivado' ?>
+                            </div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right row-icon"></i>
+                </div>
+
+                <!-- 2FA SETUP / DISABLE AREA -->
+                <div id="2fa-container" class="p-4 bg-light border-top" style="display: none;">
+                    
+                    <?php if ($user->totp_activo): ?>
+                        <!-- ESTADO: ACTIVADO -->
+                        <h5 class="text-danger mb-3">Desactivar verificación en dos pasos</h5>
+                        <p class="small text-muted mb-3">Si desactivas esta función, tu cuenta estará menos protegida.</p>
+                        
+                        <form action="<?= Url::to(['site/disable-totp']) ?>" method="post">
+                             <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                             <div class="mb-3">
+                                <label class="form-label small fw-bold">Confirma tu contraseña</label>
+                                <input type="password" class="form-control" name="current_password" required style="max-width: 300px;">
+                             </div>
+                             <div class="text-end">
+                                <button type="button" class="btn btn-sm btn-secondary me-2" onclick="toggle2FA()">Cancelar</button>
+                                <button type="submit" class="btn btn-sm btn-danger">Desactivar 2FA</button>
+                             </div>
+                        </form>
+
+                    <?php else: ?>
+                        <!-- ESTADO: DESACTIVADO (SETUP) -->
+                        <h5 class="text-primary mb-3">Configurar verificación en dos pasos</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <ol class="small text-muted ps-3 mb-4">
+                                    <li class="mb-2">Descarga una app de autenticación como <strong>Google Authenticator</strong> o <strong>Microsoft Authenticator</strong> en tu móvil.</li>
+                                    <li class="mb-2">Escanea el código QR que aparece a la derecha.</li>
+                                    <li class="mb-2">Introduce el código de 6 dígitos que genera la app para confirmar.</li>
+                                </ol>
+
+                                <form action="<?= Url::to(['site/enable-totp']) ?>" method="post">
+                                    <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                                    <!-- Enviamos el secreto generado para guardarlo definitivamente -->
+                                    <input type="hidden" name="totp_secret" value="<?= $secret ?>">
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Código de verificación</label>
+                                        <input type="text" class="form-control form-control-lg" name="totp_code" placeholder="123456" required 
+                                               style="max-width: 200px; letter-spacing: 4px; text-align: center;" autocomplete="off">
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" class="btn btn-secondary me-3" onclick="toggle2FA()">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">Activar</button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div class="col-md-4 text-center">
+                                <div class="bg-white p-3 d-inline-block rounded shadow-sm border mb-2">
+                                    <!-- Contenedor QR -->
+                                    <div id="qrcode"></div>
+                                </div>
+                                <div class="small text-muted mt-2">
+                                    ¿No puedes escanearlo? <br>
+                                    <button class="btn btn-link btn-sm p-0 text-decoration-none" type="button" 
+                                            onclick="alert('Tu clave secreta es: <?= $secret ?>')">Ver clave secreta</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Librería QR Code JS -->
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+                        <script>
+                            function generateQR() {
+                                var container = document.getElementById("qrcode");
+                                // Limpiar por si acaso ya había uno
+                                container.innerHTML = "";
+                                if (container) {
+                                    new QRCode(container, {
+                                        text: "<?= $qrCodeUrl ?>",
+                                        width: 128,
+                                        height: 128,
+                                        correctLevel : QRCode.CorrectLevel.M
+                                    });
+                                }
+                            }
+                            
+                            // Intentar generar si la sección ya es visible o al cargar
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Pequeño timeout para asegurar que la librería cargó
+                                setTimeout(function() {
+                                    var container = document.getElementById('2fa-container');
+                                    if (container && container.style.display !== 'none') {
+                                        generateQR();
+                                    }
+                                }, 500);
+                            });
+                        </script>
+                    <?php endif; ?>
+                </div>
+
+                <script>
+                function toggle2FA() {
+                    var container = document.getElementById('2fa-container');
+                    if (container.style.display === 'none') {
+                        container.style.display = 'block';
+                        if (typeof generateQR === 'function') {
+                            generateQR();
+                        }
+                    } else {
+                        container.style.display = 'none';
                     }
                 }
                 </script>
@@ -812,11 +811,15 @@ $this->registerCss("
                             </div>
                             
                             <!-- Acciones (Mockup) -->
-                            <?php if ($solicitud->isEstadoSolicitudPresupuestoEnviado() || $solicitud->isEstadoSolicitudContratado()): ?>
+                            <?php if (($solicitud->isEstadoSolicitudPresupuestoEnviado() || $solicitud->isEstadoSolicitudContratado()) && !$user->hasRole(\common\models\User::ROL_CLIENTE_USER)): ?>
                                 <div class="mt-3 pt-3 border-top d-flex justify-content-end gap-2">
-                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf me-1"></i> Ver Presupuesto</button>
+                                    <a href="<?= Url::to(['site/descargar-presupuesto', 'id' => $solicitud->id]) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+                                        <i class="fas fa-file-pdf me-1"></i> Ver Presupuesto
+                                    </a>
                                     <?php if ($solicitud->isEstadoSolicitudContratado()): ?>
-                                        <button class="btn btn-sm btn-outline-success"><i class="fas fa-file-invoice-dollar me-1"></i> Facturas</button>
+                                        <a href="<?= Url::to(['site/descargar-factura', 'id' => $solicitud->id]) ?>" class="btn btn-sm btn-outline-success" target="_blank">
+                                            <i class="fas fa-file-invoice-dollar me-1"></i> Facturas
+                                        </a>
                                     <?php endif; ?>
                                 </div>
                             <?php endif; ?>
@@ -852,6 +855,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Guardar la pestaña activa actual para restaurarla al limpiar la búsqueda
     let activeTabId = 'section-inicio'; // Por defecto
 
+    // Verificar si hay un hash en la URL para abrir una sección específica
+    if (window.location.hash) {
+        const hash = window.location.hash.substring(1); // Quitar el #
+        const targetLink = document.querySelector(`.settings-menu-item[data-target="${hash}"]`);
+        if (targetLink) {
+            // Se simulará el click más abajo o se puede ajustar activeTabId
+            // Simular click después de definir los listeners o hacerlo manualmente aquí
+            // Esperamos un momento para asegurar que todo esté listo
+            setTimeout(() => targetLink.click(), 50);
+        }
+    }
+
     // Función auxiliar para normalizar texto (quitar acentos y minúsculas)
     function normalizeText(text) {
         return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -882,7 +897,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Excluyendo explícitamente los paneles de vista/edición de perfil que tienen su propia lógica de display
                 const hiddenElements = targetSection.querySelectorAll('[style*="display: none"]');
                 hiddenElements.forEach(el => {
-                    if (el.id !== 'profile-edit-mode' && el.id !== 'profile-view-mode' && el.id !== 'recovery-email-form' && el.id !== 'totp-section' && el.id !== 'totp-setup-step-2') {
+                    if (el.id !== 'profile-edit-mode' && el.id !== 'profile-view-mode' && el.id !== 'recovery-email-form' && el.id !== '2fa-container') {
                         el.style.display = '';
                     }
                 });

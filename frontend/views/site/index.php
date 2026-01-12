@@ -48,7 +48,7 @@ $this->title = 'CyberSec Consulting - Seguridad para tu empresa';
                          <div class="mb-3 text-primary"><i class="fas fa-user-shield fa-3x"></i></div>
                         <h2 class="h4">Consultoría Estratégica</h2>
                         <p class="text-muted">Diseñamos planes de seguridad a medida para garantizar la continuidad de tu negocio.</p>
-                        <p><a class="btn btn-link text-decoration-none" href="<?= Url::to(['site/contact']) ?>">Consultar &raquo;</a></p>
+                        <p><a class="btn btn-link text-decoration-none" href="<?= Url::to(['site/catalogo']) ?>">Consultar &raquo;</a></p>
                     </div>
                 </div>
             </div>

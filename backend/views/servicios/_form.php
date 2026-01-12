@@ -10,16 +10,19 @@ use yii\widgets\ActiveForm;
 
 <div class="servicios-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+        'fieldConfig' => [
+            'options' => ['style' => 'margin-bottom: 20px;'],
+        ],
+    ]); ?>
 
     <?= $form->field($model, 'nombre')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'descripcion')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'categoria')->dropDownList([ 
-        'Gobernanza' => 'Gobernanza', 
-        'Defensa' => 'Defensa', 
-        'Auditoría' => 'Auditoría', 
+        'Consultoría' => 'Consultoría', 
+        'Ciberseguridad' => 'Ciberseguridad', 
         'Formación' => 'Formación', 
     ], ['prompt' => 'Seleccione una categoría...']) ?>
 
@@ -29,7 +32,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'requiere_auditoria')->checkbox() ?>
 
-    <?= $form->field($model, 'activo')->dropDownList([1 => 'Sí', 0 => 'No']) ?>
+    <?= $form->field($model, 'activo')->checkbox(['label' => 'Activar en el catálogo']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Guardar Servicio', ['class' => 'btn btn-success']) ?>

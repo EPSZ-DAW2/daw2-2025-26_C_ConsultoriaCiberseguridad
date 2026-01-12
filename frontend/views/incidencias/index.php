@@ -11,66 +11,57 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="incidencias-index">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1><?= Html::encode($this->title) ?></h1>
-        <?= Html::a('<i class="fas fa-plus"></i> Reportar Nueva Incidencia', ['create'], ['class' => 'btn btn-danger']) ?>
-    </div>
+    <!-- Dashboard Widget -->
+    <?= $this->render('_dashboard_widget', ['incidencias' => $incidencias]) ?>
 
-    <?php if (empty($incidencias)): ?>
-        <div class="alert alert-info">
-            <h4><i class="fas fa-info-circle"></i> No hay incidencias reportadas</h4>
-            <p>No ha reportado ninguna incidencia de seguridad. Si detecta alguna amenaza o problema de seguridad, puede reportarlo haciendo clic en el botón "Reportar Nueva Incidencia".</p>
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white border-bottom-0 py-3">
+            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-list-ul me-2"></i>Historial de Incidencias</h5>
         </div>
-    <?php else: ?>
-        <div class="row">
-            <?php foreach ($incidencias as $incidencia): ?>
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                #<?= $incidencia->id ?> - <?= Html::encode($incidencia->titulo) ?>
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">
-                                <strong>Severidad:</strong>
-                                <span class="badge badge-<?= $incidencia->severidad == 'Crítica' ? 'danger' : ($incidencia->severidad == 'Alta' ? 'warning' : ($incidencia->severidad == 'Media' ? 'info' : 'success')) ?> <?= $incidencia->severidad == 'Crítica' ? 'prioridad-critica' : '' ?>">
-                                    <?= Html::encode($incidencia->severidad) ?>
-                                </span>
-                            </p>
-                            <p class="card-text">
-                                <strong>Estado:</strong>
-                                <span class="badge badge-<?= $incidencia->estado_incidencia == 'Resuelto' ? 'success' : ($incidencia->estado_incidencia == 'Cerrado' ? 'secondary' : 'primary') ?>">
-                                    <?= Html::encode($incidencia->estado_incidencia) ?>
-                                </span>
-                            </p>
-                            <p class="card-text">
-                                <strong>Fecha Reporte:</strong>
-                                <?= Yii::$app->formatter->asDatetime($incidencia->fecha_reporte) ?>
-                            </p>
-                            <?php if ($incidencia->categoria_incidencia): ?>
-                                <p class="card-text">
-                                    <strong>Categoría:</strong>
-                                    <?= Html::encode($incidencia->categoria_incidencia) ?>
-                                </p>
-                            <?php endif; ?>
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    <?= Html::encode(mb_substr($incidencia->descripcion, 0, 100)) ?>
-                                    <?= mb_strlen($incidencia->descripcion) > 100 ? '...' : '' ?>
-                                </small>
-                            </p>
-                        </div>
-                        <div class="card-footer">
-                            <?= Html::a('Ver Detalles', ['view', 'id' => $incidencia->id], ['class' => 'btn btn-primary btn-sm']) ?>
-                        </div>
-                    </div>
+        <div class="card-body p-0">
+            <?php if (empty($incidencias)): ?>
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                    <p class="mb-0">Todo limpio. No hay incidencias registradas.</p>
                 </div>
-            <?php endforeach; ?>
+            <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-secondary">
+                            <tr>
+                                <th class="ps-4">ID</th>
+                                <th>Título</th>
+                                <th>Estado</th>
+                                <th>Fecha Reporte</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($incidencias as $incidencia): ?>
+                                <tr>
+                                    <td class="ps-4 text-muted">#<?= $incidencia->id ?></td>
+                                    <td>
+                                        <div class="fw-bold text-dark"><?= Html::encode($incidencia->titulo) ?></div>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill bg-<?= $incidencia->estado_incidencia == 'Resuelto' ? 'success' : ($incidencia->estado_incidencia == 'Abierto' ? 'danger' : 'primary') ?> fw-normal px-3">
+                                            <?= Html::encode($incidencia->estado_incidencia) ?>
+                                        </span>
+                                    </td>
+                                    <td class="text-muted">
+                                        <?= Yii::$app->formatter->asDate($incidencia->fecha_reporte, 'medium') ?>
+                                    </td>
+                                    <td>
+                                        <?= Html::a('Ver Detalles', ['view', 'id' => $incidencia->id], ['class' => 'btn btn-sm btn-outline-primary rounded-pill px-3']) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
         </div>
-    <?php endif; ?>
-
-</div>
+    </div>
 
 <style>
 .card {

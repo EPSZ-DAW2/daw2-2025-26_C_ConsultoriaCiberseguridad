@@ -2,10 +2,10 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use common\models\Usuarios;
+use common\models\User;
 use common\models\Servicios;
 use common\models\Proyectos;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\Proyectos $model */
@@ -16,35 +16,50 @@ use common\models\Proyectos;
 
     <?php $form = ActiveForm::begin(); ?>
 
+    <?php
+    // Preparar listas de usuarios por rol (usando columna 'rol' para asegurar compatibilidad)
+    $clientes = User::find()
+        ->where(['activo' => 1])
+        ->andWhere(['rol' => ['cliente_admin', 'cliente_user']])
+        ->all();
+    $clientesLista = ArrayHelper::map($clientes, 'id', function($user) {
+        return $user->nombre . ' ' . $user->apellidos . ' (' . $user->empresa . ')';
+    });
+
+    $consultores = User::byRole(
+        User::find()->where(['activo' => 1]),
+        'consultor'
+    )->all();
+    $consultoresLista = ArrayHelper::map($consultores, 'id', function($user) {
+        return $user->nombre . ' ' . $user->apellidos;
+    });
+
+    $auditores = User::byRole(
+        User::find()->where(['activo' => 1]),
+        'auditor'
+    )->all();
+    $auditoresLista = ArrayHelper::map($auditores, 'id', function($user) {
+        return $user->nombre . ' ' . $user->apellidos;
+    });
+
+    // Preparar lista de servicios
+    $servicios = Servicios::find()
+        ->where(['activo' => 1])
+        ->all();
+    $serviciosLista = ArrayHelper::map($servicios, 'id', 'nombre');
+    ?>
+
     <?= $form->field($model, 'nombre')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'descripcion')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'cliente_id')->dropDownList(
-        ArrayHelper::map(Usuarios::find()->where(['rol' => Usuarios::ROL_CLIENTE_USER])->orderBy('nombre')->all(), 'id', function($model) {
-            return $model->nombre . ' ' . $model->apellidos . ' (' . ($model->empresa ?? 'Sin Empresa') . ')';
-        }),
-        ['prompt' => 'Seleccione Cliente...']
-    ) ?>
+    <?= $form->field($model, 'cliente_id')->dropDownList($clientesLista, ['prompt' => 'Seleccionar cliente']) ?>
 
-    <?= $form->field($model, 'servicio_id')->dropDownList(
-        ArrayHelper::map(Servicios::find()->where(['activo' => 1])->orderBy('nombre')->all(), 'id', 'nombre'),
-        ['prompt' => 'Seleccione Servicio...']
-    ) ?>
+    <?= $form->field($model, 'servicio_id')->dropDownList($serviciosLista, ['prompt' => 'Seleccionar servicio']) ?>
 
-    <?= $form->field($model, 'consultor_id')->dropDownList(
-        ArrayHelper::map(Usuarios::find()->where(['rol' => Usuarios::ROL_CONSULTOR])->orderBy('nombre')->all(), 'id', function($model) {
-            return $model->nombre . ' ' . $model->apellidos;
-        }),
-        ['prompt' => 'Seleccione Consultor (Opcional)...']
-    ) ?>
+    <?= $form->field($model, 'consultor_id')->dropDownList($consultoresLista, ['prompt' => 'Seleccionar consultor']) ?>
 
-    <?= $form->field($model, 'auditor_id')->dropDownList(
-        ArrayHelper::map(Usuarios::find()->where(['rol' => Usuarios::ROL_AUDITOR])->orderBy('nombre')->all(), 'id', function($model) {
-            return $model->nombre . ' ' . $model->apellidos;
-        }),
-        ['prompt' => 'Seleccione Auditor (Opcional)...']
-    ) ?>
+    <?= $form->field($model, 'auditor_id')->dropDownList($auditoresLista, ['prompt' => 'Seleccionar auditor']) ?>
 
     <?= $form->field($model, 'fecha_inicio')->textInput(['type' => 'date']) ?>
 
@@ -60,33 +75,6 @@ use common\models\Proyectos;
     <?= $form->field($model, 'presupuesto')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'notas_internas')->textarea(['rows' => 6]) ?>
-
-    <?php
-        $internalUsers = ArrayHelper::map(
-            Usuarios::find()->where(['!=', 'rol', Usuarios::ROL_CLIENTE_USER])->orderBy('nombre')->all(),
-            'id', 
-            function($model) { return $model->nombre . ' ' . $model->apellidos . ' (' . $model->rol . ')'; }
-        );
-    ?>
-
-    <?= $form->field($model, 'creado_por')->dropDownList($internalUsers, ['prompt' => 'Seleccione Usuario...']) ?>
-
-    <?= $form->field($model, 'fecha_creacion')->textInput([
-        'type' => 'datetime-local',
-        'value' => $model->fecha_creacion ? str_replace(' ', 'T', substr($model->fecha_creacion, 0, 16)) : '',
-        'readonly' => !$model->isNewRecord
-    ]) ?>
-
-    <?= $form->field($model, 'modificado_por')->dropDownList($internalUsers, [
-        'prompt' => 'Seleccione Usuario...',
-        'disabled' => true
-    ]) ?>
-
-    <?= $form->field($model, 'fecha_modificacion')->textInput([
-        'type' => 'datetime-local',
-        'value' => $model->fecha_modificacion ? str_replace(' ', 'T', substr($model->fecha_modificacion, 0, 16)) : '',
-        'readonly' => true
-    ]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

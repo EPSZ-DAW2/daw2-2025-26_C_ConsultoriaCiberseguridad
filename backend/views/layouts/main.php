@@ -62,8 +62,11 @@ AppAsset::register($this);
             $menuItems[] = ['label' => 'Catálogo Servicios', 'url' => ['/servicios/index']];
         }
 
-        // CALENDARIO (todos los roles backend pueden verlo)
-        if (Yii::$app->user->can('verPanel')) {
+        // CALENDARIO (todos los roles backend pueden verlo excepto analista_soc y comercial)
+        if (Yii::$app->user->can('verCalendario') && 
+            !Yii::$app->user->identity->hasRole(\common\models\User::ROL_ANALISTA_SOC) &&
+            !Yii::$app->user->identity->hasRole(\common\models\User::ROL_COMERCIAL)
+        ) {
             $menuItems[] = ['label' => 'Calendario', 'url' => ['/eventos-calendario/index']];
         }
 
@@ -84,7 +87,7 @@ AppAsset::register($this);
 
         // RENTABILIDAD (manager y admin)
         if (Yii::$app->user->can('verRentabilidad')) {
-            $menuItems[] = ['label' => 'Rentabilidad', 'url' => ['/rentabilidad/index']];
+            $menuItems[] = ['label' => 'Executive Dashboard', 'url' => ['/manager/dashboard']];
         }
 
         // FORMACIÓN (consultor, admin)
@@ -93,8 +96,6 @@ AppAsset::register($this);
                 'label' => 'Formación',
                 'items' => [
                     ['label' => 'Cursos', 'url' => ['/cursos/index']],
-                    ['label' => 'Diapositivas', 'url' => ['/diapositivas/index']],
-                    ['label' => 'Preguntas Examen', 'url' => ['/preguntas-cuestionario/index']],
                     '<div class="dropdown-divider"></div>',
                     ['label' => 'Progreso Alumnos', 'url' => ['/progreso-usuario/index']],
                 ],
@@ -104,7 +105,7 @@ AppAsset::register($this);
 
     // Botón de Login para invitados (por si acaso, aunque en backend suele estar protegido)
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+        $menuItems[] = ['label' => 'Iniciar Sesión', 'url' => ['/site/login']];
     }    
     // --------------------------------------
 
@@ -115,11 +116,11 @@ AppAsset::register($this);
 
     // Botón de Logout (Salida)
     if (Yii::$app->user->isGuest) {
-        echo Html::tag('div',Html::a('Login',['/site/login'],['class' => ['btn btn-link login text-decoration-none']]),['class' => ['d-flex']]);
+        echo Html::tag('div',Html::a('Iniciar Sesión',['/site/login'],['class' => ['btn btn-link login text-decoration-none']]),['class' => ['d-flex']]);
     } else {
         echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->nombre . ')',
+                'Cerrar Sesión (' . Yii::$app->user->identity->nombre . ')',
                 ['class' => 'btn btn-link logout text-decoration-none']
             )
             . Html::endForm();
@@ -138,14 +139,18 @@ AppAsset::register($this);
     </div>
 </main>
 
-<footer class="footer mt-auto py-3 text-muted">
-    <div class="container">
-        <p class="float-start">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
-        <p class="float-end"><?= Yii::powered() ?></p>
-    </div>
-</footer>
+
 
 <?php $this->endBody() ?>
+<script>
+    // Fix: Ensure no modal backdrop remains stuck on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.paddingRight = '';
+    });
+</script>
 </body>
 </html>
 <?php $this->endPage();

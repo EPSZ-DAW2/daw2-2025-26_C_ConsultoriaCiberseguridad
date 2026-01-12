@@ -25,6 +25,7 @@ use Yii;
  * @property string|null $sistema_afectado Sistema o servidor afectado
  * @property string|null $acciones_tomadas Descripción de acciones realizadas
  * @property string|null $notas_internas Notas del equipo SOC
+ * @property string|null $origen Origen de la incidencia (Manual, Monitorización, etc.)
  * @property int $visible_cliente Si el cliente puede ver esta incidencia: 0=No, 1=Sí
  *
  * @property Usuarios $analista
@@ -73,6 +74,7 @@ class Incidencias extends \yii\db\ActiveRecord
             [['descripcion', 'severidad', 'estado_incidencia', 'acciones_tomadas', 'notas_internas'], 'string'],
             [['fecha_reporte', 'fecha_asignacion', 'fecha_primera_respuesta', 'fecha_resolucion'], 'safe'],
             [['titulo', 'sistema_afectado'], 'string', 'max' => 255],
+            [['origen'], 'string', 'max' => 100],
             [['categoria_incidencia'], 'string', 'max' => 50],
             [['ip_origen'], 'string', 'max' => 45],
             ['severidad', 'in', 'range' => array_keys(self::optsSeveridad())],
@@ -96,6 +98,7 @@ class Incidencias extends \yii\db\ActiveRecord
             'severidad' => 'Severidad',
             'estado_incidencia' => 'Estado Incidencia',
             'categoria_incidencia' => 'Categoria Incidencia',
+            'origen' => 'Origen',
             'fecha_reporte' => 'Fecha Reporte',
             'fecha_asignacion' => 'Fecha Asignacion',
             'fecha_primera_respuesta' => 'Fecha Primera Respuesta',

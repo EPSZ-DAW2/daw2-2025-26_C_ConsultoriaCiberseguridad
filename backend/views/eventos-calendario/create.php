@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\EventosCalendario $model */
 
-$this->title = 'Create Eventos Calendario';
+$this->title = 'Crear Evento';
 $this->params['breadcrumbs'][] = ['label' => 'Eventos Calendarios', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

@@ -93,10 +93,6 @@ class RbacController extends Controller
         echo "Asignando jerarquias...\n";
 
         // --- ROLES ---
-        $cliente = $auth->createRole('cliente');
-        $auth->add($cliente);
-        $auth->addChild($cliente, $verMisProyectos);
-
         $consultor = $auth->createRole('consultor');
         $auth->add($consultor);
         $auth->addChild($consultor, $verCalendario);
@@ -117,7 +113,6 @@ class RbacController extends Controller
         $auth->add($admin);
         $auth->addChild($admin, $consultor);
         $auth->addChild($admin, $auditor);
-        $auth->addChild($admin, $cliente);
 
         // Roles nuevos del backend
         $manager = $auth->createRole('manager');
@@ -188,10 +183,63 @@ class RbacController extends Controller
         }
     }
 
+    /**
+     * Verifica que todos los usuarios tengan roles RBAC asignados
+     * php yii rbac/verify
+     */
+    public function actionVerify()
+    {
+        $auth = Yii::$app->authManager;
+        echo "=== Verificación de asignaciones RBAC ===\n\n";
+
+        $usuarios = \common\models\User::find()->all();
+
+        if (empty($usuarios)) {
+            echo "No se encontraron usuarios en la base de datos.\n";
+            return 0;
+        }
+
+        $withRoles = 0;
+        $withoutRoles = [];
+
+        foreach ($usuarios as $usuario) {
+            $roles = $auth->getRolesByUser($usuario->id);
+            if (empty($roles)) {
+                $withoutRoles[] = $usuario;
+                echo "  ✗ Usuario {$usuario->id} ({$usuario->email}): NO tiene roles asignados\n";
+            } else {
+                $roleNames = implode(', ', array_keys($roles));
+                echo "  ✓ Usuario {$usuario->id} ({$usuario->email}): {$roleNames}\n";
+                $withRoles++;
+            }
+        }
+
+        echo "\n=== Resumen ===\n";
+        echo "✓ {$withRoles} usuarios con roles RBAC\n";
+
+        if (!empty($withoutRoles)) {
+            echo "✗ " . count($withoutRoles) . " usuarios SIN roles\n";
+            echo "\nEjecuta 'php yii rbac/assign-all' para asignar roles automáticamente.\n";
+            return 1; // Código de salida de error
+        } else {
+            echo "\n✓ Todos los usuarios tienen roles RBAC asignados.\n";
+            return 0; // Éxito
+        }
+    }
+
     //php yii rbac/assign-all
     public function actionAssignAll()
     {
         $auth = Yii::$app->authManager;
+
+        // Verificar que la columna 'rol' aún existe
+        $schema = Yii::$app->db->getTableSchema('usuarios');
+        if (!isset($schema->columns['rol']) && !isset($schema->columns['rol_deprecated'])) {
+            echo "ERROR: La columna 'rol' ya ha sido eliminada de la tabla usuarios.\n";
+            echo "Este comando solo es útil para la migración inicial a RBAC.\n";
+            echo "Usa 'php yii rbac/verify' para verificar asignaciones de roles.\n";
+            return 1;
+        }
 
         echo "Asignando roles RBAC a usuarios existentes basándose en su columna 'rol'...\n\n";
 
