@@ -88,7 +88,14 @@ if (!Yii::$app->user->isGuest) {
                     <div class="sb-sidenav-menu-heading">Área Privada</div>
 
                     <!-- Dashboard Empresa (solo cliente_admin) -->
-                    <?php if (Yii::$app->user->can('gestionarEmpresa')): ?>
+                    <?php 
+                    $user = Yii::$app->user->identity;
+                    $canManageCompany = Yii::$app->user->can('gestionarEmpresa') || 
+                                        $user->rol === 'cliente_admin' || 
+                                        $user->rol === 'admin';
+                    
+                    if ($canManageCompany): 
+                    ?>
                     <a class="nav-link" href="<?= \yii\helpers\Url::to(['/site/dashboard']) ?>">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Dashboard Empresa
