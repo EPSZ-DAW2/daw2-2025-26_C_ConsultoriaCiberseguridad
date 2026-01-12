@@ -27,11 +27,7 @@ class DocumentosController extends Controller
                         'actions' => ['index', 'descargar'],
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function ($rule, $action) {
-                            $user = Yii::$app->user->identity;
-                            // Check for Consultoría or Auditoría contracts
-                            return $user->hasContratoActivo([\common\models\Servicios::CATEGORIA_GOBERNANZA, \common\models\Servicios::CATEGORIA_AUDITORIA]);
-                        }
+
                     ],
                 ],
             ],

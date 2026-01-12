@@ -4,6 +4,7 @@ use common\models\Cursos;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
+use backend\components\FilterActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
@@ -40,7 +41,15 @@ $this->params['breadcrumbs'][] = $this->title;
             //'modificado_por',
             //'fecha_modificacion',
             [
-                'class' => ActionColumn::className(),
+                'class' => FilterActionColumn::className(),
+                'filter' => Html::button('<i class="fas fa-search"></i>', [
+                    'class' => 'btn btn-primary btn-sm',
+                    'title' => 'Buscar',
+                    'onclick' => '
+                        var $grid = $(this).closest(".grid-view");
+                        $grid.yiiGridView("applyFilter");
+                    ',
+                ]),
                 'urlCreator' => function ($action, Cursos $model, $key, $index, $column) {
                     if ($action === 'update') {
                         return Url::toRoute(['update-wizard', 'id' => $model->id]);
