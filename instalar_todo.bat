@@ -76,7 +76,7 @@ set "COMPOSER_CMD=composer"
 where composer >nul 2>nul
 if %errorlevel% equ 0 (
     echo [INFO] Composer global encontrado.
-    goto :prepare_install
+    goto :check_database
 )
 
 echo [AVISO] Composer no esta instalado globalmente.
@@ -84,7 +84,7 @@ echo [AVISO] Composer no esta instalado globalmente.
 if exist "composer.phar" (
     echo [INFO] Se encontro composer.phar local. Usando version local.
     set "COMPOSER_CMD=%PHP_CMD% composer.phar"
-    goto :prepare_install
+    goto :check_database
 )
 
 echo [INFO] Descargando Composer localmente...
@@ -101,6 +101,65 @@ if not exist "composer-setup.php" (
 del composer-setup.php
 set "COMPOSER_CMD=%PHP_CMD% composer.phar"
 echo [EXITO] Composer descargado correctamente.
+
+
+:check_database
+:: 2.5 CONFIGURAR BASE DE DATOS
+echo.
+echo [2.5/3] Verificando Base de Datos...
+
+set "MYSQL_CMD=mysql"
+where mysql >nul 2>nul
+if %errorlevel% neq 0 (
+    if exist "C:\xampp\mysql\bin\mysql.exe" (
+        set "MYSQL_CMD=C:\xampp\mysql\bin\mysql.exe"
+    ) else (
+        echo [AVISO] No se encontro MySQL en el sistema. Se omitira la importacion de la Base de Datos.
+        goto :prepare_install
+    )
+)
+
+echo [INFO] MySQL detectado. Comprobando existencia de 'daw2_cybersec_manager'...
+
+:: Comprobar si existe la DB
+"%MYSQL_CMD%" -u root -N -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'daw2_cybersec_manager'" > db_check.tmp
+set /p DB_EXIST_VAL=<db_check.tmp
+if exist db_check.tmp del db_check.tmp
+
+if "%DB_EXIST_VAL%"=="daw2_cybersec_manager" goto :ask_overwrite
+goto :ask_import
+
+:ask_overwrite
+echo.
+echo [AVISO] La base de datos 'daw2_cybersec_manager' YA EXISTE.
+set /p PREGUNTA=Desea SOBREESCRIBIRLA (Borrar y crear de nuevo)? [S/N]: 
+if /i "%PREGUNTA%"=="S" goto :run_drop
+goto :prepare_install
+
+:ask_import
+echo.
+echo [INFO] La base de datos no existe.
+set /p PREGUNTA=Desea importar la base de datos 'daw2_cybersec_manager' ahora? [S/N]: 
+if /i "%PREGUNTA%"=="S" goto :run_import
+goto :prepare_install
+
+:run_drop
+echo [INFO] Borrando base de datos antigua...
+"%MYSQL_CMD%" -u root -e "DROP DATABASE IF EXISTS daw2_cybersec_manager"
+:: No hay break, sigue a import
+
+:run_import
+echo [INFO] Importando SQL\database.sql...
+if exist "SQL\database.sql" (
+    "%MYSQL_CMD%" -u root < "SQL\database.sql"
+    if %errorlevel% equ 0 (
+        echo [EXITO] Base de datos importada correctamente.
+    ) else (
+        echo [ERROR] Fallo al importar la base de datos. Verifique si MySQL esta corriendo.
+    )
+) else (
+    echo [ERROR] No se encuentra el archivo SQL\database.sql
+)
 
 
 :prepare_install
