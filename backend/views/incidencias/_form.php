@@ -15,7 +15,6 @@ use yii\helpers\ArrayHelper;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php
-    <?php
     // Preparar listas de usuarios por rol (usando columna 'rol' para asegurar compatibilidad)
     $clientes = User::find()
         ->where(['activo' => 1])
