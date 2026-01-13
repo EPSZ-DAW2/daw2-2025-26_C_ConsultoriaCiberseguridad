@@ -1,0 +1,363 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CyberSec Manager - Planificación Funcional</title>
+</head>
+<body class="papel" style="background-color:#F0F0C0;">
+<style>
+/* Estilos Globales */
+body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }
+.bloque { border:1.5mm solid #508050; margin:0.5em; padding:2em; background-color: #fff; box-shadow: 5px 5px 15px rgba(0,0,0,0.1); }
+
+/* Tipografía y Títulos */
+.titulo0 { font-size:2.2em; font-weight:bold; color:#2c3e50; margin-bottom: 0.1em; border-bottom: 4px solid #4040F0; display: inline-block;}
+.titulo1 { font-size:1.4em; font-weight:bold; color:#555; margin-bottom: 1.5em; margin-top: 0.5em;}
+.titulo-seccion { 
+    font-size:1.2em; 
+    font-weight:bold; 
+    padding:0.8em; 
+    margin-top: 2em; 
+    margin-bottom: 1em; 
+    border-radius: 6px; 
+    color: #fff; 
+    text-transform: uppercase; 
+    letter-spacing: 1px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Colores de Sección */
+.bg-roles { background: linear-gradient(135deg, #F0C060 0%, #D35400 100%); }
+.bg-gestion { background: linear-gradient(135deg, #60B0D0 0%, #2980b9 100%); }
+.bg-web { background: linear-gradient(135deg, #4CAF50 0%, #27ae60 100%); }
+.bg-formacion { background: linear-gradient(135deg, #9C27B0 0%, #8e44ad 100%); }
+
+/* Tarjetas de Roles */
+.role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5em; }
+.role-card { 
+    border-left: 5px solid #D35400; 
+    background-color: #FFF8E1; 
+    padding: 1.2em; 
+    border-radius: 4px; 
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+}
+.role-title { font-weight: bold; color: #D35400; font-size: 1.1em; display: block; margin-bottom: 0.5em; text-transform: uppercase;}
+.role-desc { font-size: 0.95em; }
+.role-desc ul { margin: 0; padding-left: 1.2em; }
+
+/* Tablas */
+table.tabla { width: 100%; border-collapse: collapse; margin-bottom: 2em; font-size: 0.95em; background-color: #fff;}
+table.tabla thead th { padding: 1em; border: 1px solid #ddd; color: #333; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px;}
+table.tabla tbody td { padding: 0.8em; border: 1px solid #ddd; vertical-align: middle; text-align: center;}
+table.tabla tbody tr:hover { background-color: #f9f9f9; }
+
+/* Primera columna de la tabla (Descripción) */
+.col-desc { text-align: left !important; width: 40%; background-color: #fcfcfc; }
+.task-title { font-weight: bold; color: #2c3e50; display: block; margin-bottom: 0.3em; }
+.task-detail { font-size: 0.9em; color: #666; font-style: italic; }
+
+/* Columnas de Grupos */
+.th-g1 { background-color: #FFF9C4; border-bottom: 3px solid #FBC02D; }
+.th-g2 { background-color: #DCEDC8; border-bottom: 3px solid #7CB342; }
+.th-g3 { background-color: #B3E5FC; border-bottom: 3px solid #039BE5; }
+
+/* Checks */
+.check { color: #27ae60; font-weight: bold; font-size: 1.4em; }
+.check-support { color: #f39c12; font-weight: bold; font-size: 1.2em; }
+
+</style>
+
+<div class="bloque">
+
+<div class="titulo0">CyberSec Manager</div>
+<div class="titulo1">Matriz Funcional y Distribución de Responsabilidades</div>
+
+<p>
+Este documento detalla la arquitectura funcional del proyecto. Se define el propósito de cada perfil de usuario y se desglosan las tareas no como instrucciones de código, sino como <strong>funcionalidades de negocio</strong> que cada equipo debe entregar.
+</p>
+
+<div class="titulo-seccion bg-roles">1. Perfiles de Usuario y Alcance (Roles)</div>
+<div class="role-grid">
+
+  <div class="role-card">
+    <span class="role-title">1. Invitado (Público General)</span>
+    <div class="role-desc">
+        Es el punto de entrada comercial. Su experiencia se centra en la <strong>exploración y captación</strong>.
+      <ul>
+        <li><strong>Navegación:</strong> Accede libremente al catálogo de servicios.</li>
+        <li><strong>Conversión:</strong> Puede iniciar procesos de contratación solicitando presupuestos.</li>
+        <li><strong>Límite:</strong> No tiene acceso a datos operativos ni confidenciales.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="role-card">
+    <span class="role-title">2. Cliente (Usuario Registrado)</span>
+    <div class="role-desc">
+        Usuario que consume uno o varios servicios de la empresa.
+      <ul>
+        <li><strong>Transparencia:</strong> Visualiza en tiempo real el estado de sus proyectos ("En curso", "Auditoría").</li>
+        <li><strong>Documentación:</strong> Descarga sus informes y políticas sin esperar correos. También es capaz de subir sus propios documentos.</li>
+        <li><strong>Formación:</strong> Accede al campus virtual para realizar cursos contratados.</li>
+        <li><strong>Soporte:</strong> Reporta incidencias de seguridad urgentes.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="role-card">
+    <span class="role-title">3. Consultor (Staff Gestión)</span>
+    <div class="role-desc">
+        El responsable operativo del día a día.
+      <ul>
+        <li><strong>Entrega de Valor:</strong> Es el encargado de subir la documentación técnica al repositorio del cliente.</li>
+        <li><strong>Coordinación:</strong> Consulta el calendario para alinear fechas con los auditores.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="role-card">
+    <span class="role-title">4. Auditor (Staff Calidad)</span>
+    <div class="role-desc">
+        Perfil con autoridad sobre la planificación temporal.
+      <ul>
+        <li><strong>Gestión del Tiempo:</strong> Único rol con capacidad para <strong>agendar, mover o cancelar</strong> fechas de auditoría en el calendario oficial.</li>
+        <li><strong>Reporting:</strong> Sube los informes finales de cumplimiento normativo.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="role-card">
+    <span class="role-title">5. Analista SOC (Staff Técnico)</span>
+    <div class="role-desc">
+        Perfil altamente especializado y aislado.
+      <ul>
+        <li><strong>Respuesta a Incidentes:</strong> Monitoriza el tablero de tickets de seguridad.</li>
+        <li><strong>Ciclo de Vida:</strong> Diagnostica la severidad, contiene la amenaza y resuelve la incidencia.</li>
+        <li><strong>Foco:</strong> No visualiza datos administrativos (facturas, proyectos), solo alertas de seguridad.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="role-card">
+    <span class="role-title">6. Super-Administrador</span>
+    <div class="role-desc">
+        El garante de la infraestructura lógica y de contenidos.
+      <ul>
+        <li><strong>Gestión de Expedientes:</strong> Crea los proyectos y define qué servicio se presta a cada cliente.</li>
+        <li><strong>Gobernanza:</strong> Gestiona el alta/baja de empleados y sus niveles de acceso (RBAC).</li>
+        <li><strong>Gestor de Conocimiento:</strong> Responsable de mantener actualizado el catálogo de Cursos de Formación (Contenidos y Exámenes).</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="titulo-seccion bg-gestion">2. Bloque de Gestión Interna (Backend)</div>
+<table class="tabla">
+<thead>
+<tr>
+    <th class="col-desc">Funcionalidad de Negocio</th>
+    <th class="th-g1">G1: Iris<br><small>Coord</small></th>
+    <th class="th-g1">G1: Pedro<br><small>Coord</small></th>
+    <th class="th-g2">G2: Ignacio<br><small>Backend</small></th>
+    <th class="th-g2">G2: José<br><small>Backend</small></th>
+    <th class="th-g3">G3: Marcos<br><small>Frontend</small></th>
+    <th class="th-g3">G3: Estela<br><small>Frontend</small></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Gestión Visual de Auditorías (Calendario)</span>
+        <span class="task-detail">Implementación de un planificador gráfico interactivo que permita a los Auditores gestionar sus citas y a la empresa visualizar la carga de trabajo.</span>
+    </td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+    <td></td><td></td><td></td><td></td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Control de Acceso y Seguridad (RBAC)</span>
+        <span class="task-detail">Sistema centralizado de autenticación y autorización que asegura que cada empleado y cliente acceda únicamente a los datos permitidos.</span>
+    </td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+    <td></td><td></td><td></td><td></td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Dirección y Aseguramiento de Calidad</span>
+        <span class="task-detail">Supervisión del cumplimiento de hitos semanales, integración del código final y validación de entregables (Sprint Final).</span>
+    </td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+    <td></td><td></td><td></td><td></td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Arquitectura de Datos (Core)</span>
+        <span class="task-detail">Diseño y construcción del modelo relacional de datos que sostendrá toda la lógica de negocio (Clientes, Proyectos, Servicios).</span>
+    </td>
+    <td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+    <td></td><td></td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Administración de Expedientes</span>
+        <span class="task-detail">Motor lógico que permite la contratación de servicios, vinculando a un cliente con un producto y asignando recursos internos.</span>
+    </td>
+    <td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+    <td></td><td></td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Repositorio Documental Seguro</span>
+        <span class="task-detail">Infraestructura de almacenamiento cifrado/protegido para el intercambio confidencial de informes y políticas entre consultor y cliente.</span>
+    </td>
+    <td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+    <td></td><td></td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Motor de Gestión de Incidencias (SOC)</span>
+        <span class="task-detail">Lógica de negocio que orquesta el ciclo de vida de una alerta de seguridad, desde su recepción hasta su resolución técnica.</span>
+    </td>
+    <td></td><td></td>
+    <td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="titulo-seccion bg-web">3. Bloque de Experiencia de Usuario (Web/Frontend)</div>
+<table class="tabla">
+<thead>
+<tr>
+    <th class="col-desc">Funcionalidad de Negocio</th>
+    <th class="th-g1">G1: Iris</th>
+    <th class="th-g1">G1: Pedro</th>
+    <th class="th-g2">G2: Ignacio</th>
+    <th class="th-g2">G2: José</th>
+    <th class="th-g3">G3: Marcos</th>
+    <th class="th-g3">G3: Estela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Identidad Visual Corporativa</span>
+        <span class="task-detail">Desarrollo de la interfaz gráfica global, asegurando coherencia visual, usabilidad y adaptación a dispositivos móviles (Responsive).</span>
+    </td>
+    <td></td><td></td><td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Escaparate de Servicios (Catálogo)</span>
+        <span class="task-detail">Presentación comercial atractiva de la oferta de servicios (Gobernanza, Defensa, Auditoría) para maximizar la captación.</span>
+    </td>
+    <td></td><td></td><td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Panel de Operaciones SOC</span>
+        <span class="task-detail">Interfaces especializadas para la gestión visual de alertas críticas, incluyendo indicadores de prioridad (Semáforo de riesgos).</span>
+    </td>
+    <td></td><td></td><td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Captación de Oportunidades (Leads)</span>
+        <span class="task-detail">Integración de los canales de contacto web con la base de datos para transformar visitantes en clientes potenciales.</span>
+    </td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+    <td></td><td></td><td></td><td></td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Portal del Cliente</span>
+        <span class="task-detail">Área privada de autogestión donde el cliente consulta el estado de sus contrataciones y accede a sus entregables.</span>
+    </td>
+    <td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+    <td></td><td></td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="titulo-seccion bg-formacion">4. Bloque de Formación (E-Learning)</div>
+<table class="tabla">
+<thead>
+<tr>
+    <th class="col-desc">Funcionalidad de Negocio</th>
+    <th class="th-g1">G1: Iris</th>
+    <th class="th-g1">G1: Pedro</th>
+    <th class="th-g2">G2: Ignacio</th>
+    <th class="th-g2">G2: José</th>
+    <th class="th-g3">G3: Marcos</th>
+    <th class="th-g3">G3: Estela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Entorno de Aprendizaje Interactivo</span>
+        <span class="task-detail">Interfaz del "Aula Virtual" que permite al alumno navegar por las lecciones y contenidos multimedia del curso.</span>
+    </td>
+    <td></td><td></td>
+    <td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Sistema de Evaluación Automática</span>
+        <span class="task-detail">Motor lógico que administra los exámenes, procesa las respuestas del alumno y emite una calificación inmediata.</span>
+    </td>
+    <td></td><td></td>
+    <td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Gestión de Derechos de Acceso</span>
+        <span class="task-detail">Filtro de seguridad que verifica las licencias contratadas antes de permitir el acceso a contenidos premium.</span>
+    </td>
+    <td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+    <td></td><td></td>
+</tr>
+<tr>
+    <td class="col-desc">
+        <span class="task-title">Trazabilidad del Alumno</span>
+        <span class="task-detail">Mecanismo de persistencia que registra el historial académico y el progreso porcentual de cada estudiante.</span>
+    </td>
+    <td></td><td></td>
+    <td></td><td></td>
+    <td class="check">&check;</td>
+    <td class="check">&check;</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</body>
+</html>
